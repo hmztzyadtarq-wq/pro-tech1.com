@@ -9,22 +9,22 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-    <!-- ربط ملفات الـ CSS الخاصة بالموقع عشان الشكل يبقى موحد تماماً -->
+    <!-- ربط ملفات الـ CSS الأصلية للموقع -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="responsive.css">
+    <link rel="stylesheet" href="dashboard.css">
 
     <style>
-        * { box-sizing: border-box; }
         body {
-            font-family: 'Cairo', sans-serif;
             background-color: #f4f7f6;
             margin: 0;
-            padding: 0;
-            width: 100%;
             padding-bottom: 90px;
         }
-
-        /* تنسيق عام للمحتوى والبانر */
+        .main-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
         .top-banner-section {
             display: flex;
             gap: 20px;
@@ -33,8 +33,8 @@
             padding: 30px;
             align-items: center;
             flex-wrap: wrap;
-            margin-top: 20px;
             border-radius: 8px;
+            margin-bottom: 30px;
         }
         .banner-box {
             flex: 2;
@@ -55,13 +55,6 @@
             border-radius: 8px;
             font-size: 15px;
             line-height: 1.6;
-        }
-
-        .main-container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 30px 0;
         }
         h1, h2 {
             color: #333;
@@ -101,39 +94,6 @@
         }
         .btn-action:hover { background-color: #0056b3; }
 
-        /* شريط التواصل وزر الاستشارة الثابت أسفل الشاشة */
-        .fixed-footer-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #111;
-            color: white;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 15px 20px;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.2);
-            z-index: 1000;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .consultation-btn {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .consultation-btn:hover { background-color: #218838; }
-        .social-icons a {
-            color: white;
-            margin: 0 10px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
         /* معرض الصور والتعليقات واللايكات */
         .media-gallery {
             display: grid;
@@ -172,7 +132,6 @@
             border-radius: 4px;
             cursor: pointer;
         }
-
         .hidden { display: none; }
         .back-btn {
             background: #6c757d;
@@ -187,18 +146,21 @@
 </head>
 <body>
 
-    <!-- الهيدر أو شريط التنقل الموحد للموقع (بنفس روابط باقي الصفحات ومظبوط على فيديوهات/المكن) -->
-    <header style="background: #fff; border-bottom: 1px solid #ddd; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1001;">
-        <div class="logo">
-            <h2 style="margin:0; color:#007bff;">ProTech</h2>
+    <!-- هيدر الموقع الأصلي المطابق تماماً لصفحة Index وباقي الصفحات -->
+    <header class="header" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000;">
+        <div class="cart-btn-container">
+            <a href="cart.html" class="cart-btn" style="background: #ff6600; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-weight: bold;">🛒 السلة (0)</a>
         </div>
-        <nav class="nav-links" style="display: flex; gap: 20px; align-items: center;">
-            <a href="index.html" style="text-decoration: none; color: #333;">الرئيسية</a>
+        <nav class="nav-menu" style="display: flex; align-items: center; gap: 25px;">
+            <a href="index.html" style="text-decoration: none; color: #333; font-weight: 500;">الرئيسية</a>
             <a href="videos.html" style="text-decoration: none; color: #007bff; font-weight: bold;">المكن</a>
-            <a href="inks.html" style="text-decoration: none; color: #333;">الأحبار</a>
-            <a href="team.html" style="text-decoration: none; color: #333;">الفريق</a>
-            <a href="settings.html" style="text-decoration: none; color: #333;">الإعدادات</a>
+            <a href="inks.html" style="text-decoration: none; color: #333; font-weight: 500;">الأحبار</a>
+            <a href="team.html" style="text-decoration: none; color: #333; font-weight: 500;">الفريق</a>
+            <a href="settings.html" style="text-decoration: none; color: #333; font-weight: 500;">الإعدادات</a>
         </nav>
+        <div class="logo">
+            <h2 style="margin: 0; color: #007bff;">ProTech</h2>
+        </div>
     </header>
 
     <div class="main-container">
@@ -206,15 +168,15 @@
         <!-- البانر العلوي ومربع النصوص بجانبه -->
         <div class="top-banner-section">
             <div class="banner-box">
-                <img src="https://via.placeholder.com/1200x300" alt="بانر المكن والماكينات" id="bannerImg">
+                <img src="https://via.placeholder.com/1200x300" alt="بانر المكن" id="bannerImg">
             </div>
             <div class="banner-text-box" id="bannerDescription">
                 قسم ماكينات الطباعة المتطورة في شركة بروتك. استعرض أحدث التكنولوجيا العالمية في ماكينات الـ UV، الإكو سولفينت، الأوت دور، واللمينيشن والبلوتر بأعلى كفاءة تشغيلية.
             </div>
         </div>
 
-        <!-- القسم الرئيسي: 5 كروت للماكينات والمنتجات -->
-        <div id="mainCategoriesView" style="margin-top: 30px;">
+        <!-- القسم الرئيسي: 5 كروت للماكينات -->
+        <div id="mainCategoriesView">
             <h1>أقسام المكن والماكينات</h1>
             <div class="cards-grid">
                 <div class="category-card">
@@ -225,28 +187,28 @@
                 <div class="category-card">
                     <img src="https://via.placeholder.com/200" alt="Eco Solvent">
                     <h3>إكو سولفينت</h3>
-                    <button class="btn-action" onclick="openDetailsPage('إكو سولفينت', 'ماكينات الإكو سولفينت المتميزة بدقة الألوان والطباعة على البانر والفينيل والداخلية بأعلى جودة.')">اعرف أكتر</button>
+                    <button class="btn-action" onclick="openDetailsPage('إكو سولفينت', 'ماكينات الإكو سولفينت المتميزة بدقة الألوان والطباعة على البانر والفينيل.')">اعرف أكتر</button>
                 </div>
                 <div class="category-card">
                     <img src="https://via.placeholder.com/200" alt="Outdoor">
                     <h3>أوت دور</h3>
-                    <button class="btn-action" onclick="openDetailsPage('أوت دور', 'ماكينات الأوت دور المصممة لتحمل العوامل الجوية والعمل المستمر للوحات الإعلانية الضخمة.')">اعرف أكتر</button>
+                    <button class="btn-action" onclick="openDetailsPage('أوت دور', 'ماكينات الأوت دور المصممة لتحمل العوامل الجوية والعمل المستمر للوحات الإعلانية.')">اعرف أكتر</button>
                 </div>
                 <div class="category-card">
                     <img src="https://via.placeholder.com/200" alt="Lamination">
                     <h3>لمينيشن</h3>
-                    <button class="btn-action" onclick="openDetailsPage('لمينيشن', 'ماكينات اللمنيشن والسلوفان الحراري لحماية المطبوعات وإعطائها لمسة احترافية لامعة أو مطفية.')">اعرف أكتر</button>
+                    <button class="btn-action" onclick="openDetailsPage('لمينيشن', 'ماكينات اللمنيشن والسلوفان الحراري لحماية المطبوعات وإعطائها لمسة احترافية.')">اعرف أكتر</button>
                 </div>
                 <div class="category-card">
                     <img src="https://via.placeholder.com/200" alt="Plotter">
                     <h3>بلوتر / ولتريلوتر</h3>
-                    <button class="btn-action" onclick="openDetailsPage('بلوتر / ولتريلوتر', 'ماكينات القص والتشكيل المتقدمة للستيكر والفينيل بدقة مذهلة وسرعة عالية.')">اعرف أكتر</button>
+                    <button class="btn-action" onclick="openDetailsPage('بلوتر / ولتريلوتر', 'ماكينات القص والتشكيل المتقدمة للستيكر والفينيل بدقة مذهلة.')">اعرف أكتر</button>
                 </div>
             </div>
         </div>
 
         <!-- تفريعات الـ UV (5 أنواع) -->
-        <div id="uvSubCategoriesView" class="hidden" style="margin-top: 30px;">
+        <div id="uvSubCategoriesView" class="hidden">
             <button class="back-btn" onclick="goBackToMain()">← رجوع لأقسام المكن</button>
             <h1>أنواع ماكينات الـ UV</h1>
             <div class="cards-grid">
@@ -279,30 +241,19 @@
         </div>
 
         <!-- صفحة عرض الصور والفيديوهات والتعليقات واللايكات -->
-        <div id="dynamicMediaView" class="hidden" style="margin-top: 30px;">
+        <div id="dynamicMediaView" class="hidden">
             <button class="back-btn" onclick="goBackToPrevious()">← رجوع للخلف</button>
             <h1 id="pageTitle">عنوان القسم</h1>
             <p id="pageSubtitle" style="text-align: center; color: #666;"></p>
             
             <div class="media-gallery" id="mediaGalleryContainer">
-                <!-- يتم جلب البيانات من Firebase تلقائياً -->
+                <!-- جلب البيانات من Firebase -->
             </div>
         </div>
 
     </div>
 
-    <!-- الشريط الثابت أسفل الشاشة (زر الاستشارة وأيقونات التواصل) -->
-    <div class="fixed-footer-bar">
-        <a href="tel:01000000000" class="consultation-btn">طلب استشارة فنية</a>
-        <div class="social-icons">
-            <span>تواصل معنا:</span>
-            <a href="https://wa.me/201000000000" target="_blank">واتساب</a>
-            <a href="https://facebook.com" target="_blank">فيسبوك</a>
-            <a href="mailto:info@protech.com">إيميل</a>
-        </div>
-    </div>
-
-    <!-- كود الجافاسكريبت للتحكم والربط السحابي -->
+    <!-- كود الجافاسكريبت للربط والتفاعل -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const firebaseConfig = {
@@ -378,7 +329,7 @@
             db.collection("site_media").where("category", "==", categoryName).onSnapshot((snapshot) => {
                 container.innerHTML = '';
                 if(snapshot.empty) {
-                    container.innerHTML = '<p style="text-align:center; width:100%; color:#777;">لا توجد عناصر مضافة حالياً في هذا القسم. (سيقوم الأدمن بإضافتها قريبًا)</p>';
+                    container.innerHTML = '<p style="text-align:center; width:100%; color:#777;">لا توجد عناصر مضافة حالياً في هذا القسم.</p>';
                     return;
                 }
                 snapshot.forEach((doc) => {
@@ -387,7 +338,7 @@
                     const div = document.createElement('div');
                     div.className = 'media-item';
                     div.innerHTML = `
-                        <img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="صورة الماكينة">
+                        <img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="صورة">
                         <h3>${item.title || 'موديل جديد'}</h3>
                         <p>${item.desc || ''}</p>
                         <div class="interaction-box">
