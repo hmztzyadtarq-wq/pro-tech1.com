@@ -44,7 +44,7 @@ window.addEventListener('storage', function(e) {
     }
 });
 
-// دالة جلب وعرض البيانات ديناميكياً حسب القسم المطلوب في الصفحة
+// تعديل دالة العرض لتشمل الصور والفيديوهات معاً بدون تعليقات
 function initDynamicSection(targetCategory, containerId, cardTemplateType) {
     document.addEventListener("DOMContentLoaded", function() {
         updateCartCounter();
@@ -60,39 +60,38 @@ function initDynamicSection(targetCategory, containerId, cardTemplateType) {
                 const itemCat = (item.category || '').trim().toLowerCase();
                 const targetCat = targetCategory.trim().toLowerCase();
 
-                // شرط دقيق جداً لكل قسم عشان مفيش حاجة تدخل مكان التانية
                 let match = false;
-                if (targetCat === 'inks') {
+                if (targetCat === 'machines') {
+                    // عرض المكن والفيديوهات الخاصة بالقسم
+                    match = (itemCat === 'machines' || itemCat === 'مكن' || itemCat === 'ماكينات' || itemCat === 'videos' || itemCat === 'فيديوهات');
+                } else if (targetCat === 'inks') {
                     match = (itemCat === 'inks' || itemCat === 'حبر' || itemCat === 'أحبار');
-                } else if (targetCat === 'machines') {
-                    match = (itemCat === 'machines' || itemCat === 'مكن' || itemCat === 'ماكينات' || (itemCat !== 'inks' && itemCat !== 'حبر' && itemCat !== 'أحبار' && itemCat !== 'team' && itemCat !== 'certificates' && itemCat !== 'شهادات'));
                 } else if (targetCat === 'team') {
                     match = (itemCat === 'team' || itemCat === 'فريق');
-                } else if (targetCat === 'certificates') {
-                    match = (itemCat === 'certificates' || itemCat === 'شهادة' || itemCat === 'شهادات');
                 }
 
                 if (match) {
                     found++;
                     const card = document.createElement('div');
-                    card.className = cardTemplateType === 'team' ? 'card' : 'ink-card';
+                    card.className = 'ink-card';
                     
-                    if (cardTemplateType === 'team') {
-                        card.innerHTML = `
-                            <img src="${item.imageUrl || 'https://via.placeholder.com/150'}" alt="عضو">
-                            <h3>${item.title || 'بدون اسم'}</h3>
-                            <p>${item.desc || 'مهندس صيانة'}</p>
-                        `;
+                    // التحقق مما إذا كان المحتوى فيديو أو صورة
+                    let mediaElement = '';
+                    if (item.videoUrl && item.videoUrl.trim() !== '') {
+                        mediaElement = `<video controls style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:12px;"><source src="${item.videoUrl}" type="video/mp4">متصفحك لا يدعم عرض الفيديو</video>`;
                     } else {
-                        card.innerHTML = `
-                            <div>
-                                <img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="صورة">
-                                <h3>${item.title || 'بدون عنوان'}</h3>
-                                <p>${item.desc || 'لا يوجد وصف.'}</p>
-                            </div>
-                            <button class="btn-add-cart" onclick="addToCart('${item.title || 'منتج'}', 150)">إضافة للسلة 🛒</button>
-                        `;
+                        mediaElement = `<img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="صورة" style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:12px;">`;
                     }
+
+                    card.innerHTML = `
+                        <div>
+                            ${mediaElement}
+                            <span style="background:#e1f0ff; color:#007bff; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:bold;">${item.category || 'عام'}</span>
+                            <h3 style="margin:10px 0 5px; font-size:18px; color:#2c3e50;">${item.title || 'بدون عنوان'}</h3>
+                            <p style="color:#666; font-size:14px; margin-bottom:15px; line-height:1.5;">${item.desc || 'لا يوجد وصف.'}</p>
+                        </div>
+                        <button class="btn-add-cart" onclick="addToCart('${item.title || 'منتج'}', 150)">إضافة للسلة 🛒</button>
+                    `;
                     container.appendChild(card);
                 }
             });
@@ -100,9 +99,6 @@ function initDynamicSection(targetCategory, containerId, cardTemplateType) {
             if (found === 0) {
                 container.innerHTML = `<p style="text-align: center; grid-column: 1 / -1; color: #777;">لا توجد عناصر مضافة في هذا القسم حالياً.</p>`;
             }
-        }, (error) => {
-            console.error("Firestore Error: ", error);
-            container.innerHTML = `<p style="text-align: center; color: red;">خطأ في تحميل البيانات.</p>`;
         });
     });
 }
