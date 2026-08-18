@@ -3,43 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم قسم المكن - شركة بروتك</title>
+    <title>لوحة التحكم الشاملة - شركة بروتك</title>
     
     <!-- مكتبات Firebase الأساسية -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-    <!-- ربط ملفات الـ CSS الأصلية للموقع -->
+    <!-- ربط ملفات الـ CSS للموقع -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
 
     <style>
+        :root {
+            --primary-color: #007bff;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
         body {
-            background-color: #f4f7f6;
+            background-color: var(--bg-color);
             margin: 0;
             padding: 20px;
             font-family: 'Cairo', sans-serif;
+            color: var(--text-color);
         }
-        .admin-container {
-            max-width: 900px;
+        .admin-wrapper {
+            max-width: 1100px;
             margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
+        }
+        .admin-header {
+            background: var(--card-bg);
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .admin-header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+        .nav-links-back {
+            display: flex;
+            gap: 15px;
+        }
+        .nav-links-back a {
+            text-decoration: none;
+            background: #e2e8f0;
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .nav-links-back a:hover { background: #cbd5e1; }
+
+        .admin-grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        @media (max-width: 768px) {
+            .admin-grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        .admin-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-        h1, h2 {
-            color: #333;
-            text-align: center;
+        .admin-card h2 {
+            margin-top: 0;
+            font-size: 18px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            color: #444;
         }
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-weight: bold;
-            color: #555;
+            font-size: 14px;
         }
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
@@ -47,123 +103,182 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             font-family: 'Cairo', sans-serif;
+            box-sizing: border-box;
         }
-        .btn-submit {
-            background-color: #28a745;
+        .btn-main {
+            background-color: var(--success-color);
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 12px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
             width: 100%;
-            font-size: 16px;
+            font-size: 15px;
         }
-        .btn-submit:hover { background-color: #218838; }
-        
-        .items-list {
-            margin-top: 40px;
-            border-top: 2px solid #eee;
-            padding-top: 20px;
+        .btn-main:hover { opacity: 0.9; }
+
+        /* قسم عرض العناصر المضافة للتحكم فيها */
+        .full-width-section {
+            grid-column: 1 / -1;
         }
-        .admin-item-card {
+        .items-manage-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+            padding-right: 5px;
+        }
+        .manage-item-card {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: #fafafa;
-            border: 1px solid #ddd;
-            padding: 15px;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
             border-radius: 6px;
             margin-bottom: 10px;
-            flex-wrap: wrap;
             gap: 10px;
         }
-        .admin-item-info {
+        .manage-item-info {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
-        .admin-item-info img {
-            width: 60px;
-            height: 60px;
+        .manage-item-info img {
+            width: 50px;
+            height: 50px;
             object-fit: cover;
             border-radius: 4px;
         }
-        .btn-delete {
-            background-color: #dc3545;
+        .btn-del {
+            background-color: var(--danger-color);
             color: white;
             border: none;
-            padding: 8px 12px;
+            padding: 6px 12px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 13px;
         }
-        .btn-delete:hover { background-color: #c82333; }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
+        .btn-del:hover { background-color: #bd2130; }
+        .filter-box {
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
 
-    <div class="admin-container">
-        <a href="videos.html" class="back-link">← العودة لصفحة المكن العامة</a>
-        <h1>لوحة تحكم المكن والماكينات</h1>
-        <p style="text-align: center; color: #666;">من هنا يمكنك إضافة أو حذف أي ماكينة أو موديل يظهر في قسم المكن فوراً.</p>
+    <div class="admin-wrapper">
+        <!-- هيدر لوحة التحكم -->
+        <div class="admin-header">
+            <h1>لوحة التحكم الشاملة (بروتك)</h1>
+            <div class="nav-links-back">
+                <a href="videos.html">صفحة المكن</a>
+                <a href="index.html">الرئيسية</a>
+                <a href="team.html">الفريق</a>
+                <a href="settings.html">الإعدادات</a>
+            </div>
+        </div>
 
-        <!-- نموذج الإضافة -->
-        <form id="addMachineForm" onsubmit="addNewMachine(event)">
-            <div class="form-group">
-                <label for="machineCategory">اختر القسم التابع له الماكينة:</label>
-                <select id="machineCategory" required>
-                    <optgroup label="الأقسام الرئيسية">
-                        <option value="إكو سولفينت">إكو سولفينت</option>
-                        <option value="أوت دور">أوت دور</option>
-                        <option value="لمينيشن">لمينيشن</option>
-                        <option value="بلوتر / ولتريلوتر">بلوتر / ولتريلوتر</option>
-                    </optgroup>
-                    <optgroup label="تفريعات ماكينات الـ UV">
-                        <option value="فلات بد UV">فلات بد (Flatbed)</option>
-                        <option value="رول تو رول UV">رول تو رول (Roll to Roll)</option>
-                        <option value="هيبير UV">هيبير (Hybrid)</option>
-                        <option value="DTF UV">DTF</option>
-                        <option value="7 في 1 UV">7 في 1</option>
-                    </optgroup>
-                </select>
+        <div class="admin-grid-layout">
+            
+            <!-- نموذج إضافة عنصر جديد (مكن، أحبار، فريق، إلخ) -->
+            <div class="admin-card">
+                <h2>إضافة عنصر جديد لأي قسم</h2>
+                <form id="globalAdminForm" onsubmit="addGlobalItem(event)">
+                    <div class="form-group">
+                        <label for="targetSection">اختر القسم المستهدف بالموقع:</label>
+                        <select id="targetSection" required onchange="updateFormFields()">
+                            <optgroup label="قسم المكن والماكينات">
+                                <option value="إكو سولفينت">ماكينات إكو سولفينت</option>
+                                <option value="أوت دور">ماكينات أوت دور</option>
+                                <option value="لمينيشن">ماكينات لمينيشن</option>
+                                <option value="بلوتر / ولتريلوتر">ماكينات بلوتر / ولتريلوتر</option>
+                                <option value="فلات بد UV">UV - فلات بد (Flatbed)</option>
+                                <option value="رول تو رول UV">UV - رول تو رول (Roll to Roll)</option>
+                                <option value="هيبير UV">UV - هيبير (Hybrid)</option>
+                                <option value="DTF UV">UV - DTF</option>
+                                <option value="7 في 1 UV">UV - 7 في 1</option>
+                            </optgroup>
+                            <optgroup label="الأقسام الأخرى">
+                                <option value="inks">قسم الأحبار والمواد</option>
+                                <option value="team">فريق العمل</option>
+                                <option value="settings">الإعدادات / البانرات العامة</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemTitle">العنوان / الاسم:</label>
+                        <input type="text" id="itemTitle" placeholder="مثال: موديل ماكينة جديد أو اسم عضو الفريق" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemDesc">الوصف أو التفاصيل:</label>
+                        <textarea id="itemDesc" rows="3" placeholder="اكتب المواصفات أو الوصف هنا..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemImage">رابط الصورة (Image URL):</label>
+                        <input type="url" id="itemImage" placeholder="https://example.com/image.jpg" required>
+                    </div>
+
+                    <button type="submit" class="btn-main">حفظ وإضافة العنصر</button>
+                </form>
             </div>
 
-            <div class="form-group">
-                <label for="machineTitle">اسم الماكينة / الموديل:</label>
-                <input type="text" id="machineTitle" placeholder="مثال: موديل UV برو 2026" required>
+            <!-- معلومات وإحصائيات سريعة للوحة -->
+            <div class="admin-card">
+                <h2>تعليمات وحالة النظام</h2>
+                <p style="font-size: 14px; line-height: 1.6; color: #555;">
+                    أهلاً بك يا طارق في لوحة التحكم المركزية. من خلال هذه الصفحة يمكنك إدارة محتوى الموقع بالكامل:
+                </p>
+                <ul style="font-size: 14px; line-height: 1.8; color: #444; padding-right: 20px;">
+                    <li>إضافة ماكينات جديدة وتوزيعها تلقائياً على أقسام الـ UV والإكو سولفينت وغيرها.</li>
+                    <li>إضافة منتجات للأحبار أو أعضاء جدد لفريق العمل.</li>
+                    <li>التحكم الفوري وحذف أي عنصر قديم لا تحتاجه من القائمة أدناه.</li>
+                </ul>
+                <div style="background: #eef2f7; padding: 15px; border-radius: 6px; margin-top: 20px; text-align: center;">
+                    <span style="font-weight: bold; color: var(--primary-color);">حالة الاتصال بقاعدة البيانات:</span>
+                    <p id="dbStatus" style="margin: 5px 0 0; color: var(--success-color); font-weight: bold;">متصل بنجاح 🟢</p>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="machineDesc">وصف الماكينة والمواصفات:</label>
-                <textarea id="machineDesc" rows="3" placeholder="اكتب نبذة مختصرة أو المواصفات الفنية..." required></textarea>
+            <!-- قسم إدارة وعرض وحذف العناصر الموجودة -->
+            <div class="admin-card full-width-section">
+                <h2>إدارة وعرض وحذف عناصر الموقع</h2>
+                <div class="filter-box">
+                    <label for="filterCategory" style="font-weight: bold; font-size: 13px; margin-bottom: 5px; display: block;">فلترة حسب القسم للعرض:</label>
+                    <select id="filterCategory" onchange="loadAllItems()" style="max-width: 300px; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        <option value="all">عرض كل العناصر بالموقع</option>
+                        <optgroup label="المكن والماكينات">
+                            <option value="إكو سولفينت">إكو سولفينت</option>
+                            <option value="أوت دور">أوت دور</option>
+                            <option value="لمينيشن">لمينيشن</option>
+                            <option value="بلوتر / ولتريلوتر">بلوتر / ولتريلوتر</option>
+                            <option value="فلات بد UV">فلات بد UV</option>
+                            <option value="رول تو رول UV">رول تو رول UV</option>
+                            <option value="هيبير UV">هيبير UV</option>
+                            <option value="DTF UV">DTF UV</option>
+                            <option value="7 في 1 UV">7 في 1 UV</option>
+                        </optgroup>
+                        <optgroup label="الأقسام الأخرى">
+                            <option value="inks">الأحبار</option>
+                            <option value="team">الفريق</option>
+                            <option value="settings">الإعدادات</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="items-manage-list" id="manageItemsContainer">
+                    <p style="text-align: center; color: #777;">جاري تحميل العناصر...</p>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="machineImage">رابط صورة الماكينة (Image URL):</label>
-                <input type="url" id="machineImage" placeholder="https://example.com/image.jpg" required>
-            </div>
-
-            <button type="submit" class="btn-submit">إضافة الماكينة للقسم</button>
-        </form>
-
-        <!-- قائمة الماكينات المضافة حالياً للتحكم والحذف -->
-        <div class="items-list">
-            <h2>الماكينات الحالية في قاعدة البيانات</h2>
-            <div id="adminMachinesContainer">
-                <p style="text-align: center; color: #777;">جاري تحميل الماكينات...</p>
-            </div>
         </div>
     </div>
 
-    <!-- كود الجافاسكريبت المربوط بـ Firebase -->
+    <!-- جافاسكريبت التحكم الشامل -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const firebaseConfig = {
@@ -180,19 +295,19 @@
                 firebase.initializeApp(firebaseConfig);
             }
 
-            loadAdminMachines();
+            loadAllItems();
         });
 
         const db = firebase.firestore();
 
-        // إضافة ماكينة جديدة
-        function addNewMachine(event) {
+        // إضافة عنصر جديد وقاعدة البيانات
+        function addGlobalItem(event) {
             event.preventDefault();
 
-            const category = document.getElementById('machineCategory').value;
-            const title = document.getElementById('machineTitle').value.trim();
-            const desc = document.getElementById('machineDesc').value.trim();
-            const imageUrl = document.getElementById('machineImage').value.trim();
+            const category = document.getElementById('targetSection').value;
+            const title = document.getElementById('itemTitle').value.trim();
+            const desc = document.getElementById('itemDesc').value.trim();
+            const imageUrl = document.getElementById('itemImage').value.trim();
 
             db.collection("site_media").add({
                 category: category,
@@ -204,22 +319,31 @@
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             })
             .then(() => {
-                alert("تم إضافة الماكينة بنجاح!");
-                document.getElementById('addMachineForm').reset();
+                alert("تم إضافة العنصر بنجاح وتحديث قاعدة البيانات!");
+                document.getElementById('globalAdminForm').reset();
+                loadAllItems();
             })
             .catch((error) => {
-                alert("حدث خطأ أثناء الإضافة: " + error.message);
+                alert("حدث خطأ أثناء الإضافة (تأكد من فتح قواعد الأمان في فايربيس): " + error.message);
             });
         }
 
-        // جعرض الماكينات في لوحة الأدمن مع إمكانية الحذف
-        function loadAdminMachines() {
-            const container = document.getElementById('adminMachinesContainer');
+        // جلب وعرض العناصر للتحكم فيها والحذف
+        function loadAllItems() {
+            const container = document.getElementById('manageItemsContainer');
+            const selectedFilter = document.getElementById('filterCategory').value;
 
-            db.collection("site_media").onSnapshot((snapshot) => {
+            container.innerHTML = '<p style="text-align: center; color: #777;">جاري التحميل...</p>';
+
+            let query = db.collection("site_media");
+            if (selectedFilter !== 'all') {
+                query = query.where("category", "==", selectedFilter);
+            }
+
+            query.onSnapshot((snapshot) => {
                 container.innerHTML = '';
-                if(snapshot.empty) {
-                    container.innerHTML = '<p style="text-align: center; color: #777;">لا توجد ماكينات مضافة حالياً.</p>';
+                if (snapshot.empty) {
+                    container.innerHTML = '<p style="text-align: center; color: #777;">لا توجد عناصر مضافة في هذا القسم حالياً.</p>';
                     return;
                 }
 
@@ -228,27 +352,29 @@
                     const id = doc.id;
 
                     const div = document.createElement('div');
-                    div.className = 'admin-item-card';
+                    div.className = 'manage-item-card';
                     div.innerHTML = `
-                        <div class="admin-item-info">
-                            <img src="${item.imageUrl || 'https://via.placeholder.com/60'}" alt="صورة">
+                        <div class="manage-item-info">
+                            <img src="${item.imageUrl || 'https://via.placeholder.com/50'}" alt="صورة">
                             <div>
-                                <h4 style="margin:0 0 5px 0;">${item.title}</h4>
-                                <span style="font-size: 12px; background: #e2e8f0; padding: 2px 6px; border-radius: 4px;">القسم: ${item.category}</span>
-                                <p style="margin: 5px 0 0 0; font-size: 13px; color: #666;">${item.desc}</p>
+                                <h4 style="margin:0 0 3px 0; font-size: 15px;">${item.title || 'بدون عنوان'}</h4>
+                                <span style="font-size: 11px; background: #e2e8f0; padding: 2px 6px; border-radius: 4px;">القسم: ${item.category}</span>
+                                <p style="margin: 3px 0 0 0; font-size: 12px; color: #666;">${item.desc || ''}</p>
                             </div>
                         </div>
-                        <button class="btn-delete" onclick="deleteMachine('${id}')">حذف</button>
+                        <button class="btn-del" onclick="deleteItem('${id}')">حذف</button>
                     `;
                     container.appendChild(div);
                 });
+            }, (error) => {
+                container.innerHTML = `<p style="text-align: center; color: red;">خطأ في جلب البيانات: ${error.message}</p>`;
             });
         }
 
-        // حذف ماكينة
-        function deleteMachine(id) {
-            if(confirm("هل أنت متأكد من حذف هذه الماكينة نهائياً؟")) {
-                db.collection("site_media").doc(id).delete()
+        // حذف عنصر
+        function deleteItem(docId) {
+            if (confirm("هل أنت متأكد من حذف هذا العنصر نهائياً من الموقع؟")) {
+                db.collection("site_media").doc(docId).delete()
                 .then(() => {
                     alert("تم الحذف بنجاح.");
                 })
