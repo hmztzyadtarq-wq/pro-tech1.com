@@ -9,7 +9,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-    <!-- ربط ملفات الـ CSS الأصلية للموقع -->
+    <!-- ربط ملفات التصميم -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="responsive.css">
     <link rel="stylesheet" href="dashboard.css">
@@ -33,7 +33,7 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 100;
         }
         .cart-btn {
             background: #ff6600;
@@ -69,7 +69,7 @@
         h1 {
             text-align: center;
             color: #333;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
 
         /* شبكة عرض الأحبار */
@@ -77,25 +77,30 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 20px;
+            margin-top: 30px;
         }
 
         .ink-card {
             background: #fff;
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 15px;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: transform 0.2s;
+        }
+        .ink-card:hover {
+            transform: translateY(-3px);
         }
 
         .ink-card img {
             width: 100%;
             height: 180px;
             object-fit: cover;
-            border-radius: 6px;
+            border-radius: 8px;
             margin-bottom: 12px;
         }
 
@@ -174,10 +179,11 @@
         }
         .engineer-item {
             background: #f8f9fa;
-            padding: 10px;
+            padding: 12px;
             margin: 10px 0;
             border-radius: 6px;
             border: 1px solid #ddd;
+            text-align: right;
         }
     </style>
 </head>
@@ -202,7 +208,7 @@
 
     <div class="main-container">
         <h1>قسم الأحبار والمواد الاستهلاكية</h1>
-        <p style="text-align: center; color: #666; margin-bottom: 30px;">استعرض أجود أنواع الأحبار الأصلية وقطع الغيار والمواد المعتمدة لماكينات الطباعة.</p>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">استعرض أجود أنواع الأحبار الأصلية والمواد المعتمدة لماكينات الطباعة.</p>
 
         <!-- شبكة عرض الأحبار المضافة من لوحة التحكم -->
         <div class="inks-grid" id="inksContainer">
@@ -210,7 +216,7 @@
         </div>
     </div>
 
-    <!-- زر الاستشارة العائم لفريق المهندسين (أسفل الشاشة) -->
+    <!-- زر الاستشارة العائم لفريق المهندسين -->
     <div class="floating-consult-btn" onclick="openConsultModal()">
         💬 استشر فريق المهندسين
     </div>
@@ -224,17 +230,17 @@
             <div class="engineer-item">
                 <strong>مهندس / أحمد محمود</strong><br>
                 <span style="font-size: 13px; color: #555;">صيانة ماكينات UV و إكو سولفينت</span><br>
-                <a href="https://wa.me/201000000000" target="_blank" style="color: #28a745; font-weight: bold; text-decoration: none; font-size: 14px;">💬 مراسلة عبر واتساب</a>
+                <a href="https://wa.me/201000000000" target="_blank" style="color: #28a745; font-weight: bold; text-decoration: none; font-size: 13px;">💬 مراسلة عبر واتساب</a>
             </div>
             <div class="engineer-item">
                 <strong>مهندس / إسلام طارق</strong><br>
                 <span style="font-size: 13px; color: #555;">دعم الأحبار والتركيبات الهندسية</span><br>
-                <a href="https://wa.me/201000000000" target="_blank" style="color: #28a745; font-weight: bold; text-decoration: none; font-size: 14px;">💬 مراسلة عبر واتساب</a>
+                <a href="https://wa.me/201000000000" target="_blank" style="color: #28a745; font-weight: bold; text-decoration: none; font-size: 13px;">💬 مراسلة عبر واتساب</a>
             </div>
         </div>
     </div>
 
-    <!-- كود الجافاسكريبت لجلب الأحبار وإدارة السلة -->
+    <!-- سكربت جلب البيانات والسلة -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const firebaseConfig = {
@@ -257,37 +263,42 @@
 
         const db = firebase.firestore();
 
-        // جلب الأحبار من فايربيس (اللي بتضاف من لوحة التحكم)
         function loadInks() {
             const container = document.getElementById('inksContainer');
             
-            db.collection("site_media").where("category", "==", "inks").onSnapshot((snapshot) => {
+            db.collection("site_media").onSnapshot((snapshot) => {
                 container.innerHTML = '';
-                if(snapshot.empty) {
-                    container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #777;">لا توجد أحبار مضافة حالياً. يمكنك إضافتها من لوحة التحكم.</p>';
-                    return;
-                }
+                let itemsFound = 0;
 
                 snapshot.forEach((doc) => {
                     const item = doc.data();
-                    const id = doc.id;
-
-                    const card = document.createElement('div');
-                    card.className = 'ink-card';
-                    card.innerHTML = `
-                        <div>
-                            <img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="حبر">
-                            <h3>${item.title}</h3>
-                            <p>${item.desc}</p>
-                        </div>
-                        <button class="btn-add-cart" onclick="addToCart('${item.title}')">إضافة للسلة 🛒</button>
-                    `;
-                    container.appendChild(card);
+                    
+                    // جلب العناصر اللي القسم بتاعها inks أو title بيحتوي على كلمة حبر
+                    if(item.category === 'inks' || item.category === 'حبر' || (item.title && item.title.includes('حبر'))) {
+                        itemsFound++;
+                        const card = document.createElement('div');
+                        card.className = 'ink-card';
+                        card.innerHTML = `
+                            <div>
+                                <img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="حبر">
+                                <h3>${item.title || 'بدون عنوان'}</h3>
+                                <p>${item.desc || 'لا يوجد وصف متاح.'}</p>
+                            </div>
+                            <button class="btn-add-cart" onclick="addToCart('${item.title || 'منتج'}')">إضافة للسلة 🛒</button>
+                        `;
+                        container.appendChild(card);
+                    }
                 });
+
+                if(itemsFound === 0) {
+                    container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #777;">لا توجد أحبار مضافة حالياً. يمكنك إضافتها من لوحة التحكم.</p>';
+                }
+            }, (error) => {
+                console.error("Error loading inks: ", error);
+                container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: red;">حدث خطأ أثناء تحميل البيانات.</p>';
             });
         }
 
-        // نظام السلة المحفوظة في LocalStorage لتسمع مع صفحة السلة وتحسب وتصدر Excel
         function addToCart(title) {
             let cart = JSON.parse(localStorage.getItem('protech_cart')) || [];
             cart.push({ title: title, price: 0, qty: 1 });
@@ -304,7 +315,6 @@
             }
         }
 
-        // وظائف نافذة الاستشارة
         function openConsultModal() {
             document.getElementById('consultModal').style.display = 'flex';
         }
