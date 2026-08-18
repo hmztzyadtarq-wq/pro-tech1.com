@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شركة بروتك - ماكينات الطباعة والأحبار</title>
+    <title>قسم المكن - شركة بروتك</title>
     
     <!-- مكتبات Firebase الأساسية -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- ربط ملفات الـ CSS الخاصة بالموقع عشان الشكل يبقى موحد تماماً -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="responsive.css">
 
     <style>
         * { box-sizing: border-box; }
@@ -17,9 +21,10 @@
             margin: 0;
             padding: 0;
             width: 100%;
-            padding-bottom: 90px; /* مساحة للشريط الثابت أسفل الشاشة */
+            padding-bottom: 90px;
         }
-        /* البانر العلوي ومربع النصوص بجانبه */
+
+        /* تنسيق عام للمحتوى والبانر */
         .top-banner-section {
             display: flex;
             gap: 20px;
@@ -28,6 +33,8 @@
             padding: 30px;
             align-items: center;
             flex-wrap: wrap;
+            margin-top: 20px;
+            border-radius: 8px;
         }
         .banner-box {
             flex: 2;
@@ -51,8 +58,10 @@
         }
 
         .main-container {
-            width: 100%;
-            padding: 30px;
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 0;
         }
         h1, h2 {
             color: #333;
@@ -125,7 +134,7 @@
             font-weight: bold;
         }
 
-        /* عرض المنتجات / الصور / الفيديوهات والتعليقات */
+        /* معرض الصور والتعليقات واللايكات */
         .media-gallery {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -178,21 +187,35 @@
 </head>
 <body>
 
-    <!-- البانر العلوي ومربع النصوص -->
-    <div class="top-banner-section">
-        <div class="banner-box">
-            <img src="https://via.placeholder.com/1200x300" alt="بانر الشركة" id="bannerImg">
+    <!-- الهيدر أو شريط التنقل الموحد للموقع (بنفس روابط باقي الصفحات ومظبوط على فيديوهات/المكن) -->
+    <header style="background: #fff; border-bottom: 1px solid #ddd; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1001;">
+        <div class="logo">
+            <h2 style="margin:0; color:#007bff;">ProTech</h2>
         </div>
-        <div class="banner-text-box" id="bannerDescription">
-            أهلاً بكم في شركة بروتك لبيع وصيانة ماكينات الطباعة والأحبار. نقدم أفضل الحلول التكنولوجية المتكاملة لمطابع السوشيال ميديا والإعلانات بأعلى جودة وأفضل الأسعار في السوق المصري.
-        </div>
-    </div>
+        <nav class="nav-links" style="display: flex; gap: 20px; align-items: center;">
+            <a href="index.html" style="text-decoration: none; color: #333;">الرئيسية</a>
+            <a href="videos.html" style="text-decoration: none; color: #007bff; font-weight: bold;">المكن</a>
+            <a href="inks.html" style="text-decoration: none; color: #333;">الأحبار</a>
+            <a href="team.html" style="text-decoration: none; color: #333;">الفريق</a>
+            <a href="settings.html" style="text-decoration: none; color: #333;">الإعدادات</a>
+        </nav>
+    </header>
 
     <div class="main-container">
         
-        <!-- القسم الرئيسي: 5 كروت -->
-        <div id="mainCategoriesView">
-            <h1>أقسام ماكينات بروتك</h1>
+        <!-- البانر العلوي ومربع النصوص بجانبه -->
+        <div class="top-banner-section">
+            <div class="banner-box">
+                <img src="https://via.placeholder.com/1200x300" alt="بانر المكن والماكينات" id="bannerImg">
+            </div>
+            <div class="banner-text-box" id="bannerDescription">
+                قسم ماكينات الطباعة المتطورة في شركة بروتك. استعرض أحدث التكنولوجيا العالمية في ماكينات الـ UV، الإكو سولفينت، الأوت دور، واللمينيشن والبلوتر بأعلى كفاءة تشغيلية.
+            </div>
+        </div>
+
+        <!-- القسم الرئيسي: 5 كروت للماكينات والمنتجات -->
+        <div id="mainCategoriesView" style="margin-top: 30px;">
+            <h1>أقسام المكن والماكينات</h1>
             <div class="cards-grid">
                 <div class="category-card">
                     <img src="https://via.placeholder.com/200" alt="UV">
@@ -202,29 +225,29 @@
                 <div class="category-card">
                     <img src="https://via.placeholder.com/200" alt="Eco Solvent">
                     <h3>إكو سولفينت</h3>
-                    <button class="btn-action" onclick="openDetailsPage('إكو سولفينت', 'صفحة مخصصة لماكينات الإكو سولفينت عالية الدقة والسرعة.')">اعرف أكتر</button>
+                    <button class="btn-action" onclick="openDetailsPage('إكو سولفينت', 'ماكينات الإكو سولفينت المتميزة بدقة الألوان والطباعة على البانر والفينيل والداخلية بأعلى جودة.')">اعرف أكتر</button>
                 </div>
                 <div class="category-card">
                     <img src="https://via.placeholder.com/200" alt="Outdoor">
                     <h3>أوت دور</h3>
-                    <button class="btn-action" onclick="openDetailsPage('أوت دور', 'ماكينات الأوت دور لتحمل الظروف الجوية واللافتات الضخمة.')">اعرف أكتر</button>
+                    <button class="btn-action" onclick="openDetailsPage('أوت دور', 'ماكينات الأوت دور المصممة لتحمل العوامل الجوية والعمل المستمر للوحات الإعلانية الضخمة.')">اعرف أكتر</button>
                 </div>
                 <div class="category-card">
                     <img src="https://via.placeholder.com/200" alt="Lamination">
                     <h3>لمينيشن</h3>
-                    <button class="btn-action" onclick="openDetailsPage('لمينيشن', 'ماكينات السلوفان واللمينيشن لحماية وتثبيت المطبوعات.')">اعرف أكتر</button>
+                    <button class="btn-action" onclick="openDetailsPage('لمينيشن', 'ماكينات اللمنيشن والسلوفان الحراري لحماية المطبوعات وإعطائها لمسة احترافية لامعة أو مطفية.')">اعرف أكتر</button>
                 </div>
                 <div class="category-card">
                     <img src="https://via.placeholder.com/200" alt="Plotter">
                     <h3>بلوتر / ولتريلوتر</h3>
-                    <button class="btn-action" onclick="openDetailsPage('بلوتر / ولتريلوتر', 'قص الفينيل والستيكر بدقة متناهية وسرعة فائقة.')">اعرف أكتر</button>
+                    <button class="btn-action" onclick="openDetailsPage('بلوتر / ولتريلوتر', 'ماكينات القص والتشكيل المتقدمة للستيكر والفينيل بدقة مذهلة وسرعة عالية.')">اعرف أكتر</button>
                 </div>
             </div>
         </div>
 
-        <!-- قسم تفريعات الـ UV (5 أنواع) -->
-        <div id="uvSubCategoriesView" class="hidden">
-            <button class="back-btn" onclick="goBackToMain()">← رجوع للأقسام الرئيسية</button>
+        <!-- تفريعات الـ UV (5 أنواع) -->
+        <div id="uvSubCategoriesView" class="hidden" style="margin-top: 30px;">
+            <button class="back-btn" onclick="goBackToMain()">← رجوع لأقسام المكن</button>
             <h1>أنواع ماكينات الـ UV</h1>
             <div class="cards-grid">
                 <div class="category-card">
@@ -255,14 +278,14 @@
             </div>
         </div>
 
-        <!-- صفحة عرض الصور والفيديوهات والتعليقات واللايكات للأقسام الأربعة أو تفريعات الـ UV -->
-        <div id="dynamicMediaView" class="hidden">
+        <!-- صفحة عرض الصور والفيديوهات والتعليقات واللايكات -->
+        <div id="dynamicMediaView" class="hidden" style="margin-top: 30px;">
             <button class="back-btn" onclick="goBackToPrevious()">← رجوع للخلف</button>
             <h1 id="pageTitle">عنوان القسم</h1>
             <p id="pageSubtitle" style="text-align: center; color: #666;"></p>
             
             <div class="media-gallery" id="mediaGalleryContainer">
-                <!-- يتم جلب الصور والفيديوهات والتعليقات واللايكات من Firebase هنا -->
+                <!-- يتم جلب البيانات من Firebase تلقائياً -->
             </div>
         </div>
 
@@ -279,7 +302,7 @@
         </div>
     </div>
 
-    <!-- كود الجافاسكريبت للتحكم بالتنقل وقاعدة البيانات -->
+    <!-- كود الجافاسكريبت للتحكم والربط السحابي -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const firebaseConfig = {
@@ -347,7 +370,6 @@
             loadMediaItems(subTitle);
         }
 
-        // جلب الصور والفيديوهات والتعليقات من Firestore
         function loadMediaItems(categoryName) {
             const container = document.getElementById('mediaGalleryContainer');
             container.innerHTML = '<p style="text-align:center; width:100%;">جاري تحميل الصور والفيديوهات...</p>';
@@ -395,7 +417,6 @@
             if(!commentText) return;
 
             const db = firebase.firestore();
-            // جلب التعليقات الحالية وإضافة الجديد
             db.collection("site_media").doc(docId).get().then((doc) => {
                 if(doc.exists) {
                     const data = doc.data();
