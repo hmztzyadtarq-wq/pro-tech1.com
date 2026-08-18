@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>قسم الأحبار والمواد - شركة بروتك</title>
     
-    <!-- Firebase SDK -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
+    <!-- ملف التحكم المركزي -->
+    <script src="protech-core.js"></script>
+  <script src=script.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -33,7 +36,6 @@
 
     <header class="header">
         <div class="cart-btn-container">
-            <!-- تم توحيد رابط السلة ليكون صحيحاً لجميع الصفحات -->
             <a href="cart.html" class="cart-btn" id="cartIndicator">🛒 السلة (0)</a>
         </div>
         <nav class="nav-menu">
@@ -58,86 +60,8 @@
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const firebaseConfig = {
-              apiKey: "AIzaSyBzFacVVTAe2fMvCDXwexfd6Wi7cI7_1gc",
-              authDomain: "bro-tech-mane.firebaseapp.com",
-              projectId: "bro-tech-mane",
-              storageBucket: "bro-tech-mane.firebasestorage.app",
-              messagingSenderId: "391259453925",
-              appId: "1:391259453925:web:0fdf19af7e23d469bb970c",
-              measurementId: "G-467280QJFT"
-            };
-
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-
-            loadInks();
-            updateCartCounter();
-
-            // الاستماع لأي تحديث يحصل في السلة بين الصفحات (LocalStorage Sync)
-            window.addEventListener('storage', function(e) {
-                if (e.key === 'protech_cart') {
-                    updateCartCounter();
-                }
-            });
-        });
-
-        const db = firebase.firestore();
-
-        function loadInks() {
-            const container = document.getElementById('inksContainer');
-            
-            db.collection("site_media").onSnapshot((snapshot) => {
-                container.innerHTML = '';
-                let itemsFound = 0;
-
-                snapshot.forEach((doc) => {
-                    const item = doc.data();
-                    
-                    // فلترة دقيقة جداً: تجلب فقط ما يخص الأحبار ولا تتدخل في الشهادات أو الأقسام الأخرى
-                    if(item.category === 'inks' || item.category === 'حبر') {
-                        itemsFound++;
-                        const card = document.createElement('div');
-                        card.className = 'ink-card';
-                        card.innerHTML = `
-                            <div>
-                                <img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="حبر">
-                                <h3>${item.title || 'بدون عنوان'}</h3>
-                                <p>${item.desc || 'لا يوجد وصف متاح.'}</p>
-                            </div>
-                            <button class="btn-add-cart" onclick="addToCart('${item.title || 'حبر'}', 150)">إضافة للسلة 🛒</button>
-                        `;
-                        container.appendChild(card);
-                    }
-                });
-
-                if(itemsFound === 0) {
-                    container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #777;">لا توجد أحبار مضافة حالياً.</p>';
-                }
-            }, (error) => {
-                console.error("Error loading inks: ", error);
-            });
-        }
-
-        // دالة السلة الموحدة التي تحفظ البيانات بشكل دائم ولا تفضي مع الـ Refresh
-        function addToCart(title, price) {
-            let cart = JSON.parse(localStorage.getItem('protech_cart')) || [];
-            cart.push({ title: title, price: price || 0, qty: 1 });
-            localStorage.setItem('protech_cart', JSON.stringify(cart));
-            updateCartCounter();
-            alert("تمت إضافة (" + title + ") إلى سلة المشتريات بنجاح!");
-        }
-
-        function updateCartCounter() {
-            let cart = JSON.parse(localStorage.getItem('protech_cart')) || [];
-            const cartBtn = document.getElementById('cartIndicator');
-            if(cartBtn) {
-                let totalItems = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
-                cartBtn.innerText = `🛒 السلة (${totalItems})`;
-            }
-        }
+        // تشغيل الجلب التلقائي للأحبار فقط من ملف الـ Core المركزى
+        initDynamicSection('inks', 'inksContainer', 'product');
     </script>
 </body>
 </html>
