@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light" data-lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="store_title">ProTech - متجر الأحبار وقطع الغيار</title>
+    <!-- FontAwesome الأيقونات الاحترافية -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* تنسيق أزرار التحكم أسفل كارت المنتج (إضافة للسلة + زر المفضلة) */
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            align-items: center;
+        }
+        .card-actions .btn-action {
+            flex: 1;
+        }
+        /* زر المفضلة المجاور */
+        .favorite-inline-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 14px;
+        }
+        .favorite-inline-btn i {
+            color: #ccc;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+        .favorite-inline-btn.active {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        .favorite-inline-btn.active i {
+            color: #ef4444;
+        }
+        .favorite-inline-btn:hover {
+            border-color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. شريط التنقل العلوي (الراس) -->
+    <header>
+        <div class="logo">ProTech</div>
+        <nav class="nav-icons">
+            <button onclick="window.location.href='index.html'" class="nav-btn" id="nav-home-btn">
+                <i class="fa-solid fa-house"></i>
+                <span data-i18n="nav_home">الرئيسية</span>
+            </button>
+            <button onclick="window.location.href='videos.html'" class="nav-btn" id="nav-videos-btn">
+                <i class="fa-solid fa-print"></i>
+                <span data-i18n="nav_videos">المكن</span>
+            </button>
+            <button onclick="window.location.href='inks.html'" class="nav-btn active" id="nav-inks-btn">
+                <i class="fa-solid fa-droplet"></i>
+                <span data-i18n="nav_store">المتجر</span>
+            </button>
+            <button onclick="window.location.href='team.html'" class="nav-btn" id="nav-team-btn">
+                <i class="fa-solid fa-users-gear"></i>
+                <span data-i18n="nav_team">الفريق</span>
+            </button>
+            <button onclick="window.location.href='settings.html'" class="nav-btn" id="nav-settings-btn">
+                <i class="fa-solid fa-gears"></i>
+                <span data-i18n="nav_settings">الإعدادات</span>
+            </button>
+        </nav>
+        <button class="cart-trigger-btn" onclick="openCartModal()">
+            <i class="fa-solid fa-cart-shopping"></i> <span data-i18n="cart_text">السلة</span> (<span id="cart-count">0</span>)
+        </button>
+    </header>
+
+    <div class="container">
+        <h2 style="margin-top: 20px; margin-bottom: 20px; color: var(--primary-color); text-align: center;">
+            <i class="fa-solid fa-store"></i> <span data-i18n="store_heading">متجر أحبار وقطع غيار ماكينات الطباعة</span>
+        </h2>
+        
+        <!-- شبكة عرض المنتجات للمستخدم -->
+        <div class="ink-store-container">
+            
+            <!-- منتج 1 -->
+            <div class="ink-card" data-id="product_1">
+                <span class="badge-status status-new" data-i18n="status_available">متوفر (جديد)</span>
+                <img src="https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=400&auto=format&fit=crop&q=60" alt="حبر UV أصلي">
+                <h3 data-i18n="p1_title">حبر UV أصلي عالي الثبات</h3>
+                <p class="ink-price">1200 ج.م</p>
+                <div class="card-actions">
+                    <button class="btn-action" onclick="addToCart('حبر UV أصلي', 1200)">
+                        <i class="fa-solid fa-cart-plus"></i> <span data-i18n="add_to_cart">إضافة للسلة</span>
+                    </button>
+                    <button class="favorite-inline-btn" onclick="toggleFavorite('product_1', this)">
+                        <i class="fa-solid fa-heart"></i> <span data-i18n="fav_btn_text">المفضلة</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- منتج 2 -->
+            <div class="ink-card" data-id="product_2">
+                <span class="badge-status status-new" data-i18n="status_available">متوفر (جديد)</span>
+                <img src="https://images.unsplash.com/photo-1616440347437-b1c73416efc2?w=400&auto=format&fit=crop&q=60" alt="حبر إيكو سولفنت">
+                <h3 data-i18n="p2_title">حبر إيكو سولفنت ياباني</h3>
+                <p class="ink-price">950 ج.م</p>
+                <div class="card-actions">
+                    <button class="btn-action" onclick="addToCart('حبر إيكو سولفنت', 950)">
+                        <i class="fa-solid fa-cart-plus"></i> <span data-i18n="add_to_cart">إضافة للسلة</span>
+                    </button>
+                    <button class="favorite-inline-btn" onclick="toggleFavorite('product_2', this)">
+                        <i class="fa-solid fa-heart"></i> <span data-i18n="fav_btn_text">المفضلة</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- منتج 3 -->
+            <div class="ink-card" data-id="product_3">
+                <span class="badge-status status-out" data-i18n="status_out">نفذت الكمية</span>
+                <img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=400&auto=format&fit=crop&q=60" alt="أحبار صبغة سبليميشن">
+                <h3 data-i18n="p3_title">أحبار سبليميشن للحراريات</h3>
+                <p class="ink-price">800 ج.م</p>
+                <div class="card-actions">
+                    <button class="btn-action" style="opacity: 0.6; cursor: not-allowed;" disabled>
+                        <i class="fa-solid fa-ban"></i> <span data-i18n="status_out_btn">غير متوفر حالياً</span>
+                    </button>
+                    <button class="favorite-inline-btn" onclick="toggleFavorite('product_3', this)">
+                        <i class="fa-solid fa-heart"></i> <span data-i18n="fav_btn_text">المفضلة</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- منتج 4 -->
+            <div class="ink-card" data-id="product_4">
+                <span class="badge-status status-new" data-i18n="status_available">متوفر (جديد)</span>
+                <img src="https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=400&auto=format&fit=crop&q=60" alt="سائل تنظيف الهيد">
+                <h3 data-i18n="p4_title">سائل تنظيف الهيد والصيانة</h3>
+                <p class="ink-price">450 ج.م</p>
+                <div class="card-actions">
+                    <button class="btn-action" onclick="addToCart('سائل تنظيف الهيد', 450)">
+                        <i class="fa-solid fa-cart-plus"></i> <span data-i18n="add_to_cart">إضافة للسلة</span>
+                    </button>
+                    <button class="favorite-inline-btn" onclick="toggleFavorite('product_4', this)">
+                        <i class="fa-solid fa-heart"></i> <span data-i18n="fav_btn_text">المفضلة</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- منتج 5 -->
+            <div class="ink-card" data-id="product_5">
+                <span class="badge-status status-new" data-i18n="status_available">متوفر (جديد)</span>
+                <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=400&auto=format&fit=crop&q=60" alt="حبر ديجيتال ليزر">
+                <h3 data-i18n="p5_title">حبر ديجيتال ليزر ألوان</h3>
+                <p class="ink-price">1400 ج.م</p>
+                <div class="card-actions">
+                    <button class="btn-action" onclick="addToCart('حبر ديجيتال ليزر', 1400)">
+                        <i class="fa-solid fa-cart-plus"></i> <span data-i18n="add_to_cart">إضافة للسلة</span>
+                    </button>
+                    <button class="favorite-inline-btn" onclick="toggleFavorite('product_5', this)">
+                        <i class="fa-solid fa-heart"></i> <span data-i18n="fav_btn_text">المفضلة</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 2. أيقونات التواصل الثابتة أسفل اليسار -->
+    <div class="social-bar">
+        <a href="https://wa.me/201000000000" target="_blank" class="social-icon wa"><i class="fa-brands fa-whatsapp"></i></a>
+        <a href="mailto:info@protech.com" class="social-icon email-icon"><i class="fa-solid fa-envelope"></i></a>
+        <a href="https://facebook.com" target="_blank" class="social-icon fb"><i class="fa-brands fa-facebook-f"></i></a>
+    </div>
+
+    <!-- 3. زر الاستشارة الدائم أسفل اليمين -->
+    <button class="consultation-trigger" onclick="openConsultationModal()">
+        <i class="fa-solid fa-headset"></i> <span data-i18n="consultation_btn">استشارة فنية</span>
+    </button>
+
+    <!-- نافذة منبثقة لرقمين الواتساب -->
+    <div id="consultationModal" class="consultation-modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
+        <div class="consultation-content" style="background: var(--card-bg); padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center;">
+            <button class="close-modal" onclick="closeConsultationModal()" style="float: left; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-color);">&times;</button>
+            <h3 style="color: var(--primary-color); margin-bottom: 10px;" data-i18n="modal_wa_title">اختر رقم للتواصل عبر الواتساب</h3>
+            <p style="margin-bottom: 15px; font-size: 14px;" data-i18n="modal_wa_desc">فريق الدعم الفني جاهز للإجابة على استفساراتك:</p>
+            <a href="https://wa.me/201000000000" target="_blank" style="display: block; background: #10b981; color: white; padding: 10px; border-radius: 6px; margin-bottom: 8px; text-decoration: none;"><i class="fa-brands fa-whatsapp"></i> <span data-i18n="eng_1">تواصل مع المهندس الأول</span></a>
+            <a href="https://wa.me/201111111111" target="_blank" style="display: block; background: #10b981; color: white; padding: 10px; border-radius: 6px; text-decoration: none;"><i class="fa-brands fa-whatsapp"></i> <span data-i18n="eng_2">تواصل مع المهندس الثاني</span></a>
+        </div>
+    </div>
+
+    <!-- نافذة سلة الشراء -->
+    <div class="cart-modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
+        <div class="cart-modal-content" style="background: var(--card-bg); padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+            <button class="close-modal" onclick="closeCartModal()" style="float: left; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-color);">&times;</button>
+            <h3 style="color: var(--primary-color); margin-bottom: 15px; text-align: center;"><i class="fa-solid fa-file-invoice"></i> <span data-i18n="invoice_title">فاتورة سلة المشتريات</span></h3>
+            <div id="cartItemsContainer" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;"></div>
+            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-bottom: 20px; border-top: 2px solid var(--border-color); padding-top: 10px;">
+                <span data-i18n="total_label">الإجمالي الكلي:</span>
+                <span id="cartTotalPrice" style="color: var(--secondary-color);">0 ج.م</span>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="downloadInvoice()" class="btn-action" style="flex: 1; background-color: #3b82f6; color: #fff; padding: 10px; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-download"></i> <span data-i18n="download_invoice">تنزيل الفاتورة</span></button>
+                <button onclick="checkoutToWhatsApp()" class="btn-action" style="flex: 1; background-color: #10b981; color: #fff; padding: 10px; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-brands fa-whatsapp"></i> <span data-i18n="checkout_wa">إتمام الشراء للأدمن</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- السكريبت الوظيفي الأساسي -->
+    <script src="script.js"></script>
+    <script>
+        function openConsultationModal() {
+            document.getElementById('consultationModal').style.display = 'flex';
+        }
+        function closeConsultationModal() {
+            document.getElementById('consultationModal').style.display = 'none';
+        }
+
+        // دالة المفضلة وتغيير شكل الزر والنص
+        function toggleFavorite(productId, btn) {
+            btn.classList.toggle('active');
+            let spanText = btn.querySelector('span');
+            let currentLang = document.documentElement.getAttribute('data-lang') || 'ar';
+            
+            let favorites = JSON.parse(localStorage.getItem('protech_favorites')) || [];
+            
+            if (btn.classList.contains('active')) {
+                if (!favorites.includes(productId)) favorites.push(productId);
+                if(spanText) spanText.setAttribute('data-i18n', 'fav_added');
+                if(spanText) spanText.innerText = currentLang === 'ar' ? 'تمت الإضافة للمفضلة' : 'Added to Favorites';
+            } else {
+                favorites = favorites.filter(id => id !== productId);
+                if(spanText) spanText.setAttribute('data-i18n', 'fav_btn_text');
+                if(spanText) spanText.innerText = currentLang === 'ar' ? 'المفضلة' : 'Favorite';
+            }
+            localStorage.setItem('protech_favorites', JSON.stringify(favorites));
+        }
+
+        // استرجاع المود، اللغة، والمفضلة عند التحميل
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('protech_theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+
+            const savedLang = localStorage.getItem('protech_lang') || 'ar';
+            document.documentElement.setAttribute('data-lang', savedLang);
+            document.documentElement.setAttribute('dir', savedLang === 'ar' ? 'rtl' : 'ltr');
+            applyTranslations(savedLang);
+
+            // تفعيل أزرار المفضلة المحفوظة مسبقاً
+            let favorites = JSON.parse(localStorage.getItem('protech_favorites')) || [];
+            favorites.forEach(productId => {
+                let card = document.querySelector(`[data-id="${productId}"]`);
+                if (card) {
+                    let favBtn = card.querySelector('.favorite-inline-btn');
+                    if (favBtn) {
+                        favBtn.classList.add('active');
+                        let spanText = favBtn.querySelector('span');
+                        if(spanText) {
+                            spanText.setAttribute('data-i18n', 'fav_added');
+                            spanText.innerText = savedLang === 'ar' ? 'تمت الإضافة للمفضلة' : 'Added to Favorites';
+                        }
+                    }
+                }
+            });
+        });
+
+        // قواميس الترجمة شاملة زر المفضلة وتغيير اللغة الفوري
+        const translations = {
+            ar: {
+                store_title: "ProTech - متجر الأحبار وقطع الغيار",
+                nav_home: "الرئيسية",
+                nav_videos: "المكن",
+                nav_store: "المتجر",
+                nav_team: "الفريق",
+                nav_settings: "الإعدادات",
+                cart_text: "السلة",
+                store_heading: "متجر أحبار وقطع غيار ماكينات الطباعة",
+                status_available: "متوفر (جديد)",
+                status_out: "نفذت الكمية",
+                status_out_btn: "غير متوفر حالياً",
+                add_to_cart: "إضافة للسلة",
+                fav_btn_text: "المفضلة",
+                fav_added: "تمت الإضافة للمفضلة",
+                p1_title: "حبر UV أصلي عالي الثبات",
+                p2_title: "حبر إيكو سولفنت ياباني",
+                p3_title: "أحبار سبليميشن للحراريات",
+                p4_title: "سائل تنظيف الهيد والصيانة",
+                p5_title: "حبر ديجيتال ليزر ألوان",
+                consultation_btn: "استشارة فنية",
+                modal_wa_title: "اختر رقم للتواصل عبر الواتساب",
+                modal_wa_desc: "فريق الدعم الفني جاهز للإجابة على استفساراتك:",
+                eng_1: "تواصل مع المهندس الأول",
+                eng_2: "تواصل مع المهندس الثاني",
+                invoice_title: "فاتورة سلة المشتريات",
+                total_label: "الإجمالي الكلي:",
+                download_invoice: "تنزيل الفاتورة",
+                checkout_wa: "إتمام الشراء للأدمن"
+            },
+            en: {
+                store_title: "ProTech - Inks & Spare Parts Store",
+                nav_home: "Home",
+                nav_videos: "Machines",
+                nav_store: "Store",
+                nav_team: "Team",
+                nav_settings: "Settings",
+                cart_text: "Cart",
+                store_heading: "Printing Machines Inks & Spare Parts Store",
+                status_available: "Available (New)",
+                status_out: "Out of Stock",
+                status_out_btn: "Currently Unavailable",
+                add_to_cart: "Add to Cart",
+                fav_btn_text: "Favorite",
+                fav_added: "Added to Favorites",
+                p1_title: "Original UV Ink High Stability",
+                p2_title: "Japanese Eco Solvent Ink",
+                p3_title: "Sublimation Inks for Heat Press",
+                p4_title: "Printhead Cleaning & Maintenance Fluid",
+                p5_title: "Color Digital Laser Toner",
+                consultation_btn: "Tech Consultation",
+                modal_wa_title: "Choose a Number via WhatsApp",
+                modal_wa_desc: "Technical support team is ready to answer:",
+                eng_1: "Contact Engineer 1",
+                eng_2: "Contact Engineer 2",
+                invoice_title: "Shopping Cart Invoice",
+                total_label: "Grand Total:",
+                download_invoice: "Download Invoice",
+                checkout_wa: "Complete Order to Admin"
+            }
+        };
+
+        function applyTranslations(lang) {
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    // نتأكد إننا منغيرش النص الخاص بزر المفضلة لو هو أصلاً في حالة "تمت الإضافة" عشان ميحصلش تداخل
+                    if(key === 'fav_btn_text' && el.closest('.favorite-inline-btn').classList.contains('active')) {
+                        el.innerText = translations[lang]['fav_added'];
+                    } else {
+                        el.innerText = translations[lang][key];
+                    }
+                }
+            });
+        }
+    </script>
+    <script type="module" src="firebase.js"></script>
+<script type="module" src="script.js"></script>
+</body>
+</html>

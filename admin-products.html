@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المنتجات - شركة بروتك</title>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+        .dashboard-container {
+            max-width: 1000px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        img.product-thumb {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            padding: 5px 10px;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <h2>إدارة منتجات شركة بروتك (مع الصور)</h2>
+        
+        <form id="productForm">
+            <div class="form-group">
+                <label for="productName">اسم المنتج / الماكينة:</label>
+                <input type="text" id="productName" required placeholder="أدخل اسم المنتج...">
+            </div>
+            <div class="form-group">
+                <label for="productPrice">السعر:</label>
+                <input type="text" id="productPrice" required placeholder="أدخل السعر...">
+            </div>
+            <div class="form-group">
+                <label for="productImage">صورة المنتج:</label>
+                <input type="file" id="productImage" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="productDesc">وصف مختصر:</label>
+                <textarea id="productDesc" rows="3" placeholder="أدخل تفاصيل المنتج..."></textarea>
+            </div>
+            <button type="submit">إضافة المنتج للجدول</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>الصورة</th>
+                    <th>اسم المنتج</th>
+                    <th>السعر</th>
+                    <th>الوصف</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody id="productTableBody">
+                <!-- المنتجات تظهر هنا -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const productForm = document.getElementById('productForm');
+        const productTableBody = document.getElementById('productTableBody');
+
+        let products = JSON.parse(localStorage.getItem('protech_products_with_images')) || [];
+
+        function renderProducts() {
+            productTableBody.innerHTML = '';
+            products.forEach((product, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="${product.image}" class="product-thumb" alt="صورة المنتج"></td>
+                    <td>${product.name}</td>
+                    <td>${product.price}</td>
+                    <td>${product.desc}</td>
+                    <td><button class="delete-btn" onclick="deleteProduct(${index})">حذف</button></td>
+                `;
+                productTableBody.appendChild(row);
+            });
+        }
+
+        productForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('productName').value;
+            const price = document.getElementById('productPrice').value;
+            const desc = document.getElementById('productDesc').value;
+            const imageFile = document.getElementById('productImage').files[0];
+
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imageUrl = event.target.result;
+                    products.push({ name, price, desc, image: imageUrl });
+                    localStorage.setItem('protech_products_with_images', JSON.stringify(products));
+                    renderProducts();
+                    productForm.reset();
+                };
+                reader.readAsDataURL(imageFile);
+            }
+        });
+
+        function deleteProduct(index) {
+            products.splice(index, 1);
+            localStorage.setItem('protech_products_with_images', JSON.stringify(products));
+            renderProducts();
+        }
+
+        renderProducts();
+    </script>
+
+</body>
+</html>

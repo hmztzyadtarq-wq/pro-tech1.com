@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light" data-lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProTech - إعدادات الموقع</title>
+    <!-- FontAwesome الأيقونات الاحترافية -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .settings-container {
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .settings-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 8px;
+            font-size: 20px;
+            text-align: center;
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .setting-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .setting-label {
+            font-weight: bold;
+            color: var(--text-color);
+            font-size: 15px;
+        }
+        .setting-control select, .setting-control button {
+            padding: 8px 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .setting-control button:hover {
+            border-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. شريط التنقل العلوي (الراس) -->
+    <header>
+        <div class="logo">ProTech</div>
+        <nav class="nav-icons">
+            <button onclick="window.location.href='index.html'" class="nav-btn" id="nav-home-btn">
+                <i class="fa-solid fa-house"></i>
+                <span data-i18n="nav_home">الرئيسية</span>
+            </button>
+            <button onclick="window.location.href='videos.html'" class="nav-btn" id="nav-videos-btn">
+                <i class="fa-solid fa-print"></i>
+                <span data-i18n="nav_videos">المكن</span>
+            </button>
+            <button onclick="window.location.href='inks.html'" class="nav-btn" id="nav-inks-btn">
+                <i class="fa-solid fa-droplet"></i>
+                <span>المتجر</span>
+            </button>
+            <button onclick="window.location.href='team.html'" class="nav-btn" id="nav-team-btn">
+                <i class="fa-solid fa-users-gear"></i>
+                <span data-i18n="nav_team">الفريق</span>
+            </button>
+            <button onclick="window.location.href='settings.html'" class="nav-btn active" id="nav-settings-btn">
+                <i class="fa-solid fa-gears"></i>
+                <span data-i18n="nav_settings">الإعدادات</span>
+            </button>
+        </nav>
+        <button class="cart-trigger-btn" onclick="openCartModal()">
+            <i class="fa-solid fa-cart-shopping"></i> السلة (<span id="cart-count">0</span>)
+        </button>
+    </header>
+
+    <!-- المحتوى الرئيسي للإعدادات -->
+    <div class="container">
+        <div class="settings-container">
+            <h2><i class="fa-solid fa-gears"></i> إعدادات المظهر والتفضيلات</h2>
+            
+            <!-- اختيار مظهر الموقع (ليلي / نهاري) -->
+            <div class="setting-item">
+                <div class="setting-label">
+                    <i class="fa-solid fa-circle-half-stroke"></i> مظهر الموقع (المود)
+                </div>
+                <div class="setting-control">
+                    <button onclick="toggleTheme()" id="themeToggleBtn">الوضع الليلي / النهاري</button>
+                </div>
+            </div>
+
+            <!-- اختيار لغة الموقع -->
+            <div class="setting-item">
+                <div class="setting-label">
+                    <i class="fa-solid fa-language"></i> لغة الموقع (Language)
+                </div>
+                <div class="setting-control">
+                    <select id="langSelect" onchange="changeLanguage(this.value)">
+                        <option value="ar">العربية (Arabic)</option>
+                        <option value="en">الإنجليزية (English)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- مسح بيانات السلة المحلية -->
+            <div class="setting-item">
+                <div class="setting-label">
+                    <i class="fa-solid fa-trash-can"></i> تفريغ سلة المشتريات المحفوظة
+                </div>
+                <div class="setting-control">
+                    <button onclick="clearStoreCart()" style="background-color: #ef4444; color: white; border: none;">مسح السلة</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 2. أيقونات التواصل الثابتة أسفل اليسار -->
+    <div class="social-bar">
+        <a href="https://wa.me/201000000000" target="_blank" class="social-icon wa"><i class="fa-brands fa-whatsapp"></i></a>
+        <a href="mailto:info@protech.com" class="social-icon email-icon"><i class="fa-solid fa-envelope"></i></a>
+        <a href="https://facebook.com" target="_blank" class="social-icon fb"><i class="fa-brands fa-facebook-f"></i></a>
+    </div>
+
+    <!-- 3. زر الاستشارة الدائم أسفل اليمين -->
+    <button class="consultation-trigger" onclick="openConsultationModal()">
+        <i class="fa-solid fa-headset"></i> استشارة فنية
+    </button>
+
+    <!-- نافذة منبثقة لرقمين الواتساب -->
+    <div id="consultationModal" class="consultation-modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
+        <div class="consultation-content" style="background: var(--card-bg); padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center;">
+            <button class="close-modal" onclick="closeConsultationModal()" style="float: left; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-color);">&times;</button>
+            <h3 style="color: var(--primary-color); margin-bottom: 10px;">اختر رقم للتواصل عبر الواتساب</h3>
+            <p style="margin-bottom: 15px; font-size: 14px;">فريق الدعم الفني جاهز للإجابة على استفساراتك:</p>
+            <a href="https://wa.me/201000000000" target="_blank" style="display: block; background: #10b981; color: white; padding: 10px; border-radius: 6px; margin-bottom: 8px; text-decoration: none;"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الأول</a>
+            <a href="https://wa.me/201111111111" target="_blank" style="display: block; background: #10b981; color: white; padding: 10px; border-radius: 6px; text-decoration: none;"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الثاني</a>
+        </div>
+    </div>
+
+    <!-- نافذة سلة المشتريات والفاتورة -->
+    <div class="cart-modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
+        <div class="cart-modal-content" style="background: var(--card-bg); padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+            <button class="close-modal" onclick="closeCartModal()" style="float: left; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-color);">&times;</button>
+            <h3 style="color: var(--primary-color); margin-bottom: 15px; text-align: center;"><i class="fa-solid fa-file-invoice"></i> فاتورة سلة المشتريات</h3>
+            <div id="cartItemsContainer" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;"></div>
+            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-bottom: 20px; border-top: 2px solid var(--border-color); padding-top: 10px;">
+                <span>الإجمالي الكلي:</span>
+                <span id="cartTotalPrice" style="color: var(--secondary-color);">0 ج.م</span>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="downloadInvoice()" class="btn-action" style="flex: 1; background-color: #3b82f6; color: #fff; padding: 10px; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-download"></i> تنزيل الفاتورة</button>
+                <button onclick="checkoutToWhatsApp()" class="btn-action" style="flex: 1; background-color: #10b981; color: #fff; padding: 10px; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-brands fa-whatsapp"></i> إتمام الشراء للأدمن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- السكريبت الشامل -->
+    <script src="script.js"></script>
+    <script>
+        // دوال الاستشارة
+        function openConsultationModal() {
+            document.getElementById('consultationModal').style.display = 'flex';
+        }
+        function closeConsultationModal() {
+            document.getElementById('consultationModal').style.display = 'none';
+        }
+
+        // دالة تبديل المود (ليلي / نهاري) وحفظها في المتصفح
+        function toggleTheme() {
+            const html = document.documentElement;
+            let currentTheme = html.getAttribute('data-theme');
+            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('protech_theme', newTheme);
+        }
+
+        // استرجاع المود واللغة المحفوظة عند فتح الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('protech_theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+
+            const savedLang = localStorage.getItem('protech_lang') || 'ar';
+            document.documentElement.setAttribute('data-lang', savedLang);
+            const langSelect = document.getElementById('langSelect');
+            if(langSelect) langSelect.value = savedLang;
+        });
+
+        // دالة تغيير اللغة
+        function changeLanguage(lang) {
+            document.documentElement.setAttribute('data-lang', lang);
+            localStorage.setItem('protech_lang', lang);
+            alert(lang === 'ar' ? 'تم تغيير لغة الموقع إلى العربية' : 'Website language changed to English');
+        }
+
+        // دالة مسح السلة من الإعدادات
+        function clearStoreCart() {
+            if(confirm('هل أنت متأكد من تفريغ سلة المشتريات بالكامل؟')) {
+                localStorage.removeItem('protech_cart');
+                cartItems = [];
+                updateCartUI();
+                alert('تم تفريغ السلة بنجاح.');
+            }
+        }
+    </script>
+    <script type="module" src="firebase.js"></script>
+<script type="module" src="script.js"></script>
+</body>
+</html>

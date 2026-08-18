@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light" data-lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProTech - فريق العمل</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- شريط التنقل العلوي المرتبط -->
+    <header>
+        <div class="logo">ProTech</div>
+        <nav class="nav-icons">
+            <button onclick="window.location.href='index.html'" class="nav-btn" id="nav-home-btn">
+                <i class="fa-solid fa-house"></i>
+                <span data-i18n="nav_home">الرئيسية</span>
+            </button>
+            <button onclick="window.location.href='videos.html'" class="nav-btn" id="nav-videos-btn">
+                <i class="fa-solid fa-print"></i>
+                <span data-i18n="nav_videos">المكن</span>
+            </button>
+            <button onclick="window.location.href='inks.html'" class="nav-btn" id="nav-inks-btn">
+                <i class="fa-solid fa-droplet"></i>
+                <span>المتجر</span>
+            </button>
+            <button onclick="window.location.href='team.html'" class="nav-btn active" id="nav-team-btn">
+                <i class="fa-solid fa-users-gear"></i>
+                <span data-i18n="nav_team">الفريق</span>
+            </button>
+            <button onclick="window.location.href='settings.html'" class="nav-btn" id="nav-settings-btn">
+                <i class="fa-solid fa-gears"></i>
+                <span data-i18n="nav_settings">الإعدادات</span>
+            </button>
+        </nav>
+        <button class="cart-trigger-btn" onclick="openCartModal()">
+            <i class="fa-solid fa-cart-shopping"></i> السلة (<span id="cart-count">0</span>)
+        </button>
+    </header>
+
+    <div class="container">
+        <h2 style="margin-top: 20px; color: var(--primary-color);">فريق الهندسة والصيانة</h2>
+        <div class="engineers-grid">
+            <div class="engineer-card">
+                <h3>مهندسو برو تيك</h3>
+                <div class="role">خبراء صيانة الماكينات الرقمية</div>
+                <p>دعم فني هندسي متكامل وتركيبات على أعلى مستوى.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

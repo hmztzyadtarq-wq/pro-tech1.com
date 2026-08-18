@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light" data-lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProTech - قسم المكن والماكينات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- شريط التنقل العلوي المرتبط -->
+    <header>
+        <div class="logo">ProTech</div>
+        <nav class="nav-icons">
+            <button onclick="window.location.href='index.html'" class="nav-btn" id="nav-home-btn">
+                <i class="fa-solid fa-house"></i>
+                <span data-i18n="nav_home">الرئيسية</span>
+            </button>
+            <button onclick="window.location.href='videos.html'" class="nav-btn active" id="nav-videos-btn">
+                <i class="fa-solid fa-print"></i>
+                <span data-i18n="nav_videos">المكن</span>
+            </button>
+            <button onclick="window.location.href='inks.html'" class="nav-btn" id="nav-inks-btn">
+                <i class="fa-solid fa-droplet"></i>
+                <span>المتجر</span>
+            </button>
+            <button onclick="window.location.href='team.html'" class="nav-btn" id="nav-team-btn">
+                <i class="fa-solid fa-users-gear"></i>
+                <span data-i18n="nav_team">الفريق</span>
+            </button>
+            <button onclick="window.location.href='settings.html'" class="nav-btn" id="nav-settings-btn">
+                <i class="fa-solid fa-gears"></i>
+                <span data-i18n="nav_settings">الإعدادات</span>
+            </button>
+        </nav>
+        <button class="cart-trigger-btn" onclick="openCartModal()">
+            <i class="fa-solid fa-cart-shopping"></i> السلة (<span id="cart-count">0</span>)
+        </button>
+    </header>
+
+    <!-- محتوى صفحة المكن -->
+    <div class="container">
+        <div id="videos" class="page active">
+            <div id="cat-level-1" class="machine-section active">
+                <div class="slideshow-container" id="mainMachinesBanner">
+                    <div class="slide active" style="background-image: url('https://scontent.fcai19-2.fna.fbcdn.net/v/t39.30808-6/643717536_122252975474188486_6651397221300364705_n.jpg');">
+                        <div class="slide-content"><h2>بانر ماكينات برو تيك الاحترافية - الجودة أولاً</h2></div>
+                    </div>
+                </div>
+
+                <h2 style="font-size: 18px; margin-bottom: 15px;">أنواع ماكينات الطباعة الرئيسية (5 أنواع)</h2>
+                <div class="machine-grid">
+                    <div class="machine-card" onclick="openMachineCategory('uv')">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRVtTeUHjB1UqZkuHpOHrABtfMi928fRzg8ZUtenWsBw&s=10" alt="UV Printing Machine">
+                        <h3>ماكينات UV</h3>
+                        <p>تقنيات اليو في المتقدمة للأسطح الصلبة والمرنة</p>
+                        <div class="explore-badge"><i class="fa-solid fa-hand-pointer"></i> 5 أقسام داخلية وفلات بَد</div>
+                    </div>
+                    <div class="machine-card" onclick="openMachineCategory('eco')">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRn5n3k7ScrOYDGth3Y5BP8peKWtS7O8aUiEBQ_2aEqYQ&s=10" alt="Eco Solvent Machine">
+                        <h3>ماكينات إيكو سولفنت</h3>
+                        <p>طباعة دقيقة للاستخدامات الداخلية والخارجية</p>
+                        <div class="explore-badge"><i class="fa-solid fa-hand-pointer"></i> تشمل مقاسات رول تو رول</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- المستوى الثاني: تفاريع الـ UV -->
+            <div id="cat-uv" class="machine-section">
+                <button class="back-btn" onclick="backToMainCat()"><i class="fa-solid fa-arrow-right"></i> الرجوع للرئيسية</button>
+                <div class="sub-banner-details-wrapper">
+                    <div class="animated-details-box">
+                        <h3>تفاصيل ماكينات UV</h3>
+                        <p><b>طبيعة الطباعة:</b> طباعة مباشرة بجودة فائقة على الأسطح الصلبة والمرنة.<br><b>المقاسات:</b> متوفرة بمقاسات متعددة.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

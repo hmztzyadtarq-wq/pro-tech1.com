@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light" data-lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProTech - برو تيك للماكينات والطباعة - الرئيسية</title>
+    <!-- FontAwesome الأيقونات الاحترافية -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 1. شريط التنقل العلوي (الراس) -->
+    <header>
+        <div class="logo">ProTech</div>
+        <nav class="nav-icons">
+            <button onclick="window.location.href='index.html'" class="nav-btn active" id="nav-home-btn">
+                <i class="fa-solid fa-house"></i>
+                <span data-i18n="nav_home">الرئيسية</span>
+            </button>
+            <button onclick="window.location.href='videos.html'" class="nav-btn" id="nav-videos-btn">
+                <i class="fa-solid fa-print"></i>
+                <span data-i18n="nav_videos">المكن</span>
+            </button>
+            <button onclick="window.location.href='inks.html'" class="nav-btn" id="nav-inks-btn">
+                <i class="fa-solid fa-droplet"></i>
+                <span>المتجر</span>
+            </button>
+            <button onclick="window.location.href='team.html'" class="nav-btn" id="nav-team-btn">
+                <i class="fa-solid fa-users-gear"></i>
+                <span data-i18n="nav_team">الفريق</span>
+            </button>
+            <button onclick="window.location.href='settings.html'" class="nav-btn" id="nav-settings-btn">
+                <i class="fa-solid fa-gears"></i>
+                <span data-i18n="nav_settings">الإعدادات</span>
+            </button>
+        </nav>
+        <button class="cart-trigger-btn" onclick="openCartModal()">
+            <i class="fa-solid fa-cart-shopping"></i> السلة (<span id="cart-count">0</span>)
+        </button>
+    </header>
+
+    <!-- المحتوى الرئيسي للرئيسية -->
+    <div class="container">
+        <div id="home" class="page active">
+            
+            <!-- 2. البنر المتحرك (3 صور تتغير تلقائياً) -->
+            <div class="slideshow-container">
+                <div class="slide active" style="background-image: url('https://scontent.fcai19-2.fna.fbcdn.net/v/t39.30808-6/527149354_10162824688942567_8680616158836740571_n.jpg?stp=dst-jpg_tt6&cstp=mx1204x1600&ctp=s1204x1600&_nc_cat=108&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeG4h_sc5MUHjZDRzIjNjy3XMP8N81cwilgw_w3zVzCKWFqp3rm8dkg1q5E9pj4QgQFzTvSmhSKPjlo_Aw_rvjUX&_nc_ohc=9oOq48mk4pUQ7kNvwFsABwZ&_nc_oc=AdrCCdjN3EX-EUcg9yoNCLo27OHQ0QP-JU6r-5r00dIudmMZY-V0wHwMU3ScR7kAt-8&_nc_zt=23&_nc_ht=scontent.fcai19-2.fna&_nc_gid=l3jNI80t6hob5EXpR58tyw&_nc_ss=7b2a8&oh=00_AQClpB7qfVGl8MLKhaGQY_wrg7r6tyJSehoGKaIYCOTQ2w&oe=6A6D3018');">
+                    <div class="slide-content"><h2 data-i18n="slide_1_title">أحدث ماكينات الطباعة الرقمية</h2></div>
+                </div>
+                <div class="slide" style="background-image: url('https://scontent.fcai19-2.fna.fbcdn.net/v/t39.30808-6/739252281_10164239597702567_5006819225810549550_n.jpg?stp=dst-jpg_tt6&cstp=mx2048x1152&ctp=s960x960&_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeHiBnsBbS8HcXpkOVf71SeTIbvN8cUwtEwhu83xxTC0TJacV9m8MOWc4MVMG00dDCWDFjQhXQcsRC49CBVspx8V&_nc_ohc=JsxY4RwHuRUQ7kNvwF_jjN7&_nc_oc=AdrLa2n8D6Ku2VoPlIbm-gZkUUFCL31g3R-3IeINQz6f1EgQCs2JaisCJs2Xk3tJH1Q&_nc_zt=23&_nc_ht=scontent.fcai19-2.fna&_nc_gid=b3wp22jH1TsUM9AvQpOgbA&_nc_ss=7b2a8&oh=00_AQDIh2nj0uJmtpEtXWsn_iQGmUe2PNWpRrCTCLuBE8hQjw&oe=6A6D3CB8');">
+                    <div class="slide-content"><h2 data-i18n="slide_2_title">جودة فائقة واعتمادية كاملة</h2></div>
+                </div>
+                <div class="slide" style="background-image: url('https://scontent.fcai19-2.fna.fbcdn.net/v/t39.30808-6/687378114_10163963997682567_3586316144285632201_n.jpg?stp=dst-jpg_tt6&cstp=mx1273x1276&ctp=s1273x1276&_nc_cat=102&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeG8LbVqxRwCUu3w7sxa20kmvDcdk2ag4sq8Nx2TZqDiykWDEj-t8o7RG29uN-Xh8gSPwWd-DKVQ9ybTUCSG14gG&_nc_ohc=7K891a-G-OAQ7kNvwFG_jp9&_nc_oc=AdpVdSWlxPT3klaHFjVGfkUGF0zj22eZiT1xpCiRaHiL6QJVAaK_jLhVoX1MQyys9n0&_nc_zt=23&_nc_ht=scontent.fcai19-2.fna&_nc_gid=l3jNI80t6hob5EXpR58tyw&_nc_ss=7b2a8&oh=00_AQAotYTZbGBf04Ytm1-daqJTqMEPP_x-k1X8ikfkmsrEVA&oe=6A6D4367');">
+                    <div class="slide-content"><h2 data-i18n="slide_3_title">صيانة ودعم فني على مدار الساعة</h2></div>
+                </div>
+            </div>
+
+            <!-- 3. عداد الإحصائيات تحت الصور -->
+            <div class="stats-container">
+                <div class="stat-box">
+                    <h3>+500</h3>
+                    <p data-i18n="stat_1">ماكينة تم تركيبها وصيانتها</p>
+                </div>
+                <div class="stat-box">
+                    <h3>+10</h3>
+                    <p data-i18n="stat_2">سنوات خبرة رائدة</p>
+                </div>
+                <div class="stat-box">
+                    <h3>+200</h3>
+                    <p data-i18n="stat_3">عميل راضٍ وشركاء نجاح</p>
+                </div>
+            </div>
+
+            <!-- 4. عنوان "وكلاؤنا وشهادات خبرة" ومعرض الصور المكبرة (Lightbox) دون مغادرة الصفحة -->
+            <h2 style="text-align: center; margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">وكلاؤنا وشهادات خبرة</h2>
+            <div class="gallery-container">
+                <div class="gallery-item" onclick="openLightbox('https://scontent.fcai19-2.fna.fbcdn.net/v/t51.82787-15/752838679_18415436563148748_1034128723220752883_n.jpg')">
+                    <img src="https://scontent.fcai19-2.fna.fbcdn.net/v/t51.82787-15/752838679_18415436563148748_1034128723220752883_n.jpg" alt="شهادة 1">
+                </div>
+                <div class="gallery-item" onclick="openLightbox('https://scontent.fcai19-2.fna.fbcdn.net/v/t39.30808-6/527149354_10162824688942567_8680616158836740571_n.jpg')">
+                    <img src="https://scontent.fcai19-2.fna.fbcdn.net/v/t39.30808-6/527149354_10162824688942567_8680616158836740571_n.jpg" alt="شهادة 2">
+                </div>
+                <div class="gallery-item" onclick="openLightbox('https://scontent.fcai19-2.fna.fbcdn.net/v/t39.30808-6/739252281_10164239597702567_5006819225810549550_n.jpg')">
+                    <img src="https://scontent.fcai19-2.fna.fbcdn.net/v/t39.30808-6/739252281_10164239597702567_5006819225810549550_n.jpg" alt="شهادة 3">
+                </div>
+                <div class="gallery-item" onclick="openLightbox('https://scontent.fcai19-2.fna.fbcdn.net/v/t39.30808-6/687378114_10163963997682567_3586316144285632201_n.jpg')">
+                    <img src="https://scontent.fcai19-2.fna.fbcdn.net/v/t39.30808-6/687378114_10163963997682567_3586316144285632201_n.jpg" alt="شهادة 4">
+                </div>
+                <div class="gallery-item" onclick="openLightbox('https://scontent.fcai19-2.fna.fbcdn.net/v/t39.30808-6/643717536_122252975474188486_6651397221300364705_n.jpg')">
+                    <img src="https://scontent.fcai19-2.fna.fbcdn.net/v/t39.30808-6/643717536_122252975474188486_6651397221300364705_n.jpg" alt="شهادة 5">
+                </div>
+                <div class="gallery-item" onclick="openLightbox('https://scontent.fcai19-2.fna.fbcdn.net/v/t39.30808-6/527149354_10162824688942567_8680616158836740571_n.jpg')">
+                    <img src="https://scontent.fcai19-2.fna.fbcdn.net/v/t39.30808-6/527149354_10162824688942567_8680616158836740571_n.jpg" alt="شهادة 6">
+                </div>
+            </div>
+            <!-- نافذة سلة المشتريات والفاتورة الشاملة -->
+<div class="cart-modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
+    <div class="cart-modal-content" style="background: var(--card-bg, #fff); padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+        <button class="close-modal" onclick="closeCartModal()" style="float: left; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-color);">&times;</button>
+        
+        <h3 style="color: var(--primary-color); margin-bottom: 15px; text-align: center;"><i class="fa-solid fa-file-invoice"></i> فاتورة سلة المشتريات</h3>
+        
+        <!-- حاوية قائمة المنتجات داخل السلة -->
+        <div id="cartItemsContainer" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;">
+            <!-- العناصر تضاف ديناميكياً هنا -->
+        </div>
+
+        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-bottom: 20px; border-top: 2px solid var(--border-color); padding-top: 10px;">
+            <span>الإجمالي الكلي:</span>
+            <span id="cartTotalPrice" style="color: var(--secondary-color);">0 ج.م</span>
+        </div>
+
+        <!-- أزرار الإجراءات (تنزيل الفاتورة وإتمام الطلب للواتساب) -->
+        <div style="display: flex; gap: 10px;">
+            <button onclick="downloadInvoice()" class="btn-action" style="flex: 1; background-color: #3b82f6; color: #fff; padding: 10px; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-download"></i> تنزيل الفاتورة</button>
+            <button onclick="checkoutToWhatsApp()" class="btn-action" style="flex: 1; background-color: #10b981; color: #fff; padding: 10px; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-brands fa-whatsapp"></i> إتمام الشراء للأدمن</button>
+        </div>
+    </div>
+</div>
+
+            <!-- نافذة عرض الصورة المكبرة (Lightbox Modal) -->
+            <div id="myLightbox" class="lightbox" onclick="closeLightbox()">
+                <span class="close-btn">&times;</span>
+                <img id="lightboxImg" src="" alt="صورة مكبرة">
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 5. أيقونات التواصل الثابتة أسفل اليسار -->
+    <div class="social-bar">
+        <a href="https://wa.me/201000000000" target="_blank" class="social-icon wa"><i class="fa-brands fa-whatsapp"></i></a>
+        <a href="mailto:info@protech.com" class="social-icon email-icon"><i class="fa-solid fa-envelope"></i></a>
+        <a href="https://facebook.com" target="_blank" class="social-icon fb"><i class="fa-brands fa-facebook-f"></i></a>
+    </div>
+
+    <!-- 6. زر الاستشارة الدائم أسفل اليمين -->
+    <button class="consultation-trigger" onclick="openConsultationModal()">
+        <i class="fa-solid fa-headset"></i> استشارة فنية
+    </button>
+
+    <!-- نافذة منبثقة لرقمين الواتساب -->
+    <div id="consultationModal" class="consultation-modal">
+        <div class="consultation-content">
+            <button class="close-modal" onclick="closeConsultationModal()">&times;</button>
+            <h3>اختر رقم للتواصل عبر الواتساب</h3>
+            <p>فريق الدعم الفني جاهز للإجابة على استفساراتك:</p>
+            <a href="https://wa.me/201000000000" target="_blank"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الأول</a>
+            <a href="https://wa.me/201111111111" target="_blank"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الثاني</a>
+        </div>
+    </div>
+
+    <!-- السكريبت الخاص بالصفحة وتغيير البنرات كل 3 ثواني -->
+    <script src="script.js"></script>
+    <script>
+        // تفعيل حركة السلايدشو التلقائي كل 3 ثوانٍ
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function autoSlide() {
+            if(slides.length > 0) {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }
+        }
+        setInterval(autoSlide, 3000);
+
+        // دوال نافذة الاستشارة الفنية
+        function openConsultationModal() {
+            document.getElementById('consultationModal').style.display = 'flex';
+        }
+        function closeConsultationModal() {
+            document.getElementById('consultationModal').style.display = 'none';
+        }
+    </script>
+    <script type="module" src="firebase.js"></script>
+<script type="module" src="script.js"></script>
+</body>
+</html>
