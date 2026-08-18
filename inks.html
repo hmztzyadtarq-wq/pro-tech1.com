@@ -9,10 +9,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-    <!-- ربط ملفات التصميم -->
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="responsive.css">
-    <link rel="stylesheet" href="dashboard.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -23,7 +19,6 @@
             padding-bottom: 100px;
         }
 
-        /* هيدر الموقع الأصلي */
         .header {
             display: flex;
             justify-content: space-between;
@@ -72,7 +67,6 @@
             margin-bottom: 10px;
         }
 
-        /* شبكة عرض الأحبار */
         .inks-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -90,10 +84,6 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: transform 0.2s;
-        }
-        .ink-card:hover {
-            transform: translateY(-3px);
         }
 
         .ink-card img {
@@ -127,11 +117,9 @@
             font-weight: bold;
             font-family: 'Cairo', sans-serif;
             width: 100%;
-            transition: background 0.2s;
         }
         .btn-add-cart:hover { background-color: #218838; }
 
-        /* زر الاستشارة العائم لفريق المهندسين أسفل اليمين */
         .floating-consult-btn {
             position: fixed;
             bottom: 25px;
@@ -150,7 +138,6 @@
             font-size: 14px;
         }
 
-        /* نافذة المهندسين المنبثقة (Modal) */
         .consult-modal {
             display: none;
             position: fixed;
@@ -189,7 +176,6 @@
 </head>
 <body>
 
-    <!-- هيدر الموقع الأصلي المتكامل -->
     <header class="header">
         <div class="cart-btn-container">
             <a href="cart.html" class="cart-btn" id="cartIndicator">🛒 السلة (0)</a>
@@ -208,39 +194,29 @@
 
     <div class="main-container">
         <h1>قسم الأحبار والمواد الاستهلاكية</h1>
-        <p style="text-align: center; color: #666; margin-bottom: 30px;">استعرض أجود أنواع الأحبار الأصلية والمواد المعتمدة لماكينات الطباعة.</p>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">استعرض أجود أنواع الأحبار الأصلية والمواد المعتمدة.</p>
 
-        <!-- شبكة عرض الأحبار المضافة من لوحة التحكم -->
         <div class="inks-grid" id="inksContainer">
-            <p style="text-align: center; grid-column: 1 / -1; color: #777;">جاري تحميل الأحبار...</p>
+            <p style="text-align: center; grid-column: 1 / -1; color: #777;">جاري تحميل البيانات...</p>
         </div>
     </div>
 
-    <!-- زر الاستشارة العائم لفريق المهندسين -->
     <div class="floating-consult-btn" onclick="openConsultModal()">
         💬 استشر فريق المهندسين
     </div>
 
-    <!-- نافذة المهندسين المنبثقة -->
     <div class="consult-modal" id="consultModal">
         <div class="consult-modal-content">
             <span class="close-modal" onclick="closeConsultModal()">&times;</span>
             <h3 style="color: #007bff; margin-top: 0;">فريق الدعم الفني والمهندسين</h3>
-            <p style="font-size: 13px; color: #666;">تواصل مباشرة مع أحد مهندسينا للاستشارة الفنية:</p>
             <div class="engineer-item">
                 <strong>مهندس / أحمد محمود</strong><br>
                 <span style="font-size: 13px; color: #555;">صيانة ماكينات UV و إكو سولفينت</span><br>
                 <a href="https://wa.me/201000000000" target="_blank" style="color: #28a745; font-weight: bold; text-decoration: none; font-size: 13px;">💬 مراسلة عبر واتساب</a>
             </div>
-            <div class="engineer-item">
-                <strong>مهندس / إسلام طارق</strong><br>
-                <span style="font-size: 13px; color: #555;">دعم الأحبار والتركيبات الهندسية</span><br>
-                <a href="https://wa.me/201000000000" target="_blank" style="color: #28a745; font-weight: bold; text-decoration: none; font-size: 13px;">💬 مراسلة عبر واتساب</a>
-            </div>
         </div>
     </div>
 
-    <!-- سكربت جلب البيانات والسلة -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const firebaseConfig = {
@@ -257,70 +233,57 @@
                 firebase.initializeApp(firebaseConfig);
             }
 
-            loadInks();
-            updateCartCounter();
-        });
-
-        const db = firebase.firestore();
-
-        function loadInks() {
+            const db = firebase.firestore();
             const container = document.getElementById('inksContainer');
-            
+
+            // جلب كل البيانات المضافة في الكولكشن لعرضها مباشرة للتأكد من ظهورها
             db.collection("site_media").onSnapshot((snapshot) => {
                 container.innerHTML = '';
-                let itemsFound = 0;
+                if(snapshot.empty) {
+                    container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #777;">لا توجد منتجات مضافة في قاعدة البيانات حالياً.</p>';
+                    return;
+                }
 
                 snapshot.forEach((doc) => {
                     const item = doc.data();
                     
-                    // جلب العناصر اللي القسم بتاعها inks أو title بيحتوي على كلمة حبر
-                    if(item.category === 'inks' || item.category === 'حبر' || (item.title && item.title.includes('حبر'))) {
-                        itemsFound++;
-                        const card = document.createElement('div');
-                        card.className = 'ink-card';
-                        card.innerHTML = `
-                            <div>
-                                <img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="حبر">
-                                <h3>${item.title || 'بدون عنوان'}</h3>
-                                <p>${item.desc || 'لا يوجد وصف متاح.'}</p>
-                            </div>
-                            <button class="btn-add-cart" onclick="addToCart('${item.title || 'منتج'}')">إضافة للسلة 🛒</button>
-                        `;
-                        container.appendChild(card);
-                    }
+                    const card = document.createElement('div');
+                    card.className = 'ink-card';
+                    card.innerHTML = `
+                        <div>
+                            <img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="صورة">
+                            <span style="background:#e1f0ff; color:#007bff; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:bold;">${item.category || 'عام'}</span>
+                            <h3>${item.title || 'بدون عنوان'}</h3>
+                            <p>${item.desc || 'لا يوجد وصف.'}</p>
+                        </div>
+                        <button class="btn-add-cart" onclick="addToCart('${item.title || 'منتج'}')">إضافة للسلة 🛒</button>
+                    `;
+                    container.appendChild(card);
                 });
-
-                if(itemsFound === 0) {
-                    container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #777;">لا توجد أحبار مضافة حالياً. يمكنك إضافتها من لوحة التحكم.</p>';
-                }
             }, (error) => {
-                console.error("Error loading inks: ", error);
-                container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: red;">حدث خطأ أثناء تحميل البيانات.</p>';
+                console.error(error);
+                container.innerHTML = '<p style="text-align: center; color: red;">خطأ في الاتصال بقاعدة البيانات.</p>';
             });
-        }
+
+            updateCartCounter();
+        });
 
         function addToCart(title) {
             let cart = JSON.parse(localStorage.getItem('protech_cart')) || [];
             cart.push({ title: title, price: 0, qty: 1 });
             localStorage.setItem('protech_cart', JSON.stringify(cart));
             updateCartCounter();
-            alert("تمت إضافة (" + title + ") إلى سلة المشتريات بنجاح!");
+            alert("تمت إضافة (" + title + ") إلى السلة بنجاح!");
         }
 
         function updateCartCounter() {
             let cart = JSON.parse(localStorage.getItem('protech_cart')) || [];
             const cartBtn = document.getElementById('cartIndicator');
-            if(cartBtn) {
-                cartBtn.innerText = `🛒 السلة (${cart.length})`;
-            }
+            if(cartBtn) cartBtn.innerText = `🛒 السلة (${cart.length})`;
         }
 
-        function openConsultModal() {
-            document.getElementById('consultModal').style.display = 'flex';
-        }
-        function closeConsultModal() {
-            document.getElementById('consultModal').style.display = 'none';
-        }
+        function openConsultModal() { document.getElementById('consultModal').style.display = 'flex'; }
+        function closeConsultModal() { document.getElementById('consultModal').style.display = 'none'; }
     </script>
 </body>
 </html>
