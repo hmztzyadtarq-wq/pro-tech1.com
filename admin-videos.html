@@ -620,107 +620,6 @@
                 alert("خطأ أثناء الحفظ: " + err.message);
             });
         }
-        <!-- كود الجافاسكريبت الموحد للتحكم بـ Odoo Style مع حماية بكلمة مرور -->
-    <script>
-        // ======= نظام حماية لوحة التحكم (كلمة المرور) =======
-        const ADMIN_PASSWORD = "1234"; // تقدر تغير "1234" لأي كلمة سر ترتاح لها
-
-        function checkAdminAuth() {
-            let password = prompt("أهلاً بك يا طارق. يرجى إدخال كلمة سر لوحة التحكم:");
-            if (password !== ADMIN_PASSWORD) {
-                alert("كلمة المرور غير صحيحة!");
-                document.body.innerHTML = `
-                    <div style="text-align:center; margin-top:100px; font-family:'Cairo',sans-serif;">
-                        <h2 style="color:red;">⛔ غير مسموح بالدخول</h2>
-                        <p>كلمة المرور خاطئة. يرجى تحديث الصفحة وإعادة المحاولة.</p>
-                        <a href="videos.html" style="color:#007bff; text-decoration:none; font-weight:bold;">← العودة للموقع</a>
-                    </div>
-                `;
-                throw new Error("Unauthorized Access");
-            }
-        }
-        
-        // تشغيل التحقق فور فتح الصفحة
-        checkAdminAuth();
-        // =================================================
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyBzFacVVTAe2fMvCDXwexfd6Wi7cI7_1gc",
-          authDomain: "bro-tech-mane.firebaseapp.com",
-          projectId: "bro-tech-mane",
-          storageBucket: "bro-tech-mane.firebasestorage.app",
-          messagingSenderId: "391259453925",
-          appId: "1:391259453925:web:0fdf19af7e23d469bb970c",
-          measurementId: "G-467280QJFT"
-        };
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = firebase.firestore();
-
-        function switchTab(tabId, btnElement) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.sidebar-menu button').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.add('active');
-            btnElement.classList.add('active');
-
-            const titles = {
-                'machines': 'إدارة المكن والماكينات',
-                'inks': 'قسم الأحبار والمواد',
-                'banners': 'البانرات والوصف الرئيسي',
-                'certificates': 'شهادات التقدير والصور',
-                'team': 'فريق العمل'
-            };
-            document.getElementById('pageTitleHeader').innerText = titles[tabId];
-        }
-
-        // إضافة عنصر عام لأي قسم
-        function addItem(event, type) {
-            event.preventDefault();
-            let category, title, desc, imageUrl;
-
-            if(type === 'machine') {
-                category = document.getElementById('machineCategory').value;
-                title = document.getElementById('machineTitle').value;
-                desc = document.getElementById('machineDesc').value;
-                imageUrl = document.getElementById('machineImage').value;
-            } else if(type === 'inks') {
-                category = 'inks';
-                title = document.getElementById('inkTitle').value;
-                desc = document.getElementById('inkDesc').value;
-                imageUrl = document.getElementById('inkImage').value;
-            } else if(type === 'banners') {
-                category = document.getElementById('bannerCategory').value;
-                title = document.getElementById('bannerTitle').value;
-                desc = document.getElementById('bannerDesc').value;
-                imageUrl = document.getElementById('bannerImage').value;
-            } else if(type === 'certificates') {
-                category = 'certificates';
-                title = document.getElementById('certTitle').value;
-                desc = document.getElementById('certDesc').value;
-                imageUrl = document.getElementById('certImage').value;
-            } else if(type === 'team') {
-                category = 'team';
-                title = document.getElementById('teamTitle').value;
-                desc = document.getElementById('teamDesc').value;
-                imageUrl = document.getElementById('teamImage').value;
-            }
-
-            db.collection("site_media").add({
-                category: category,
-                title: title,
-                desc: desc,
-                imageUrl: imageUrl,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
-                alert("تم الحفظ بنجاح وتحديث الموقع!");
-                event.target.reset();
-            }).catch(err => {
-                alert("خطأ أثناء الحفظ: " + err.message);
-            });
-        }
 
         // جلب البيانات وعرضها في الجداول حسب القسم
         function loadAllData() {
@@ -771,5 +670,5 @@
 
         document.addEventListener("DOMContentLoaded", loadAllData);
     </script>
-
-     
+</body>
+</html>
