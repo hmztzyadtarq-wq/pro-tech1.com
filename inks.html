@@ -5,29 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إدارة الأحبار - شركة بروتك</title>
     
-    <!-- مكتبات Firebase الأساسية -->
+    <!-- مكتبات Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         body {
             font-family: 'Cairo', sans-serif;
             background-color: #f4f7f6;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             width: 100%;
         }
-        /* جعل الحاوية تملى الشاشة بالكامل */
         .dashboard-container {
-            width: 98%;
-            max-width: 100%;
-            margin: auto;
+            width: 100%;
+            min-height: 90vh;
             background: #fff;
             padding: 30px;
-            border-radius: 10px;
+            border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
         h2 {
@@ -43,7 +39,7 @@
         }
         .form-group {
             flex: 1;
-            min-width: 220px;
+            min-width: 250px;
             margin-bottom: 15px;
         }
         label {
@@ -68,7 +64,6 @@
             cursor: pointer;
             font-size: 16px;
             font-weight: bold;
-            display: block;
             margin-top: 10px;
         }
         button[type="submit"]:hover {
@@ -90,23 +85,17 @@
             background-color: #007bff;
             color: white;
         }
-        .product-thumb {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 5px;
-        }
     </style>
 </head>
 <body>
 
     <div class="dashboard-container">
-        <h2>إدارة أحبار شركة بروتك (متصل بقاعدة البيانات)</h2>
+        <h2>إدارة أحبار شركة بروتك (ملء الشاشة ومتصل بالداتابيز)</h2>
         
         <form id="inkForm">
             <div class="form-row">
                 <div class="form-group">
-                    <label for="inkName">اسم نوع الحبر:</label>
+                    <label for="inkName">اسم الحبر:</label>
                     <input type="text" id="inkName" required placeholder="أدخل اسم الحبر...">
                 </div>
                 <div class="form-group">
@@ -119,10 +108,10 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="inkDesc">وصف الحبر والتوافق:</label>
-                <textarea id="inkDesc" rows="3" placeholder="أدخل تفاصيل الألوان أو الماكينات المتوافقة..."></textarea>
+                <label for="inkDesc">الوصف:</label>
+                <textarea id="inkDesc" rows="3" placeholder="تفاصيل إضافية..."></textarea>
             </div>
-            <button type="submit">إضافة الحبر إلى السحابة</button>
+            <button type="submit">إضافة الحبر</button>
         </form>
 
         <table>
@@ -136,98 +125,11 @@
                 </tr>
             </thead>
             <tbody id="inkTableBody">
-                <!-- بيانات الأحبار ستعرض هنا تلقائياً من Firebase -->
+                <!-- البيانات تظهر هنا تلقائياً -->
             </tbody>
         </table>
     </div>
 
-    <!-- كود الجافاسكريبت الخاص بصفحة الأحبار متصلاً بـ Firebase -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const firebaseConfig = {
-              apiKey: "AIzaSyBzFacVVTAe2fMvCDXwexfd6Wi7cI7_1gc",
-              authDomain: "bro-tech-mane.firebaseapp.com",
-              projectId: "bro-tech-mane",
-              storageBucket: "bro-tech-mane.firebasestorage.app",
-              messagingSenderId: "391259453925",
-              appId: "1:391259453925:web:0fdf19af7e23d469bb970c",
-              measurementId: "G-467280QJFT"
-            };
-
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            const db = firebase.firestore();
-
-            const inkForm = document.getElementById('inkForm');
-            const inkTableBody = document.getElementById('inkTableBody');
-
-            // جلب وعرض الأحبار من مجموعة "inks" في قاعدة البيانات
-            if (inkTableBody) {
-                db.collection("inks").onSnapshot((snapshot) => {
-                    inkTableBody.innerHTML = '';
-                    snapshot.forEach((doc) => {
-                        const ink = doc.data();
-                        const id = doc.id;
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td><img src="${ink.image || ''}" class="product-thumb" alt="صورة"></td>
-                            <td>${ink.name}</td>
-                            <td>${ink.price}</td>
-                            <td>${ink.desc}</td>
-                            <td><button onclick="deleteInk('${id}')" style="background-color: #dc3545; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;">حذف</button></td>
-                        `;
-                        inkTableBody.appendChild(row);
-                    });
-                });
-            }
-
-            // إضافة حبر جديد إلى قاعدة بيانات Firebase
-            if (inkForm) {
-                inkForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const name = document.getElementById('inkName').value;
-                    const price = document.getElementById('inkPrice').value;
-                    const desc = document.getElementById('inkDesc').value;
-                    const imageFile = document.getElementById('inkImage').files[0];
-
-                    if (imageFile) {
-                        const reader = new FileReader();
-                        reader.onload = function(event) {
-                            const imageUrl = event.target.result;
-                            
-                            db.collection("inks").add({
-                                name: name,
-                                price: price,
-                                desc: desc,
-                                image: imageUrl,
-                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                            })
-                            .then(() => {
-                                inkForm.reset();
-                                alert("تم إضافة الحبر بنجاح إلى قاعدة البيانات!");
-                            })
-                            .catch((error) => {
-                                console.error("خطأ في الإضافة: ", error);
-                            });
-                        };
-                        reader.readAsDataURL(imageFile);
-                    }
-                });
-            }
-        });
-
-        // دالة حذف الحبر
-        function deleteInk(id) {
-            if(confirm("هل أنت متأكد من حذف هذا الحبر؟")) {
-                const db = firebase.firestore();
-                db.collection("inks").doc(id).delete().then(() => {
-                    console.log("تم الحذف بنجاح");
-                }).catch((error) => {
-                    console.error("خطأ أثناء الحذف: ", error);
-                });
-            }
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
