@@ -1,128 +1,87 @@
-// ==========================================
-// ملف الجافاسكريبت الشامل - موقع ProTech
-// ==========================================
+document.addEventListener("DOMContentLoaded", function() {
+    // إعدادات Firebase الخاصة بك
+    const firebaseConfig = {
+      apiKey: "AIzaSyBzFacVVTAe2fMvCDXwexfd6Wi7cI7_1gc",
+      authDomain: "bro-tech-mane.firebaseapp.com",
+      projectId: "bro-tech-mane",
+      storageBucket: "bro-tech-mane.firebasestorage.app",
+      messagingSenderId: "391259453925",
+      appId: "1:391259453925:web:0fdf19af7e23d469bb970c",
+      measurementId: "G-467280QJFT"
+    };
 
-// مصفوفة تخزين المنتجات داخل السلة
-let cartItems = [];
-
-// دالة فتح نافذة السلة وتحديث بيانات الفاتورة
-function openCartModal() {
-    let modal = document.querySelector('.cart-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-        updateCartUI(); // تحديث عناصر الفاتورة فور فتحها
+    // تشغيل الفايربيز
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
     }
-}
+    const db = firebase.firestore();
 
-// دالة إغلاق نافذة السلة
-function closeCartModal() {
-    let modal = document.querySelector('.cart-modal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
+    const productForm = document.getElementById('productForm');
+    const productTableBody = document.getElementById('productTableBody');
 
-// دالة إضافة منتج إلى السلة من أي صفحة
-function addToCart(name, price) {
-    let existingItem = cartItems.find(item => item.name === name);
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cartItems.push({
-            name: name,
-            price: parseFloat(price),
-            quantity: 1
+    // جلب وعرض المنتجات مباشرة من قاعدة البيانات
+    if (productTableBody) {
+        db.collection("products").onSnapshot((snapshot) => {
+            productTableBody.innerHTML = '';
+            snapshot.forEach((doc) => {
+                const product = doc.data();
+                const id = doc.id;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="${product.image || ''}" class="product-thumb" alt="صورة" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;"></td>
+                    <td>${product.name}</td>
+                    <td>${product.price}</td>
+                    <td>${product.desc}</td>
+                    <td><button class="delete-btn" onclick="deleteProduct('${id}')" style="background-color: #dc3545; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">حذف</button></td>
+                `;
+                productTableBody.appendChild(row);
+            });
         });
     }
-    updateCartUI();
-    openCartModal(); // تفتح السلة تلقائياً ليرى العميل فاتورته بعد الإضافة
-}
 
-// دالة تحديث واجهة السلة (حساب الإجمالي، الكميات، وعدد العناصر في الـ Header)
-function updateCartUI() {
-    const cartCountSpan = document.getElementById('cart-count');
-    const cartItemsContainer = document.getElementById('cartItemsContainer');
-    const cartTotalPrice = document.getElementById('cartTotalPrice');
+    // إضافة منتج جديد إلى قاعدة بيانات Firebase
+    if (productForm) {
+        productForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('productName').value;
+            const price = document.getElementById('productPrice').value;
+            const desc = document.getElementById('productDesc').value;
+            const imageFile = document.getElementById('productImage').files[0];
 
-    let totalCount = 0;
-    let totalPrice = 0;
-
-    if (cartItemsContainer) {
-        cartItemsContainer.innerHTML = '';
-        
-        if (cartItems.length === 0) {
-            cartItemsContainer.innerHTML = '<p style="text-align:center; color: var(--text-color); padding: 20px;">السلة فارغة حالياً</p>';
-        } else {
-            cartItems.forEach((item, index) => {
-                totalCount += item.quantity;
-                totalPrice += item.price * item.quantity;
-
-                let row = document.createElement('div');
-                row.className = 'cart-item-row';
-                row.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); font-size: 14px;';
-                
-                row.innerHTML = `
-                    <div style="flex: 2;"><strong>${item.name}</strong></div>
-                    <div style="flex: 1; text-align: center;">${item.price} ج.م</div>
-                    <div style="flex: 1; text-align: center;">
-                        <button onclick="changeQuantity(${index}, -1)" style="padding: 2px 6px; cursor:pointer;">-</button>
-                        <span style="margin: 0 6px;">${item.quantity}</span>
-                        <button onclick="changeQuantity(${index}, 1)" style="padding: 2px 6px; cursor:pointer;">+</button>
-                    </div>
-                    <div style="flex: 1; text-align: left; font-weight: bold; color: var(--secondary-color);">${item.price * item.quantity} ج.م</div>
-                `;
-                cartItemsContainer.appendChild(row);
-            });
-        }
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imageUrl = event.target.result;
+                    
+                    db.collection("products").add({
+                        name: name,
+                        price: price,
+                        desc: desc,
+                        image: imageUrl,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    })
+                    .then(() => {
+                        productForm.reset();
+                        alert("تم إضافة المنتج بنجاح إلى قاعدة البيانات!");
+                    })
+                    .catch((error) => {
+                        console.error("خطأ في الإضافة: ", error);
+                    });
+                };
+                reader.readAsDataURL(imageFile);
+            }
+        });
     }
+});
 
-    if (cartCountSpan) {
-        cartCountSpan.innerText = totalCount;
+// دالة الحذف العامة
+function deleteProduct(id) {
+    if(confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
+        const db = firebase.firestore();
+        db.collection("products").doc(id).delete().then(() => {
+            console.log("تم الحذف بنجاح");
+        }).catch((error) => {
+            console.error("خطأ أثناء الحذف: ", error);
+        });
     }
-    if (cartTotalPrice) {
-        cartTotalPrice.innerText = totalPrice + ' ج.م';
-    }
-}
-
-// دالة تعديل الكميات داخل السلة (زيادة أو نقصان)
-function changeQuantity(index, delta) {
-    cartItems[index].quantity += delta;
-    if (cartItems[index].quantity <= 0) {
-        cartItems.splice(index, 1);
-    }
-    updateCartUI();
-}
-
-// دالة تنزيل وحفظ الفاتورة (طباعة أو حفظ كملف PDF عبر المتصفح)
-function downloadInvoice() {
-    if (cartItems.length === 0) {
-        alert('السلة فارغة لتنزيل الفاتورة!');
-        return;
-    }
-    window.print();
-}
-
-// دالة إتمام الشراء وإرسال الطلب للأدمن عبر الواتساب (بأسعار ومنتجات ثابتة لا يمكن للعميل التلاعب بها)
-function checkoutToWhatsApp() {
-    if (cartItems.length === 0) {
-        alert('السلة فارغة، أضف منتجات أولاً!');
-        return;
-    }
-
-    let adminPhoneNumber = "201000000000"; // رقم الواتساب الخاص بالأدمن
-    let message = "مرحباً ProTech، أريد إتمام طلب الشراء التالي:\n\n------------------\n";
-    
-    let grandTotal = 0;
-    cartItems.forEach((item, idx) => {
-        let itemTotal = item.price * item.quantity;
-        grandTotal += itemTotal;
-        message += `${idx + 1}- ${item.name} | الكمية: ${item.quantity} | السعر: ${itemTotal} ج.م\n`;
-    });
-
-    message += `------------------\nإجمالي المبلغ المطلوب: ${grandTotal} ج.م\nفي انتظار تأكيد الطلب.`;
-
-    let encodedMessage = encodeURIComponent(message);
-    let whatsappURL = `https://wa.me/${adminPhoneNumber}?text=${encodedMessage}`;
-
-    window.open(whatsappURL, '_blank');
 }
