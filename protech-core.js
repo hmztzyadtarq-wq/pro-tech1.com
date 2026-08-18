@@ -106,3 +106,48 @@ function initDynamicSection(targetCategory, containerId, cardTemplateType) {
         });
     });
 }
+// --- كود السلة العائمة الموحدة ---
+function injectCartModal() {
+    const modalHTML = `
+        <div id="cartModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+            <div style="background:#fff; padding:20px; width:90%; max-width:400px; border-radius:10px; max-height:80vh; overflow-y:auto; position:relative;">
+                <button onclick="toggleCart()" style="position:absolute; top:10px; right:10px; border:none; background:none; cursor:pointer; font-size:20px;">×</button>
+                <h2>سلة المشتريات</h2>
+                <div id="cartItemsList"></div>
+                <button onclick="clearCart()" style="background:red; color:white; border:none; padding:5px 10px; margin-top:10px; border-radius:5px;">تفريغ السلة</button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+function toggleCart() {
+    const modal = document.getElementById('cartModal');
+    modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+    if(modal.style.display === 'flex') {
+        renderCartItems();
+    }
+}
+
+function renderCartItems() {
+    let cart = JSON.parse(localStorage.getItem('protech_cart')) || [];
+    let list = document.getElementById('cartItemsList');
+    if(cart.length === 0) {
+        list.innerHTML = "<p>السلة فارغة</p>";
+    } else {
+        list.innerHTML = cart.map((item, index) => `
+            <div style="border-bottom:1px solid #eee; padding:10px 0;">
+                <p>${item.title} - ${item.price} ج.م</p>
+            </div>
+        `).join('');
+    }
+}
+
+function clearCart() {
+    localStorage.removeItem('protech_cart');
+    renderCartItems();
+    updateCartCounter();
+}
+
+// استدعاء السلة عند تحميل أي صفحة
+document.addEventListener("DOMContentLoaded", injectCartModal);
