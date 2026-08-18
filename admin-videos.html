@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم قسم المكن - شركة بروتك</title>
+    
+    <!-- مكتبات Firebase الأساسية -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- ربط ملفات الـ CSS الأصلية للموقع -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+
+    <style>
+        body {
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            font-family: 'Cairo', sans-serif;
+        }
+        .admin-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: 'Cairo', sans-serif;
+        }
+        .btn-submit {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            font-size: 16px;
+        }
+        .btn-submit:hover { background-color: #218838; }
+        
+        .items-list {
+            margin-top: 40px;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+        .admin-item-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafafa;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .admin-item-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .admin-item-info img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-delete:hover { background-color: #c82333; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+        <a href="videos.html" class="back-link">← العودة لصفحة المكن العامة</a>
+        <h1>لوحة تحكم المكن والماكينات</h1>
+        <p style="text-align: center; color: #666;">من هنا يمكنك إضافة أو حذف أي ماكينة أو موديل يظهر في قسم المكن فوراً.</p>
+
+        <!-- نموذج الإضافة -->
+        <form id="addMachineForm" onsubmit="addNewMachine(event)">
+            <div class="form-group">
+                <label for="machineCategory">اختر القسم التابع له الماكينة:</label>
+                <select id="machineCategory" required>
+                    <optgroup label="الأقسام الرئيسية">
+                        <option value="إكو سولفينت">إكو سولفينت</option>
+                        <option value="أوت دور">أوت دور</option>
+                        <option value="لمينيشن">لمينيشن</option>
+                        <option value="بلوتر / ولتريلوتر">بلوتر / ولتريلوتر</option>
+                    </optgroup>
+                    <optgroup label="تفريعات ماكينات الـ UV">
+                        <option value="فلات بد UV">فلات بد (Flatbed)</option>
+                        <option value="رول تو رول UV">رول تو رول (Roll to Roll)</option>
+                        <option value="هيبير UV">هيبير (Hybrid)</option>
+                        <option value="DTF UV">DTF</option>
+                        <option value="7 في 1 UV">7 في 1</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="machineTitle">اسم الماكينة / الموديل:</label>
+                <input type="text" id="machineTitle" placeholder="مثال: موديل UV برو 2026" required>
+            </div>
+
+            <div class="form-group">
+                <label for="machineDesc">وصف الماكينة والمواصفات:</label>
+                <textarea id="machineDesc" rows="3" placeholder="اكتب نبذة مختصرة أو المواصفات الفنية..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="machineImage">رابط صورة الماكينة (Image URL):</label>
+                <input type="url" id="machineImage" placeholder="https://example.com/image.jpg" required>
+            </div>
+
+            <button type="submit" class="btn-submit">إضافة الماكينة للقسم</button>
+        </form>
+
+        <!-- قائمة الماكينات المضافة حالياً للتحكم والحذف -->
+        <div class="items-list">
+            <h2>الماكينات الحالية في قاعدة البيانات</h2>
+            <div id="adminMachinesContainer">
+                <p style="text-align: center; color: #777;">جاري تحميل الماكينات...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- كود الجافاسكريبت المربوط بـ Firebase -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const firebaseConfig = {
+              apiKey: "AIzaSyBzFacVVTAe2fMvCDXwexfd6Wi7cI7_1gc",
+              authDomain: "bro-tech-mane.firebaseapp.com",
+              projectId: "bro-tech-mane",
+              storageBucket: "bro-tech-mane.firebasestorage.app",
+              messagingSenderId: "391259453925",
+              appId: "1:391259453925:web:0fdf19af7e23d469bb970c",
+              measurementId: "G-467280QJFT"
+            };
+
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+
+            loadAdminMachines();
+        });
+
+        const db = firebase.firestore();
+
+        // إضافة ماكينة جديدة
+        function addNewMachine(event) {
+            event.preventDefault();
+
+            const category = document.getElementById('machineCategory').value;
+            const title = document.getElementById('machineTitle').value.trim();
+            const desc = document.getElementById('machineDesc').value.trim();
+            const imageUrl = document.getElementById('machineImage').value.trim();
+
+            db.collection("site_media").add({
+                category: category,
+                title: title,
+                desc: desc,
+                imageUrl: imageUrl,
+                likes: 0,
+                comments: [],
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                alert("تم إضافة الماكينة بنجاح!");
+                document.getElementById('addMachineForm').reset();
+            })
+            .catch((error) => {
+                alert("حدث خطأ أثناء الإضافة: " + error.message);
+            });
+        }
+
+        // جعرض الماكينات في لوحة الأدمن مع إمكانية الحذف
+        function loadAdminMachines() {
+            const container = document.getElementById('adminMachinesContainer');
+
+            db.collection("site_media").onSnapshot((snapshot) => {
+                container.innerHTML = '';
+                if(snapshot.empty) {
+                    container.innerHTML = '<p style="text-align: center; color: #777;">لا توجد ماكينات مضافة حالياً.</p>';
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const item = doc.data();
+                    const id = doc.id;
+
+                    const div = document.createElement('div');
+                    div.className = 'admin-item-card';
+                    div.innerHTML = `
+                        <div class="admin-item-info">
+                            <img src="${item.imageUrl || 'https://via.placeholder.com/60'}" alt="صورة">
+                            <div>
+                                <h4 style="margin:0 0 5px 0;">${item.title}</h4>
+                                <span style="font-size: 12px; background: #e2e8f0; padding: 2px 6px; border-radius: 4px;">القسم: ${item.category}</span>
+                                <p style="margin: 5px 0 0 0; font-size: 13px; color: #666;">${item.desc}</p>
+                            </div>
+                        </div>
+                        <button class="btn-delete" onclick="deleteMachine('${id}')">حذف</button>
+                    `;
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        // حذف ماكينة
+        function deleteMachine(id) {
+            if(confirm("هل أنت متأكد من حذف هذه الماكينة نهائياً؟")) {
+                db.collection("site_media").doc(id).delete()
+                .then(() => {
+                    alert("تم الحذف بنجاح.");
+                })
+                .catch((error) => {
+                    alert("خطأ أثناء الحذف: " + error.message);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
