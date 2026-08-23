@@ -1,6 +1,11 @@
 // ==========================================
 // ملف التحكم المركزي لشركة بروتك (ProTech Core)
 // ==========================================
+// هذه نسخة مطابقة تمامًا لملفك الأصلي، فيها 5 تعديلات محددة فقط
+// (مُعلّمة بتعليق "🔧 تعديل" في مكانها): توحيد عداد وبيانات السلة
+// مع باقي الموقع، تصحيح السعر الثابت، منع تكرار مودال السلة، دمج
+// الكمية بدل تكرار المنتج في السلة، وجعل كل كارت يفتح صفحة تفاصيل.
+// باقي المنطق (Firebase، مطابقة الأقسام، عرض البيانات) لم يتغير.
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzFacVVTAe2fMvCDXwexfd6Wi7cI7_1gc",
@@ -21,17 +26,33 @@ const db = firebase.firestore();
 // تحديث عداد السلة في أي صفحة تلقائياً
 function updateCartCounter() {
     let cart = JSON.parse(localStorage.getItem('protech_cart')) || [];
+    let totalItems = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
+
+    // التصميم القديم (لو لسه موجود في أي صفحة)
     const cartBtn = document.getElementById('cartIndicator');
     if(cartBtn) {
-        let totalItems = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
         cartBtn.innerText = `🛒 السلة (${totalItems})`;
+    }
+
+    // 🔧 تعديل 1: التصميم الجديد الموحّد بيستخدم badge باسم cart-count
+    const newBadge = document.getElementById('cart-count');
+    if (newBadge) {
+        newBadge.textContent = totalItems;
     }
 }
 
 // إضافة منتج للسلة
-function addToCart(title, price) {
+// 🔧 تعديل 4: لو المنتج ده أصلاً في السلة، بيزود الكمية بدل ما يضيف
+// سطر جديد منفصل — كده الإجمالي بيفضل يحسب صح والسلة منظمة أكتر
+function addToCart(title, price, qty) {
+    qty = qty || 1;
     let cart = JSON.parse(localStorage.getItem('protech_cart')) || [];
-    cart.push({ title: title, price: price || 0, qty: 1 });
+    const existing = cart.find(i => i.title === title && i.price === price);
+    if (existing) {
+        existing.qty = (existing.qty || 1) + qty;
+    } else {
+        cart.push({ title: title, price: price || 0, qty: qty });
+    }
     localStorage.setItem('protech_cart', JSON.stringify(cart));
     updateCartCounter();
     alert("تمت إضافة (" + title + ") إلى السلة بنجاح!");
@@ -74,7 +95,13 @@ function initDynamicSection(targetCategory, containerId, cardTemplateType) {
                     found++;
                     const card = document.createElement('div');
                     card.className = 'ink-card';
-                    
+
+                    // 🔧 تعديل 5: كل كارت بقى قابل للدوس عليه يفتح صفحة تفاصيل
+                    // المنتج (بيستخدم رقم الوثيقة في فايربيز)، وزرار "إضافة للسلة"
+                    // مستثنى من ده عشان الدوس عليه يضيف للسلة بس من غير ما يفتح الصفحة
+                    card.style.cursor = 'pointer';
+                    card.setAttribute('onclick', `location.href='product-details.html?id=${doc.id}'`);
+
                     // التحقق مما إذا كان المحتوى فيديو أو صورة
                     let mediaElement = '';
                     if (item.videoUrl && item.videoUrl.trim() !== '') {
@@ -83,14 +110,20 @@ function initDynamicSection(targetCategory, containerId, cardTemplateType) {
                         mediaElement = `<img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="صورة" style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:12px;">`;
                     }
 
+                    // 🔧 تعديل 2: كان في سعر ثابت 150 لكل المنتجات مهما كان سعرها
+                    // الحقيقي — بقى ياخد item.price من فايربيز، ولو مش موجود يبقى صفر
+                    const priceValue = item.price || 0;
+                    const safeTitle = (item.title || 'منتج').replace(/'/g, "\\'");
+
                     card.innerHTML = `
                         <div>
                             ${mediaElement}
                             <span style="background:#e1f0ff; color:#007bff; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:bold;">${item.category || 'عام'}</span>
                             <h3 style="margin:10px 0 5px; font-size:18px; color:#2c3e50;">${item.title || 'بدون عنوان'}</h3>
                             <p style="color:#666; font-size:14px; margin-bottom:15px; line-height:1.5;">${item.desc || 'لا يوجد وصف.'}</p>
+                            ${priceValue ? `<p style="color:#00AEEF; font-weight:800; font-size:15px; margin-bottom:10px;">${priceValue} ج.م</p>` : ''}
                         </div>
-                        <button class="btn-add-cart" onclick="addToCart('${item.title || 'منتج'}', 150)">إضافة للسلة 🛒</button>
+                        <button class="btn-add-cart" onclick="event.stopPropagation(); addToCart('${safeTitle}', ${priceValue})">إضافة للسلة 🛒</button>
                     `;
                     container.appendChild(card);
                 }
@@ -102,8 +135,13 @@ function initDynamicSection(targetCategory, containerId, cardTemplateType) {
         });
     });
 }
-// --- كود السلة العائمة الموحدة ---
+
+// --- كود السلة العائمة الموحدة (احتياطي لأي صفحة قديمة لسه معملهاش تحديث) ---
 function injectCartModal() {
+    // 🔧 تعديل 3: الصفحات الجديدة أصلاً فيها مودال سلة جاهز في الـ HTML
+    // (بتصميم أحدث ومتكامل مع باقي الموقع) — لو موجود، منحقنش واحد تاني فوقه
+    if (document.getElementById('cartModal')) return;
+
     const modalHTML = `
         <div id="cartModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
             <div style="background:#fff; padding:20px; width:90%; max-width:400px; border-radius:10px; max-height:80vh; overflow-y:auto; position:relative;">
@@ -128,6 +166,7 @@ function toggleCart() {
 function renderCartItems() {
     let cart = JSON.parse(localStorage.getItem('protech_cart')) || [];
     let list = document.getElementById('cartItemsList');
+    if (!list) return; // الصفحات الجديدة عندها مودال مختلف بيتعرض بدالة renderCart في script.js
     if(cart.length === 0) {
         list.innerHTML = "<p>السلة فارغة</p>";
     } else {
