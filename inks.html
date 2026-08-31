@@ -12,10 +12,10 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- ملف التصميم الرئيسي للموقع (عشان ياخد نفس لون الهيدر والبار الأصلي) -->
+    <!-- ملف التصميم الرئيسي للموقع -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- تنسيقات خاصة لترتيب المنتجات بالعرض وزر إفراغ السلة داخل المودال -->
+    <!-- تنسيقات عرض المنتجات وزر إفراغ السلة داخل نافذة الفاتورة -->
     <style>
         .main-container {
             max-width: 1200px;
@@ -29,7 +29,7 @@
             margin-bottom: 10px;
         }
 
-        /* تنسيق شبكة المنتجات لتظهر بالعرض (أفقيًا) بجوار بعضها */
+        /* تنسيق شبكة المنتجات لتظهر بالعرض (أفقيًا) */
         .inks-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -37,7 +37,7 @@
             margin-top: 30px;
         }
 
-        /* تنسيق كارت المنتج الفردي */
+        /* كارت المنتج الفردي */
         .inks-grid .product, .inks-grid > div {
             background: #ffffff;
             border: 1px solid #e0e0e0;
@@ -62,7 +62,7 @@
             margin-bottom: 15px;
         }
 
-        /* تنسيق زر إفراغ السلة ليتطابق مع أزرار المودال الموجودة في صورتك */
+        /* تنسيق زر إفراغ السلة ليتناسب مع أزرار الفاتورة في باقي الموقع */
         .clear-cart-modal-btn {
             background-color: #dc3545;
             color: white;
@@ -74,11 +74,12 @@
             font-size: 14px;
             font-weight: 600;
             transition: background 0.2s;
-            flex: 1;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 5px;
+            margin-top: 10px;
+            width: 100%;
         }
 
         .clear-cart-modal-btn:hover {
@@ -96,18 +97,9 @@
 </head>
 <body>
 
-    <!-- الهيدر الأصلي المتطابق مع باقي صفحات الموقع (بألوانه وأزراره الأصلية) -->
+    <!-- الهيدر الأصلي المتطابق تماماً مع صفحة الرئيسية (اللوجو يمين - السلة شمال) -->
     <header id="siteHeader">
-        <div class="header-actions">
-            <button class="cart-trigger-btn" onclick="openCartModal()">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <span>السلة</span>
-                <span class="cart-badge" id="cart-count">0</span>
-            </button>
-            <button class="nav-toggle" id="navToggle" aria-label="فتح القائمة">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-        </div>
+        <div class="logo">Pro<span>Tech</span></div>
 
         <nav class="nav-icons" id="mainNav">
             <button onclick="location.href='index.html'" class="nav-btn">
@@ -116,7 +108,7 @@
             <button onclick="location.href='videos.html'" class="nav-btn">
                 <i class="fa-solid fa-print"></i><span>المكن</span>
             </button>
-            <!-- تفعيل كلاس active هنا ليعلم المستخدم أنه واقف في صفحة المتجر -->
+            <!-- تفعيل كلاس active لزر المتجر -->
             <button onclick="location.href='inks.html'" class="nav-btn active">
                 <i class="fa-solid fa-droplet"></i><span>المتجر</span>
             </button>
@@ -128,7 +120,16 @@
             </button>
         </nav>
 
-        <div class="logo">Pro<span>Tech</span></div>
+        <div class="header-actions">
+            <button class="cart-trigger-btn" onclick="openCartModal()">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span>السلة</span>
+                <span class="cart-badge" id="cart-count">0</span>
+            </button>
+            <button class="nav-toggle" id="navToggle" aria-label="فتح القائمة">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
     </header>
 
     <!-- المحتوى الرئيسي -->
@@ -142,12 +143,12 @@
         </div>
     </div>
 
-    <!-- السكريبتات الخاصة بجلب المنتجات وإضافة زر إفراغ السلة تلقائياً داخل نافذة السلة -->
+    <!-- السكريبتات -->
     <script>
         // تشغيل الجلب التلقائي للأحبار من ملف الـ Core المركزي
         initDynamicSection('inks', 'inksContainer', 'product');
 
-        // دالة إفراغ السلة بالكامل
+        // دالة إفراغ السلة
         function clearEntireCart() {
             if (confirm('هل أنت متأكد من رغبتك في إفراغ السلة بالكامل؟')) {
                 localStorage.removeItem('cart');
@@ -156,32 +157,30 @@
                 const cartCountEl = document.getElementById('cart-count');
                 if (cartCountEl) cartCountEl.innerText = '0';
 
-                // إغلاق مودال السلة أو إعادة تحميل الصفحة لتحديث الواجهة
                 location.reload();
             }
         }
 
-        // كود برمجي ذكي يضيف زر "إفراغ السلة" جوه نافذة الفاتورة تلقائياً أول ما تفتح
+        // حقن زر "إفراغ السلة" بداخل نافذة الفاتورة عند فتحها تلقائياً دون التأثير على وظائف الموقع الأصلية
         const originalOpenCartModal = window.openCartModal;
         window.openCartModal = function() {
             if (typeof originalOpenCartModal === 'function') {
                 originalOpenCartModal();
             }
             
-            // الانتظار حتى يتم فتح الـ Modal والتأكد من وجود الأزرار لتعديلها وإضافة زر الإفراغ بجانبهم
             setTimeout(() => {
-                const modalActions = document.querySelector('.cart-modal-actions, .modal-footer, div[style*="flex"]');
-                // نتحقق لو الزر مش متضاف قبل كده جوه النافذة
-                if (modalActions && !document.getElementById('customClearCartBtn')) {
+                // البحث عن النافذة أو الأزرار داخل مودال الفاتورة لإضافة زر الإفراغ بلطف
+                const modalContent = document.querySelector('.cart-modal-content, .modal-content, div[class*="modal"]');
+                if (modalContent && !document.getElementById('customClearCartBtn')) {
                     const clearBtn = document.createElement('button');
                     clearBtn.id = 'customClearCartBtn';
                     clearBtn.className = 'clear-cart-modal-btn';
-                    clearBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i> إفراغ السلة';
+                    clearBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i> إفراغ السلة بالكامل';
                     clearBtn.onclick = clearEntireCart;
                     
-                    modalActions.appendChild(clearBtn);
+                    modalContent.appendChild(clearBtn);
                 }
-            }, 100);
+            }, 150);
         };
     </script>
 </body>
