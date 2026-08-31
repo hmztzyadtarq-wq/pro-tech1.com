@@ -887,3 +887,16 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     object-fit: cover;
     border-radius: 6px;
 }
+/* شكل اللينك العادي */
+.nav-link {
+    color: #333;
+    text-decoration: none;
+    padding: 5px 10px;
+}
+
+/* شكل اللينك وهو نشط (أنت واقف جوه صفحته) */
+.nav-link.active {
+    color: #007bff; /* لون مميز زي الأزرق */
+    font-weight: bold;
+    border-bottom: 2px solid #007bff; /* خط تحت الكلمة */
+}
