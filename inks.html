@@ -34,21 +34,39 @@
 </head>
 <body>
 
-    <header class="header">
-        <div class="cart-btn-container">
-            <a href="cart.html" class="cart-btn" id="cartIndicator">🛒 السلة (0)</a>
-        </div>
-        <nav class="nav-menu">
-            <a href="index.html">الرئيسية</a>
-            <a href="videos.html">المكن</a>
-            <a href="inks.html" class="active">الأحبار</a>
-            <a href="team.html">الفريق</a>
-            <a href="settings.html">الإعدادات</a>
-        </nav>
-        <div class="logo">
-            <h2 style="margin: 0; color: #007bff;">ProTech</h2>
-        </div>
-    </header>
+   <!-- الهيدر -->
+<header id="siteHeader">
+    <div class="logo">Pro<span>Tech</span></div>
+
+    <nav class="nav-icons" id="mainNav">
+        <button onclick="location.href='index.html'" class="nav-btn active">
+            <i class="fa-solid fa-house"></i><span>الرئيسية</span>
+        </button>
+        <button onclick="location.href='videos.html'" class="nav-btn">
+            <i class="fa-solid fa-print"></i><span>المكن</span>
+        </button>
+        <button onclick="location.href='inks.html'" class="nav-btn">
+            <i class="fa-solid fa-droplet"></i><span>المتجر</span>
+        </button>
+        <button onclick="location.href='team.html'" class="nav-btn">
+            <i class="fa-solid fa-users-gear"></i><span>الفريق</span>
+        </button>
+        <button onclick="location.href='settings.html'" class="nav-btn">
+            <i class="fa-solid fa-gears"></i><span>الإعدادات</span>
+        </button>
+    </nav>
+
+    <div class="header-actions">
+        <button class="cart-trigger-btn" onclick="openCartModal()">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>السلة</span>
+            <span class="cart-badge" id="cart-count">0</span>
+        </button>
+        <button class="nav-toggle" id="navToggle" aria-label="فتح القائمة">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </div>
+</header>
 
     <div class="main-container">
         <h1>قسم الأحبار والمواد الاستهلاكية</h1>
