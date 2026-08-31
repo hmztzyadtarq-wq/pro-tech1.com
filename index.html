@@ -11,6 +11,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;800&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="style.css">
+
+<!-- فايربيز: مطلوب بس عشان قراءة إعدادات الموقع العامة (أرقام واتساب/البار/الإعلانات) اللي بتتحكم فيها من الأدمن -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="protech-core.js"></script>
+
+<!-- Firebase: لازمة عشان أرقام الواتساب وشريط الحالة والإعلانات تتحدث من الأدمن تلقائيًا -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="protech-core.js"></script>
 </head>
 <body>
 
@@ -102,6 +112,9 @@
         </div>
     </section>
 
+    <!-- ============ إعلانات وعروض (تتحدث من الأدمن — بتتخفي لوحدها لو مفيش عروض) ============ -->
+    <div class="ads-strip" id="adsStrip" style="display:none"></div>
+
     <!-- ============ كروت الوصول السريع ============ -->
     <section class="section">
         <div class="section-head reveal">
@@ -147,13 +160,13 @@
                 <i class="fa-solid fa-computer"></i>
                 <h3>بيع الماكينات</h3>
                 <p>ماكينات طباعة رقمية جديدة ومستعملة مضمونة، مع تركيب وتشغيل كامل في مكانك.</p>
-                <a href="https://wa.me/201000000000?text=%D8%B9%D8%A7%D9%88%D8%B2%20%D8%A7%D8%B3%D8%A3%D9%84%20%D8%B9%D9%86%20%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1%20%D9%85%D8%A7%D9%83%D9%8A%D9%86%D8%A9" target="_blank">اسأل عن السعر <i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://wa.me/201000000000?text=%D8%B9%D8%A7%D9%88%D8%B2%20%D8%A7%D8%B3%D8%A3%D9%84%20%D8%B9%D9%86%20%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1%20%D9%85%D8%A7%D9%83%D9%8A%D9%86%D8%A9" target="_blank" data-wa="phone1">اسأل عن السعر <i class="fa-brands fa-whatsapp"></i></a>
             </div>
             <div class="service-card">
                 <i class="fa-solid fa-screwdriver-wrench"></i>
                 <h3>الصيانة والدعم الفني</h3>
                 <p>عقود صيانة دورية أو زيارة فردية، بفريق مهندسين معتمدين وقطع غيار أصلية.</p>
-                <a href="https://wa.me/201000000000?text=%D8%B9%D8%A7%D9%88%D8%B2%20%D8%A3%D8%B7%D9%84%D8%A8%20%D8%B5%D9%8A%D8%A7%D9%86%D8%A9" target="_blank">اطلب صيانة <i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://wa.me/201000000000?text=%D8%B9%D8%A7%D9%88%D8%B2%20%D8%A3%D8%B7%D9%84%D8%A8%20%D8%B5%D9%8A%D8%A7%D9%86%D8%A9" target="_blank" data-wa="phone1">اطلب صيانة <i class="fa-brands fa-whatsapp"></i></a>
             </div>
             <div class="service-card">
                 <i class="fa-solid fa-droplet"></i>
@@ -252,7 +265,7 @@
     <div class="footer-top">
         <div class="footer-brand">Pro<span>Tech</span></div>
         <div class="footer-social">
-            <a href="https://wa.me/201000000000" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="https://wa.me/201000000000" target="_blank" data-wa="phone1"><i class="fa-brands fa-whatsapp"></i></a>
             <a href="mailto:info@protech.com"><i class="fa-solid fa-envelope"></i></a>
             <a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
         </div>
@@ -271,8 +284,8 @@
         <button class="modal-close" onclick="closeConsultationModal()">&times;</button>
         <h3><i class="fa-solid fa-headset"></i> اختر رقم للتواصل عبر الواتساب</h3>
         <p>فريق الدعم الفني جاهز للإجابة على استفساراتك:</p>
-        <a class="wa-choice" href="https://wa.me/201000000000" target="_blank"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الأول</a>
-        <a class="wa-choice" href="https://wa.me/201111111111" target="_blank"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الثاني</a>
+        <a class="wa-choice" href="https://wa.me/201000000000" target="_blank" data-wa="phone1"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الأول</a>
+        <a class="wa-choice" href="https://wa.me/201111111111" target="_blank" data-wa="phone2"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الثاني</a>
     </div>
 </div>
 
@@ -323,5 +336,6 @@
 </div>
 
 <script src="script.js"></script>
+<script>loadAds('adsStrip');</script>
 </body>
 </html>
