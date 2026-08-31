@@ -5,8 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>المكن | ProTech</title>
 
-<!-- protech-core.js: كان مكرر مرتين في النسخة الأصلية، سبته مرة واحدة فقط -->
-<script src="protech-core.js"></script>
+<!--
+  ملحوظة: protech-core.js اتحمّل تحت في نهاية الصفحة بعد مكتبات
+  Firebase مباشرة (مش هنا) — عشان يشتغل صح من غير أخطاء، ولإنه دلوقتي
+  بيوفر كمان أرقام الواتساب وشريط الحالة العلوي اللي بيتحدثوا من الأدمن.
+-->
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -260,7 +263,7 @@
     <div class="footer-top">
         <div class="footer-brand">Pro<span>Tech</span></div>
         <div class="footer-social">
-            <a href="https://wa.me/201000000000" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="https://wa.me/201000000000" target="_blank" data-wa="phone1"><i class="fa-brands fa-whatsapp"></i></a>
             <a href="mailto:info@protech.com"><i class="fa-solid fa-envelope"></i></a>
             <a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
         </div>
@@ -278,8 +281,8 @@
         <button class="modal-close" onclick="closeConsultationModal()">&times;</button>
         <h3><i class="fa-solid fa-headset"></i> اختر رقم للتواصل عبر الواتساب</h3>
         <p>فريق الدعم الفني جاهز للإجابة على استفساراتك:</p>
-        <a class="wa-choice" href="https://wa.me/201000000000" target="_blank"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الأول</a>
-        <a class="wa-choice" href="https://wa.me/201111111111" target="_blank"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الثاني</a>
+        <a class="wa-choice" href="https://wa.me/201000000000" target="_blank" data-wa="phone1"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الأول</a>
+        <a class="wa-choice" href="https://wa.me/201111111111" target="_blank" data-wa="phone2"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الثاني</a>
     </div>
 </div>
 
@@ -318,6 +321,9 @@
 <!-- Firebase (نفس الإعداد الأصلي بدون أي تغيير) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<!-- بعد ما Firebase بقى متحمّل، دلوقتي ينفع نحمّل protech-core.js بأمان
+     (بيوفر أرقام الواتساب وشريط الحالة العلوي اللي بيتحدثوا من الأدمن) -->
+<script src="protech-core.js"></script>
 
 <!-- التصميم المشترك (هيدر/فوتر/مودالات/أنيميشن) -->
 <script src="script.js"></script>
@@ -337,6 +343,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     }
+    // تطبيق إعدادات الموقع العامة (أرقام واتساب/البار/الإعلانات) بمجرد جاهزية فايربيز
+    if (typeof applySiteSettings === 'function') applySiteSettings();
 });
 
 const mainView = document.getElementById('mainCategoriesView');
