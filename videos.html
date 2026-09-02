@@ -184,6 +184,7 @@
         </div>
         <div class="machine-hero-text">
             <span class="eyebrow">قسم الماكينات</span>
+            <h2 id="bannerTitleText" style="color:#fff;font-size:19px;margin-bottom:8px;">أحدث ماكينات الطباعة الرقمية</h2>
             <p id="bannerDescription">قسم ماكينات الطباعة المتطورة في شركة ProTech. استعرض أحدث التكنولوجيا العالمية في ماكينات الـ UV، الإكو سولفينت، الأوت دور، واللمينيشن والبلوتر بأعلى كفاءة تشغيلية.</p>
         </div>
     </div>
@@ -345,6 +346,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     // تطبيق إعدادات الموقع العامة (أرقام واتساب/البار/الإعلانات) بمجرد جاهزية فايربيز
     if (typeof applySiteSettings === 'function') applySiteSettings();
+    if (typeof loadPageBanner === 'function') {
+        loadPageBanner('banner_videos', (item) => {
+            if (item.title) document.getElementById('bannerTitleText').textContent = item.title;
+            if (item.desc) document.getElementById('bannerDescription').textContent = item.desc;
+            if (item.imageUrl) document.getElementById('bannerImg').src = item.imageUrl;
+        });
+    }
 });
 
 const mainView = document.getElementById('mainCategoriesView');
