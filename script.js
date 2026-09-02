@@ -1,176 +1,3 @@
-document.addEventListener("DOMContentLoaded", function() {
-    // إعدادات Firebase الخاصة بك
-    const firebaseConfig = {
-      apiKey: "AIzaSyBzFacVVTAe2fMvCDXwexfd6Wi7cI7_1gc",
-      authDomain: "bro-tech-mane.firebaseapp.com",
-      projectId: "bro-tech-mane",
-      storageBucket: "bro-tech-mane.firebasestorage.app",
-      messagingSenderId: "391259453925",
-      appId: "1:391259453925:web:0fdf19af7e23d469bb970c",
-      measurementId: "G-467280QJFT"
-    };
-
-    // تشغيل الفايربيز
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
-    const db = firebase.firestore();
-
-    // --- 1. إدارة المنتجات ---
-    const productForm = document.getElementById('productForm');
-    const productTableBody = document.getElementById('productTableBody');
-
-    if (productTableBody) {
-        db.collection("products").onSnapshot((snapshot) => {
-            productTableBody.innerHTML = '';
-            snapshot.forEach((doc) => {
-                const product = doc.data();
-                const id = doc.id;
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><img src="${product.image || ''}" class="product-thumb" alt="صورة" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;"></td>
-                    <td>${product.name}</td>
-                    <td>${product.price}</td>
-                    <td>${product.desc}</td>
-                    <td>
-                        <button class="delete-btn" onclick="deleteDocument('products', '${id}')" style="background-color: #dc3545; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">حذف</button>
-                    </td>
-                `;
-                productTableBody.appendChild(row);
-            });
-        });
-    }
-
-    if (productForm) {
-        productForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('productName').value;
-            const price = document.getElementById('productPrice').value;
-            const desc = document.getElementById('productDesc').value;
-            const imageFile = document.getElementById('productImage').files[0];
-
-            if (imageFile) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    db.collection("products").add({
-                        name: name,
-                        price: price,
-                        desc: desc,
-                        image: event.target.result,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    })
-                    .then(() => {
-                        productForm.reset();
-                        alert("تم إضافة المنتج بنجاح إلى قاعدة البيانات!");
-                    })
-                    .catch((error) => console.error("خطأ في الإضافة: ", error));
-                };
-                reader.readAsDataURL(imageFile);
-            }
-        });
-    }
-
-    // --- 2. إدارة الأحبار ---
-    const inkForm = document.getElementById('inkForm');
-    const inkTableBody = document.getElementById('inkTableBody');
-
-    if (inkTableBody) {
-        db.collection("inks").onSnapshot((snapshot) => {
-            inkTableBody.innerHTML = '';
-            snapshot.forEach((doc) => {
-                const ink = doc.data();
-                const id = doc.id;
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><img src="${ink.image || ''}" class="product-thumb" alt="صورة" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;"></td>
-                    <td>${ink.name}</td>
-                    <td>${ink.price}</td>
-                    <td>${ink.desc}</td>
-                    <td>
-                        <button onclick="deleteDocument('inks', '${id}')" style="background-color: #dc3545; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">حذف</button>
-                    </td>
-                `;
-                inkTableBody.appendChild(row);
-            });
-        });
-    }
-
-    if (inkForm) {
-        inkForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('inkName').value;
-            const price = document.getElementById('inkPrice').value;
-            const desc = document.getElementById('inkDesc').value;
-            const imageFile = document.getElementById('inkImage').files[0];
-
-            if (imageFile) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    db.collection("inks").add({
-                        name: name,
-                        price: price,
-                        desc: desc,
-                        image: event.target.result,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    })
-                    .then(() => {
-                        inkForm.reset();
-                        alert("تم إضافة الحبر بنجاح إلى قاعدة البيانات!");
-                    })
-                    .catch((error) => console.error("خطأ في الإضافة: ", error));
-                };
-                reader.readAsDataURL(imageFile);
-            }
-        });
-    }
-
-    // --- 3. إدارة السلة (Cart) والمفضلة (Wishlist) عبر السحابة لعدم الحذف ---
-    const cartTableBody = document.getElementById('cartTableBody');
-    if (cartTableBody) {
-        db.collection("cart").onSnapshot((snapshot) => {
-            cartTableBody.innerHTML = '';
-            snapshot.forEach((doc) => {
-                const item = doc.data();
-                const id = doc.id;
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.name}</td>
-                    <td>${item.price}</td>
-                    <td><button onclick="deleteDocument('cart', '${id}')" style="background-color: #dc3545; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">إزالة من السلة</button></td>
-                `;
-                cartTableBody.appendChild(row);
-            });
-        });
-    }
-
-    const wishlistContainer = document.getElementById('wishlistContainer');
-    if (wishlistContainer) {
-        db.collection("wishlist").onSnapshot((snapshot) => {
-            wishlistContainer.innerHTML = '';
-            snapshot.forEach((doc) => {
-                const item = doc.data();
-                const id = doc.id;
-                const div = document.createElement('div');
-                div.style.cssText = "border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center;";
-                div.innerHTML = `
-                    <span>${item.name} - ${item.price}</span>
-                    <button onclick="deleteDocument('wishlist', '${id}')" style="background-color: #dc3545; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">حذف من المفضلة</button>
-                `;
-                wishlistContainer.appendChild(div);
-            });
-        });
-    }
-});
-
-// دالة عامة لحذف أي عنصر من أي جدول في Firebase
-function deleteDocument(collectionName, id) {
-    if(confirm("هل أنت متأكد من الحذف؟")) {
-        const db = firebase.firestore();
-        db.collection(collectionName).doc(id).delete().catch((error) => {
-            console.error("خطأ أثناء الحذف: ", error);
-        });
-    }
-}
 /* =========================================================
    ProTech — script.js
    ملحوظة: ده ملف مبني من الصفر عشان محضرش الملف الأصلي.
@@ -178,7 +5,7 @@ function deleteDocument(collectionName, id) {
    ابعتهالي عشان أدمجها هنا بدل ما تتكرر أو تتعارض.
    ========================================================= */
 
-const WHATSAPP_ADMIN = "201000000000"; // رقم الأدمن لاستقبال الطلبات والطلبات
+let WHATSAPP_ADMIN = "201000000000"; // قيمة افتراضية — بتتغير تلقائيًا لو فيه رقم محفوظ في إعدادات الأدمن
 
 /* ---------- الهيدر: ظل عند التمرير + قائمة الموبايل ---------- */
 const header = document.getElementById('siteHeader');
@@ -289,24 +116,23 @@ function sendMaintenanceRequest(event){
   return false;
 }
 
-/* ---------- السلة (localStorage) ---------- */
+/* ---------- السلة (localStorage) ----------
+   ملحوظة مهمة: السلة هنا بتستخدم نفس مخزن البيانات اللي بيستخدمه
+   protech-core.js بالظبط (المفتاح "protech_cart" وشكل العنصر
+   {title, price, qty})، عشان يبقى مصدر بيانات واحد بس للسلة في
+   كل الموقع. دالة addToCart نفسها اتسابت في protech-core.js فقط
+   ومتعرفتش هنا تاني عشان منتلغيش بعض. */
 function getCart(){
-  return JSON.parse(localStorage.getItem('protech-cart') || '[]');
+  return JSON.parse(localStorage.getItem('protech_cart') || '[]');
 }
 function saveCart(cart){
-  localStorage.setItem('protech-cart', JSON.stringify(cart));
+  localStorage.setItem('protech_cart', JSON.stringify(cart));
   updateCartBadge();
 }
 function updateCartBadge(){
   const cart = getCart();
-  document.getElementById('cart-count').textContent = cart.reduce((sum, i) => sum + i.qty, 0);
-}
-function addToCart(name, price){
-  const cart = getCart();
-  const existing = cart.find(i => i.name === name);
-  if (existing) existing.qty += 1;
-  else cart.push({ name, price, qty: 1 });
-  saveCart(cart);
+  const badge = document.getElementById('cart-count');
+  if (badge) badge.textContent = cart.reduce((sum, i) => sum + (i.qty || 1), 0);
 }
 function renderCart(){
   const cart = getCart();
@@ -319,13 +145,15 @@ function renderCart(){
   }
 
   cart.forEach((item, idx) => {
-    total += item.price * item.qty;
+    const price = item.price || 0;
+    const qty = item.qty || 1;
+    total += price * qty;
     const row = document.createElement('div');
     row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px;';
     row.innerHTML = `
-      <span>${item.name} × ${item.qty}</span>
+      <span>${item.title} × ${qty}</span>
       <span style="display:flex;align-items:center;gap:10px">
-        <b>${item.price * item.qty} ج.م</b>
+        <b>${price * qty} ج.م</b>
         <button onclick="removeFromCart(${idx})" style="background:none;border:none;color:#e11d48;font-size:15px">&times;</button>
       </span>`;
     container.appendChild(row);
@@ -351,8 +179,10 @@ function downloadInvoice(){
   let total = 0;
   let text = 'فاتورة ProTech\n===================\n';
   cart.forEach(item => {
-    total += item.price * item.qty;
-    text += `${item.name} × ${item.qty} = ${item.price * item.qty} ج.م\n`;
+    const price = item.price || 0;
+    const qty = item.qty || 1;
+    total += price * qty;
+    text += `${item.title} × ${qty} = ${price * qty} ج.م\n`;
   });
   text += `===================\nالإجمالي: ${total} ج.م`;
 
@@ -369,14 +199,107 @@ function checkoutToWhatsApp(){
   let total = 0;
   let message = 'طلب شراء جديد من موقع ProTech%0A%0A';
   cart.forEach(item => {
-    total += item.price * item.qty;
-    message += `${encodeURIComponent(item.name)} × ${item.qty} = ${item.price * item.qty} ج.م%0A`;
+    const price = item.price || 0;
+    const qty = item.qty || 1;
+    total += price * qty;
+    message += `${encodeURIComponent(item.title)} × ${qty} = ${price * qty} ج.م%0A`;
   });
   message += `%0Aالإجمالي: ${total} ج.م`;
   window.open(`https://wa.me/${WHATSAPP_ADMIN}?text=${message}`, '_blank');
 }
 
 updateCartBadge();
+/* السلة بتتغير أحيانًا من تبويب تاني (لو فيه أكتر من صفحة مفتوحة) */
+window.addEventListener('storage', (e) => { if (e.key === 'protech_cart') updateCartBadge(); });
+
+/* ---------- إعدادات الموقع العامة (من صفحة الأدمن) ----------
+   بتتقرا من مستند واحد في فايربيز: settings/site_config
+   وتتطبق على أي صفحة فيها فايربيز مُهيّأ بالفعل (بعد
+   firebase.initializeApp). الصفحات اللي مفيهاش فايربيز أصلاً
+   (زي index.html القديمة) هتحتاج تحميل مكتبات فايربيز الأول. */
+function applySiteSettings(){
+  if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return;
+
+  firebase.firestore().collection('settings').doc('site_config').get().then((doc) => {
+    if (!doc.exists) return;
+    const s = doc.data();
+
+    if (s.phone1) document.querySelectorAll('[data-wa="phone1"]').forEach(el => updateWaLink(el, s.phone1));
+    if (s.phone2) document.querySelectorAll('[data-wa="phone2"]').forEach(el => updateWaLink(el, s.phone2));
+
+    // الرقم المستخدم لطلبات الصيانة وإتمام الشراء من السلة
+    if (s.cartPhone || s.phone1) WHATSAPP_ADMIN = s.cartPhone || s.phone1;
+
+    const statusEl = document.querySelector('.topbar-status');
+    if (statusEl && s.topbarStatus) statusEl.innerHTML = `<span class="dot"></span> ${s.topbarStatus}`;
+
+    const hoursEl = document.querySelector('.topbar-hours');
+    if (hoursEl && s.topbarHours) hoursEl.innerHTML = `<i class="fa-regular fa-clock"></i> ${s.topbarHours}`;
+
+    if (s.promoEnabled && s.promoText) injectPromoBanner(s.promoText, s.promoLink);
+  }).catch(() => {});
+}
+
+function updateWaLink(el, phone){
+  el.href = el.href.replace(/wa\.me\/\d+/, 'wa.me/' + phone);
+}
+
+function injectPromoBanner(text, link){
+  if (document.getElementById('promoBanner')) return;
+  const header = document.getElementById('siteHeader');
+  if (!header) return;
+  const bar = document.createElement('div');
+  bar.id = 'promoBanner';
+  bar.className = 'promo-banner';
+  bar.innerHTML = `
+    <span><i class="fa-solid fa-bullhorn"></i> ${text}</span>
+    ${link ? `<a href="${link}" target="_blank">التفاصيل</a>` : ''}
+    <button aria-label="إغلاق" onclick="this.parentElement.remove()">&times;</button>`;
+  header.insertAdjacentElement('afterend', bar);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // بعض الصفحات (زي المكن) بتهيّئ فايربيز في سكريبت خاص بيها بعد
+  // ما الصفحة تحمّل، فبنستنى شوية صغيرة كمان بعد DOMContentLoaded
+  // تحسبًا لده. الصفحات اللي فيها protech-core.js بتنادي الدالة
+  // دي بنفسها فور ما تتهيأ.
+  setTimeout(applySiteSettings, 300);
+});
+
+/* ---------- بانر الصفحة (من تبويب "البانرات" في الأدمن) ----------
+   بتجيب أول مستند في site_media بنفس اسم القسم (banner_index/
+   banner_videos/banner_inks) وتبعته لدالة apply الخاصة بكل صفحة
+   عشان كل صفحة تحدّث العناصر بتاعتها بالشكل المناسب ليها. */
+function loadPageBanner(categoryName, applyFn){
+  if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return;
+  firebase.firestore().collection('site_media').where('category', '==', categoryName).limit(1).get()
+    .then(snap => { if (!snap.empty) applyFn(snap.docs[0].data()); })
+    .catch(() => {});
+}
+
+/* ---------- معرض الشهادات في الصفحة الرئيسية (Firestore) ---------- */
+function loadCertificatesGallery(){
+  const track = document.getElementById('galleryTrack');
+  if (!track || typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return;
+
+  firebase.firestore().collection('site_media').where('category', '==', 'certificates').onSnapshot((snapshot) => {
+    if (snapshot.empty){
+      track.innerHTML = '<p style="color:var(--muted);padding:16px 4px;font-size:13.5px">لا توجد شهادات مضافة بعد.</p>';
+      return;
+    }
+    track.innerHTML = '';
+    snapshot.forEach((doc) => {
+      const item = doc.data();
+      const div = document.createElement('div');
+      div.className = 'gallery-item';
+      div.onclick = () => openLightbox(item.imageUrl);
+      div.innerHTML = `
+        <img src="${item.imageUrl || ''}" alt="${item.title || 'شهادة'}" loading="lazy" onerror="this.closest('.gallery-item').classList.add('img-missing')">
+        <span class="cap">${item.title || ''}</span>`;
+      track.appendChild(div);
+    });
+  });
+}
 
 /* ---------- Lightbox ---------- */
 function openLightbox(src){
