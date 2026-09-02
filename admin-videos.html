@@ -368,6 +368,7 @@ a{ color:inherit; }
                             <option value="banner_index">الصفحة الرئيسية</option>
                             <option value="banner_videos">صفحة المكن</option>
                             <option value="banner_inks">صفحة الأحبار</option>
+                            <option value="banner_team">صفحة الفريق</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -771,7 +772,7 @@ function loadAllData(){
 }
 
 function bannerCategoryLabel(cat){
-    return { banner_index:'الرئيسية', banner_videos:'المكن', banner_inks:'الأحبار' }[cat] || cat;
+    return { banner_index:'الرئيسية', banner_videos:'المكن', banner_inks:'الأحبار', banner_team:'الفريق' }[cat] || cat;
 }
 
 function renderTable(bucket, searchTerm){
