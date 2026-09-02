@@ -23,6 +23,13 @@
 <script src="protech-core.js"></script>
 </head>
 <body>
+
+<!-- شريط تنبيه علوي صغير: حالة التوفر -->
+<div class="topbar">
+    <span class="topbar-status"><span class="dot"></span> متاحين الآن للرد على استفساراتكم</span>
+    <span class="topbar-hours"><i class="fa-regular fa-clock"></i> السبت - الخميس: ٩ص - ٨م</span>
+</div>
+
 <!-- الهيدر -->
 <header id="siteHeader">
     <div class="logo">Pro<span>Tech</span></div>
@@ -62,7 +69,7 @@
     <!-- ============ HERO ============ -->
     <section class="hero">
         <div class="hero-slides" id="heroSlides">
-            <div class="hero-slide active" style="background-image:linear-gradient(0deg, rgba(10,20,32,.78), rgba(10,20,32,.35)), url('صور/WhatsApp Image 2026-08-09 at 2.35.41 PM.jpeg')"></div>
+            <div class="hero-slide active" id="heroSlideMain" style="background-image:linear-gradient(0deg, rgba(10,20,32,.78), rgba(10,20,32,.35)), url('صور/WhatsApp Image 2026-08-09 at 2.35.41 PM.jpeg')"></div>
             <div class="hero-slide slide-pattern slide-pattern-2"></div>
             <div class="hero-slide slide-pattern slide-pattern-3"></div>
         </div>
@@ -210,18 +217,7 @@
             <h2>وكلاؤنا وشهادات خبرة</h2>
         </div>
         <div class="gallery-track reveal" id="galleryTrack">
-            <div class="gallery-item" onclick="openLightbox('صور/شهادة-1.jpg')">
-                <img src="صور/شهادة-1.jpg" alt="شهادة خبرة 1" loading="lazy" onerror="this.closest('.gallery-item').classList.add('img-missing')">
-                <span class="cap">شهادة ١</span>
-            </div>
-            <div class="gallery-item" onclick="openLightbox('صور/شهادة-2.jpg')">
-                <img src="صور/شهادة-2.jpg" alt="شهادة خبرة 2" loading="lazy" onerror="this.closest('.gallery-item').classList.add('img-missing')">
-                <span class="cap">شهادة ٢</span>
-            </div>
-            <div class="gallery-item" onclick="openLightbox('صور/شهادة-3.jpg')">
-                <img src="صور/شهادة-3.jpg" alt="شهادة خبرة 3" loading="lazy" onerror="this.closest('.gallery-item').classList.add('img-missing')">
-                <span class="cap">شهادة ٣</span>
-            </div>
+            <p style="color:var(--muted);padding:16px 4px;font-size:13.5px">جاري تحميل الشهادات...</p>
         </div>
     </section>
 
@@ -277,7 +273,7 @@
         <button class="modal-close" onclick="closeConsultationModal()">&times;</button>
         <h3><i class="fa-solid fa-headset"></i> اختر رقم للتواصل عبر الواتساب</h3>
         <p>فريق الدعم الفني جاهز للإجابة على استفساراتك:</p>
-        <a class="wa-choice" href="https://wa.me/201140090339" target="_blank" data-wa="phone1"><i class="fa-brands fa-whatsapp"></i>بشمهندس طارق وائل  </a>
+        <a class="wa-choice" href="https://wa.me/201000000000" target="_blank" data-wa="phone1"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الأول</a>
         <a class="wa-choice" href="https://wa.me/201111111111" target="_blank" data-wa="phone2"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الثاني</a>
     </div>
 </div>
@@ -329,6 +325,19 @@
 </div>
 
 <script src="script.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    loadCertificatesGallery();
+    loadPageBanner('banner_index', (item) => {
+        if (item.title) document.querySelector('.hero-content h1').textContent = item.title;
+        if (item.desc) document.querySelector('.hero-content p').textContent = item.desc;
+        if (item.imageUrl) {
+            const slide = document.getElementById('heroSlideMain');
+            if (slide) slide.style.backgroundImage = `linear-gradient(0deg, rgba(10,20,32,.78), rgba(10,20,32,.35)), url('${item.imageUrl}')`;
+        }
+    });
+});
+</script>
 <script>loadAds('adsStrip');</script>
 </body>
 </html>
