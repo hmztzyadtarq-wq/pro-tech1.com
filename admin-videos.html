@@ -570,6 +570,22 @@ a{ color:inherit; }
                     </div>
                 </div>
 
+                <h3 style="margin-top:26px">أرقام المحافظ الإلكترونية (تظهر للعميل وقت الدفع في السلة)</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>رقم فودافون كاش</label>
+                        <input type="text" id="setWalletVodafone" placeholder="201000000000">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم اتصالات كاش</label>
+                        <input type="text" id="setWalletEtisalat" placeholder="201000000000">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم أورانج كاش</label>
+                        <input type="text" id="setWalletOrange" placeholder="201000000000">
+                    </div>
+                </div>
+
                 <h3 style="margin-top:26px">البار العلوي (يظهر أعلى الصفحة الرئيسية)</h3>
                 <div class="form-grid">
                     <div class="form-group">
@@ -650,8 +666,8 @@ a{ color:inherit; }
             </div>
             <div class="data-table-container">
                 <table class="data-table">
-                    <thead><tr><th>النوع</th><th>اسم العميل</th><th>الهاتف</th><th>التفاصيل</th><th>الإجمالي</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
-                    <tbody id="ordersTableBody"><tr class="empty-row"><td colspan="7">جاري التحميل...</td></tr></tbody>
+                    <thead><tr><th>النوع</th><th>اسم العميل</th><th>الهاتف</th><th>التفاصيل</th><th>الإجمالي</th><th>الدفع</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+                    <tbody id="ordersTableBody"><tr class="empty-row"><td colspan="8">جاري التحميل...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -951,6 +967,9 @@ function loadSettings(){
         document.getElementById('setPhone1').value = s.phone1 || '';
         document.getElementById('setPhone2').value = s.phone2 || '';
         document.getElementById('setCartPhone').value = s.cartPhone || '';
+        document.getElementById('setWalletVodafone').value = s.walletVodafone || '';
+        document.getElementById('setWalletEtisalat').value = s.walletEtisalat || '';
+        document.getElementById('setWalletOrange').value = s.walletOrange || '';
         document.getElementById('setTopbarStatus').value = s.topbarStatus || '';
         document.getElementById('setTopbarHours').value = s.topbarHours || '';
         document.getElementById('setPromoEnabled').checked = !!s.promoEnabled;
@@ -1020,6 +1039,9 @@ function saveSettings(event){
         phone1: document.getElementById('setPhone1').value.trim(),
         phone2: document.getElementById('setPhone2').value.trim(),
         cartPhone: document.getElementById('setCartPhone').value.trim(),
+        walletVodafone: document.getElementById('setWalletVodafone').value.trim(),
+        walletEtisalat: document.getElementById('setWalletEtisalat').value.trim(),
+        walletOrange: document.getElementById('setWalletOrange').value.trim(),
         topbarStatus: document.getElementById('setTopbarStatus').value.trim(),
         topbarHours: document.getElementById('setTopbarHours').value.trim(),
         promoEnabled: document.getElementById('setPromoEnabled').checked,
@@ -1048,27 +1070,36 @@ function renderOrders(searchTerm){
 
     document.getElementById('ordersCount').textContent = `${rows.length} طلب`;
     const tbody = document.getElementById('ordersTableBody');
-    if (!rows.length){ tbody.innerHTML = `<tr class="empty-row"><td colspan="7">لا توجد طلبات بعد.</td></tr>`; return; }
+    if (!rows.length){ tbody.innerHTML = `<tr class="empty-row"><td colspan="8">لا توجد طلبات بعد.</td></tr>`; return; }
 
+    const paymentLabels = { cash:'كاش/تواصل', vodafone:'فودافون كاش', etisalat:'اتصالات كاش', orange:'أورانج كاش' };
     tbody.innerHTML = rows.map(([id, o]) => {
         const typeLabel = o.type === 'purchase' ? 'شراء' : 'صيانة';
+        const paymentCell = o.paymentMethod
+            ? `${paymentLabels[o.paymentMethod] || o.paymentMethod}${o.paymentRef ? '<br><span style="font-family:var(--font-mono);font-size:11px;color:var(--muted)">' + o.paymentRef + '</span>' : ''}`
+            : '—';
         const statusBadge = o.status === 'approved'
             ? `<span class="status-badge">تمت الموافقة</span>`
             : `<span class="status-badge offline">قيد المراجعة</span>`;
-        const approveBtn = o.status === 'approved' ? '' : `<button class="btn-edit-sm" onclick="approveOrder('${id}')"><i class="fa-solid fa-check"></i> موافقة</button>`;
+        const approveLabel = (o.paymentMethod && o.paymentMethod !== 'cash' && o.paymentStatus === 'awaiting_confirmation') ? 'تأكيد الدفع' : 'موافقة';
+        const approveBtn = o.status === 'approved' ? '' : `<button class="btn-edit-sm" onclick="approveOrder('${id}')"><i class="fa-solid fa-check"></i> ${approveLabel}</button>`;
         return `<tr>
             <td><span class="cat-chip">${typeLabel}</span></td>
             <td><strong>${o.customerName || '—'}</strong></td>
             <td>${o.phone || '—'}</td>
-            <td style="max-width:260px">${o.details || ''}</td>
+            <td style="max-width:220px">${o.details || ''}</td>
             <td class="price-chip">${o.total ? o.total + ' ج.م' : '—'}</td>
+            <td style="font-size:12px">${paymentCell}</td>
             <td>${statusBadge}</td>
             <td>${approveBtn}<button class="btn-danger-sm" onclick="deleteOrder('${id}')"><i class="fa-solid fa-trash"></i></button></td>
         </tr>`;
     }).join('');
 }
 function approveOrder(id){
-    db.collection('orders').doc(id).update({ status:'approved' }).then(() => showToast('تمت الموافقة على الطلب'));
+    const o = ordersCache[id];
+    const updates = { status:'approved' };
+    if (o && o.paymentMethod && o.paymentMethod !== 'cash') updates.paymentStatus = 'confirmed';
+    db.collection('orders').doc(id).update(updates).then(() => showToast('تم تأكيد الطلب'));
 }
 function deleteOrder(id){
     if (!confirm('حذف هذا الطلب نهائيًا؟')) return;
