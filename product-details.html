@@ -103,8 +103,8 @@
 <footer class="site-footer">
     <div class="footer-top">
         <div class="footer-brand">Pro<span>Tech</span></div>
-        <div class="footer-social">
-            <a href="https://wa.me/201000000000" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+        <div class="footer-social" id="footerSocial">
+            <a href="https://wa.me/201000000000" target="_blank" data-wa="phone1"><i class="fa-brands fa-whatsapp"></i></a>
             <a href="mailto:info@protech.com"><i class="fa-solid fa-envelope"></i></a>
             <a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
         </div>
@@ -121,8 +121,10 @@
         <button class="modal-close" onclick="closeConsultationModal()">&times;</button>
         <h3><i class="fa-solid fa-headset"></i> اختر رقم للتواصل عبر الواتساب</h3>
         <p>فريق الدعم الفني جاهز للإجابة على استفساراتك:</p>
-        <a class="wa-choice" href="https://wa.me/201000000000" target="_blank"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الأول</a>
-        <a class="wa-choice" href="https://wa.me/201111111111" target="_blank"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الثاني</a>
+        <div id="consultationNumbersList">
+        <a class="wa-choice" href="https://wa.me/201000000000" target="_blank" data-wa="phone1"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الأول</a>
+        <a class="wa-choice" href="https://wa.me/201111111111" target="_blank" data-wa="phone2"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الثاني</a>
+        </div>
     </div>
 </div>
 
@@ -132,6 +134,7 @@
         <h3><i class="fa-solid fa-screwdriver-wrench"></i> اطلب صيانة الآن</h3>
         <p>املأ البيانات دي وهيتفتحلك واتساب برسالة جاهزة نبعتها للأدمن مباشرة.</p>
         <form id="maintenanceForm" onsubmit="return sendMaintenanceRequest(event)">
+            <label>اسمك<input type="text" name="customerName" placeholder="الاسم بالكامل" required></label>
             <label>نوع الماكينة<input type="text" name="machine" placeholder="مثال: طابعة نافورة" required></label>
             <label>وصف المشكلة<textarea name="issue" rows="3" placeholder="اكتب المشكلة باختصار" required></textarea></label>
             <label>رقم التليفون<input type="tel" name="phone" placeholder="01xxxxxxxxx" required></label>
@@ -146,9 +149,14 @@
         <h3><i class="fa-solid fa-file-invoice"></i> فاتورة سلة المشتريات</h3>
         <div id="cartItemsContainer" class="cart-items"></div>
         <div class="cart-total"><span>الإجمالي الكلي:</span><span id="cartTotalPrice">0 ج.م</span></div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+            <input type="text" id="cartCustomerName" placeholder="اسمك بالكامل" style="padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);font-family:inherit;font-size:13.5px">
+            <input type="tel" id="cartCustomerPhone" placeholder="رقم تليفونك" style="padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);font-family:inherit;font-size:13.5px">
+        </div>
         <div class="cart-actions">
             <button onclick="downloadInvoice()" class="btn-action btn-blue"><i class="fa-solid fa-download"></i> تنزيل الفاتورة</button>
             <button onclick="checkoutToWhatsApp()" class="btn-action btn-green"><i class="fa-brands fa-whatsapp"></i> إتمام الشراء للأدمن</button>
+            <button onclick="clearCartItems()" class="btn-action" style="background:#e5484d"><i class="fa-solid fa-trash"></i> مسح السلة</button>
         </div>
     </div>
 </div>
@@ -216,7 +224,7 @@ if (!productId) {
                         <button class="btn btn-primary" onclick="addFromDetails('${safeTitle}', ${price})">
                             <i class="fa-solid fa-cart-plus"></i> أضف للسلة
                         </button>
-                        <a href="https://wa.me/201000000000?text=${encodeURIComponent('عايز أسأل عن: ' + (item.title || ''))}" target="_blank" class="btn btn-ghost" style="color:var(--charcoal);border-color:var(--line)">
+                        <a href="https://wa.me/${WHATSAPP_ADMIN}?text=${encodeURIComponent('عايز أسأل عن: ' + (item.title || ''))}" target="_blank" class="btn btn-ghost" style="color:var(--charcoal);border-color:var(--line)">
                             <i class="fa-brands fa-whatsapp"></i> اسأل عن المنتج
                         </a>
                     </div>
