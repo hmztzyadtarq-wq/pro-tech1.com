@@ -98,14 +98,30 @@ function closeConsultationModal(){ document.getElementById('consultationModal').
 function openMaintenanceModal(){ document.getElementById('maintenanceModal').classList.add('open'); }
 function closeMaintenanceModal(){ document.getElementById('maintenanceModal').classList.remove('open'); }
 
+/* ---------- حفظ الطلبات (تظهر لاحقًا في تبويب "الطلبات" بالأدمن) ---------- */
+function saveOrder(data){
+  if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return Promise.resolve();
+  return firebase.firestore().collection('orders').add({
+    ...data, status: 'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).catch((err) => console.error('saveOrder error:', err.message));
+}
+
 function sendMaintenanceRequest(event){
   event.preventDefault();
   const form = event.target;
+  const customerName = form.customerName.value.trim();
   const machine = form.machine.value.trim();
   const issue = form.issue.value.trim();
   const phone = form.phone.value.trim();
 
+  saveOrder({
+    type: 'maintenance',
+    customerName, phone,
+    details: `الماكينة: ${machine} — المشكلة: ${issue}`
+  });
+
   const message = `طلب صيانة جديد من موقع ProTech%0A` +
+    `اسم العميل: ${encodeURIComponent(customerName)}%0A` +
     `نوع الماكينة: ${encodeURIComponent(machine)}%0A` +
     `المشكلة: ${encodeURIComponent(issue)}%0A` +
     `رقم التواصل: ${encodeURIComponent(phone)}`;
@@ -167,11 +183,25 @@ function removeFromCart(idx){
   saveCart(cart);
   renderCart();
 }
+function clearCart(){
+  if (!getCart().length) return;
+  if (!confirm('تفريغ السلة بالكامل؟')) return;
+  saveCart([]);
+  renderCart();
+}
 function openCartModal(){
   renderCart();
   document.getElementById('cartModal').classList.add('open');
 }
 function closeCartModal(){ document.getElementById('cartModal').classList.remove('open'); }
+
+function clearCartItems(){
+  if (!getCart().length) return;
+  if (!confirm('هل تريد مسح كل محتويات السلة نهائيًا؟')) return;
+  localStorage.removeItem('protech_cart');
+  updateCartBadge();
+  renderCart();
+}
 
 function downloadInvoice(){
   const cart = getCart();
@@ -196,15 +226,36 @@ function downloadInvoice(){
 function checkoutToWhatsApp(){
   const cart = getCart();
   if (!cart.length){ alert('السلة فاضية، ضيف منتجات الأول.'); return; }
+
+  const nameInput = document.getElementById('cartCustomerName');
+  const phoneInput = document.getElementById('cartCustomerPhone');
+  const customerName = nameInput ? nameInput.value.trim() : '';
+  const customerPhone = phoneInput ? phoneInput.value.trim() : '';
+  if (nameInput && phoneInput && (!customerName || !customerPhone)){
+    alert('من فضلك اكتب اسمك ورقم تليفونك قبل إتمام الطلب.');
+    return;
+  }
+
   let total = 0;
+  const itemsList = [];
   let message = 'طلب شراء جديد من موقع ProTech%0A%0A';
+  if (customerName) message += `اسم العميل: ${encodeURIComponent(customerName)}%0A%0A`;
   cart.forEach(item => {
     const price = item.price || 0;
     const qty = item.qty || 1;
     total += price * qty;
+    itemsList.push(`${item.title} × ${qty} = ${price * qty} ج.م`);
     message += `${encodeURIComponent(item.title)} × ${qty} = ${price * qty} ج.م%0A`;
   });
   message += `%0Aالإجمالي: ${total} ج.م`;
+
+  saveOrder({
+    type: 'purchase',
+    customerName, phone: customerPhone,
+    details: itemsList.join(' | '),
+    total
+  });
+
   window.open(`https://wa.me/${WHATSAPP_ADMIN}?text=${message}`, '_blank');
 }
 
@@ -237,8 +288,35 @@ function applySiteSettings(){
     if (hoursEl && s.topbarHours) hoursEl.innerHTML = `<i class="fa-regular fa-clock"></i> ${s.topbarHours}`;
 
     if (s.promoEnabled && s.promoText) injectPromoBanner(s.promoText, s.promoLink);
-  }).catch(() => {});
+
+    // روابط التواصل في الفوتر — لو الأدمن ضاف قايمة مخصصة بتستبدل الافتراضية
+    if (Array.isArray(s.socialLinks) && s.socialLinks.length){
+      const box = document.getElementById('footerSocial');
+      if (box){
+        box.innerHTML = s.socialLinks.map(link => {
+          const icon = SOCIAL_ICON_MAP[link.platform] || 'fa-solid fa-link';
+          return `<a href="${link.url}" target="_blank"><i class="${icon}"></i></a>`;
+        }).join('');
+      }
+    }
+
+    // أرقام الاستشارة الفنية — لو الأدمن ضاف قايمة مخصصة بتستبدل الافتراضية
+    if (Array.isArray(s.consultationNumbers) && s.consultationNumbers.length){
+      const list = document.getElementById('consultationNumbersList');
+      if (list){
+        list.innerHTML = s.consultationNumbers.map(c =>
+          `<a class="wa-choice" href="https://wa.me/${c.phone}" target="_blank"><i class="fa-brands fa-whatsapp"></i> ${c.name || 'تواصل معنا'}</a>`
+        ).join('');
+      }
+    }
+  }).catch((err) => console.error('applySiteSettings error:', err.message));
 }
+
+const SOCIAL_ICON_MAP = {
+  whatsapp: 'fa-brands fa-whatsapp', facebook: 'fa-brands fa-facebook-f', instagram: 'fa-brands fa-instagram',
+  tiktok: 'fa-brands fa-tiktok', youtube: 'fa-brands fa-youtube', email: 'fa-solid fa-envelope',
+  website: 'fa-solid fa-globe', phone: 'fa-solid fa-phone'
+};
 
 function updateWaLink(el, phone){
   el.href = el.href.replace(/wa\.me\/\d+/, 'wa.me/' + phone);
@@ -274,7 +352,7 @@ function loadPageBanner(categoryName, applyFn){
   if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return;
   firebase.firestore().collection('site_media').where('category', '==', categoryName).limit(1).get()
     .then(snap => { if (!snap.empty) applyFn(snap.docs[0].data()); })
-    .catch(() => {});
+    .catch((err) => console.error('loadPageBanner error:', err.message));
 }
 
 /* ---------- معرض الشهادات في الصفحة الرئيسية (Firestore) ---------- */
@@ -298,7 +376,7 @@ function loadCertificatesGallery(){
         <span class="cap">${item.title || ''}</span>`;
       track.appendChild(div);
     });
-  });
+  }, (err) => console.error('loadCertificatesGallery error:', err.message));
 }
 
 /* ---------- Lightbox ---------- */
