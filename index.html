@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ProTech | بيع وصيانة ماكينات الطباعة وتوريد الأحبار</title>
-<meta name="description" content="ProTech لبيع وصيانة ماكينات الطباعة الرقمية وتوريد الأحبار الأصلية، بخبرة أكثر من 30 عام ودعم فني على مدار الساعة.">
+<meta name="description" content="ProTech لبيع وصيانة ماكينات الطباعة الرقمية وتوريد الأحبار الأصلية، بخبرة أكثر من ١٠ سنوات ودعم فني على مدار الساعة.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,13 +16,15 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="protech-core.js"></script>
-
-<!-- Firebase: لازمة عشان أرقام الواتساب وشريط الحالة والإعلانات تتحدث من الأدمن تلقائيًا -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script src="protech-core.js"></script>
 </head>
 <body>
+
+<!-- شريط تنبيه علوي صغير: حالة التوفر -->
+<div class="topbar">
+    <span class="topbar-status"><span class="dot"></span> متاحين الآن للرد على استفساراتكم</span>
+    <span class="topbar-hours"><i class="fa-regular fa-clock"></i> السبت - الخميس: ٩ص - ٨م</span>
+</div>
+
 <!-- الهيدر -->
 <header id="siteHeader">
     <div class="logo">Pro<span>Tech</span></div>
@@ -62,15 +64,15 @@
     <!-- ============ HERO ============ -->
     <section class="hero">
         <div class="hero-slides" id="heroSlides">
-             <div class="hero-slide active" id="heroSlideMain" style="background-image:linear-gradient(0deg, rgba(10,20,32,.78), rgba(10,20,32,.35)), url('2a3d56b1-927d-4837-a0cc-84f1d1292222.jpg')"></div>
-             <div class="hero-slide active" id="heroSlideMain" style="background-image:linear-gradient(0deg, rgba(10,20,32,.78), rgba(10,20,32,.35)), url('7f1b7bdf-986a-466f-a8ec-39da609bdb5d.jpg')"></div>
             <div class="hero-slide active" id="heroSlideMain" style="background-image:linear-gradient(0deg, rgba(10,20,32,.78), rgba(10,20,32,.35)), url('صور/WhatsApp Image 2026-08-09 at 2.35.41 PM.jpeg')"></div>
+            <div class="hero-slide slide-pattern slide-pattern-2"></div>
+            <div class="hero-slide slide-pattern slide-pattern-3"></div>
         </div>
         <div class="hero-dots-mark" aria-hidden="true"></div>
 
         <div class="hero-content reveal">
             <span class="eyebrow">ProTech · بيع وصيانة وأحبار أصلية</span>
-            <h1>خبرة أكتر من <span class="mono-accent">30</span> عام في صيانة وتوريد ماكينات الطباعة</h1>
+            <h1>خبرة أكتر من <span class="mono-accent">١٠</span> سنين في صيانة وتوريد ماكينات الطباعة</h1>
             <p>بيع ماكينات طباعة رقمية، صيانة ودعم فني متكامل، وتوريد أحبار وتونر أصلي لكل الأنواع — بضمان حقيقي ومتابعة لحد ما تشتغل الماكينة تمام.</p>
             <div class="hero-actions">
                 <a href="inks.html" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> تسوق الأحبار الآن</a>
@@ -246,7 +248,7 @@
 <footer class="site-footer">
     <div class="footer-top">
         <div class="footer-brand">Pro<span>Tech</span></div>
-        <div class="footer-social">
+        <div class="footer-social" id="footerSocial">
             <a href="https://wa.me/201000000000" target="_blank" data-wa="phone1"><i class="fa-brands fa-whatsapp"></i></a>
             <a href="mailto:info@protech.com"><i class="fa-solid fa-envelope"></i></a>
             <a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
@@ -266,8 +268,10 @@
         <button class="modal-close" onclick="closeConsultationModal()">&times;</button>
         <h3><i class="fa-solid fa-headset"></i> اختر رقم للتواصل عبر الواتساب</h3>
         <p>فريق الدعم الفني جاهز للإجابة على استفساراتك:</p>
+        <div id="consultationNumbersList">
         <a class="wa-choice" href="https://wa.me/201000000000" target="_blank" data-wa="phone1"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الأول</a>
         <a class="wa-choice" href="https://wa.me/201111111111" target="_blank" data-wa="phone2"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الثاني</a>
+        </div>
     </div>
 </div>
 
@@ -278,6 +282,9 @@
         <h3><i class="fa-solid fa-screwdriver-wrench"></i> اطلب صيانة الآن</h3>
         <p>املأ البيانات دي وهيتفتحلك واتساب برسالة جاهزة نبعتها للأدمن مباشرة.</p>
         <form id="maintenanceForm" onsubmit="return sendMaintenanceRequest(event)">
+            <label>اسمك
+                <input type="text" name="customerName" placeholder="الاسم بالكامل" required>
+            </label>
             <label>نوع الماكينة
                 <input type="text" name="machine" placeholder="مثال: طابعة ليزر ملونة" required>
             </label>
@@ -304,9 +311,14 @@
             <span>الإجمالي الكلي:</span>
             <span id="cartTotalPrice">0 ج.م</span>
         </div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+            <input type="text" id="cartCustomerName" placeholder="اسمك بالكامل" style="padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);font-family:inherit;font-size:13.5px">
+            <input type="tel" id="cartCustomerPhone" placeholder="رقم تليفونك" style="padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);font-family:inherit;font-size:13.5px">
+        </div>
         <div class="cart-actions">
             <button onclick="downloadInvoice()" class="btn-action btn-blue"><i class="fa-solid fa-download"></i> تنزيل الفاتورة</button>
             <button onclick="checkoutToWhatsApp()" class="btn-action btn-green"><i class="fa-brands fa-whatsapp"></i> إتمام الشراء للأدمن</button>
+            <button onclick="clearCartItems()" class="btn-action" style="background:#e5484d"><i class="fa-solid fa-trash"></i> مسح السلة</button>
         </div>
     </div>
 </div>
