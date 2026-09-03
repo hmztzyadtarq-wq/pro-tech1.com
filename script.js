@@ -191,9 +191,40 @@ function clearCart(){
 }
 function openCartModal(){
   renderCart();
+  renderPaymentOptions();
   document.getElementById('cartModal').classList.add('open');
 }
 function closeCartModal(){ document.getElementById('cartModal').classList.remove('open'); }
+
+const PAYMENT_LABELS = { cash:'الدفع عند الاستلام / تواصل مباشر', vodafone:'فودافون كاش', etisalat:'اتصالات كاش', orange:'أورانج كاش' };
+
+function renderPaymentOptions(){
+  const box = document.getElementById('paymentMethodBox');
+  if (!box) return;
+  box.innerHTML = `
+    <label class="pm-label">طريقة الدفع</label>
+    <div class="pm-options">
+      <label class="pm-choice"><input type="radio" name="paymentMethod" value="cash" checked onchange="updateWalletInfo()"> ${PAYMENT_LABELS.cash}</label>
+      <label class="pm-choice"><input type="radio" name="paymentMethod" value="vodafone" onchange="updateWalletInfo()"> ${PAYMENT_LABELS.vodafone}</label>
+      <label class="pm-choice"><input type="radio" name="paymentMethod" value="etisalat" onchange="updateWalletInfo()"> ${PAYMENT_LABELS.etisalat}</label>
+      <label class="pm-choice"><input type="radio" name="paymentMethod" value="orange" onchange="updateWalletInfo()"> ${PAYMENT_LABELS.orange}</label>
+    </div>
+    <div id="walletInfoBox" class="wallet-info-box" style="display:none"></div>`;
+}
+
+function updateWalletInfo(){
+  const method = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+  const box = document.getElementById('walletInfoBox');
+  if (method === 'cash' || !SITE_WALLETS[method]){
+    box.style.display = 'none';
+    box.innerHTML = '';
+    return;
+  }
+  box.style.display = 'block';
+  box.innerHTML = `
+    <p>حوّل المبلغ على رقم <b>${SITE_WALLETS[method]}</b> (${PAYMENT_LABELS[method]})، وبعدين اكتب رقمك اللي حوّلت منه تحت:</p>
+    <input type="tel" id="cartPaymentRef" placeholder="رقمك اللي حوّلت منه">`;
+}
 
 function clearCartItems(){
   if (!getCart().length) return;
@@ -236,10 +267,22 @@ function checkoutToWhatsApp(){
     return;
   }
 
+  const methodInput = document.querySelector('input[name="paymentMethod"]:checked');
+  const paymentMethod = methodInput ? methodInput.value : 'cash';
+  let paymentRef = '';
+  if (paymentMethod !== 'cash'){
+    const refInput = document.getElementById('cartPaymentRef');
+    paymentRef = refInput ? refInput.value.trim() : '';
+    if (!paymentRef){ alert('اكتب رقمك اللي حوّلت منه قبل تأكيد الطلب.'); return; }
+  }
+
   let total = 0;
   const itemsList = [];
   let message = 'طلب شراء جديد من موقع ProTech%0A%0A';
-  if (customerName) message += `اسم العميل: ${encodeURIComponent(customerName)}%0A%0A`;
+  if (customerName) message += `اسم العميل: ${encodeURIComponent(customerName)}%0A`;
+  message += `طريقة الدفع: ${encodeURIComponent(PAYMENT_LABELS[paymentMethod])}%0A`;
+  if (paymentRef) message += `رقم التحويل منه: ${encodeURIComponent(paymentRef)}%0A`;
+  message += '%0A';
   cart.forEach(item => {
     const price = item.price || 0;
     const qty = item.qty || 1;
@@ -253,7 +296,10 @@ function checkoutToWhatsApp(){
     type: 'purchase',
     customerName, phone: customerPhone,
     details: itemsList.join(' | '),
-    total
+    total,
+    paymentMethod,
+    paymentRef,
+    paymentStatus: paymentMethod === 'cash' ? 'not_required' : 'awaiting_confirmation'
   });
 
   window.open(`https://wa.me/${WHATSAPP_ADMIN}?text=${message}`, '_blank');
@@ -268,6 +314,8 @@ window.addEventListener('storage', (e) => { if (e.key === 'protech_cart') update
    وتتطبق على أي صفحة فيها فايربيز مُهيّأ بالفعل (بعد
    firebase.initializeApp). الصفحات اللي مفيهاش فايربيز أصلاً
    (زي index.html القديمة) هتحتاج تحميل مكتبات فايربيز الأول. */
+let SITE_WALLETS = {};
+
 function applySiteSettings(){
   if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return;
 
@@ -288,6 +336,8 @@ function applySiteSettings(){
     if (hoursEl && s.topbarHours) hoursEl.innerHTML = `<i class="fa-regular fa-clock"></i> ${s.topbarHours}`;
 
     if (s.promoEnabled && s.promoText) injectPromoBanner(s.promoText, s.promoLink);
+
+    SITE_WALLETS = { vodafone: s.walletVodafone || '', etisalat: s.walletEtisalat || '', orange: s.walletOrange || '' };
 
     // روابط التواصل في الفوتر — لو الأدمن ضاف قايمة مخصصة بتستبدل الافتراضية
     if (Array.isArray(s.socialLinks) && s.socialLinks.length){
