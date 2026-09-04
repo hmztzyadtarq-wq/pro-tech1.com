@@ -19,7 +19,10 @@
 </head>
 <body>
 
-
+<!-- شريط تنبيه علوي صغير: حالة التوفر -->
+<div class="topbar">
+    <span class="topbar-status"><span class="dot"></span> متاحين الآن للرد على استفساراتكم</span>
+    <span class="topbar-hours"><i class="fa-regular fa-clock"></i> السبت - الخميس: ٩ص - ٨م</span>
 </div>
 
 <!-- الهيدر -->
@@ -377,10 +380,11 @@ document.addEventListener('DOMContentLoaded', () => {
     loadPageBanner('banner_index', (item) => {
         if (item.title) document.querySelector('.hero-content h1').textContent = item.title;
         if (item.desc) document.querySelector('.hero-content p').textContent = item.desc;
-        if (item.imageUrl) {
-            const slide = document.getElementById('heroSlideMain');
-            if (slide) slide.style.backgroundImage = `linear-gradient(0deg, rgba(10,20,32,.78), rgba(10,20,32,.35)), url('${item.imageUrl}')`;
-        }
+        const images = [item.imageUrl, item.image2, item.image3].filter(Boolean);
+        const slides = document.querySelectorAll('.hero-slide');
+        images.forEach((url, i) => {
+            if (slides[i]) slides[i].style.backgroundImage = `linear-gradient(0deg, rgba(10,20,32,.78), rgba(10,20,32,.35)), url('${url}')`;
+        });
     });
 });
 </script>
