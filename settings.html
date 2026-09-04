@@ -1,224 +1,617 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-theme="light" data-lang="ar">
+<html lang="ar" dir="rtl" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProTech - إعدادات الموقع</title>
-    <!-- FontAwesome الأيقونات الاحترافية -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .settings-container {
-            max-width: 600px;
-            margin: 30px auto;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        .settings-container h2 {
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 8px;
-            font-size: 20px;
-            text-align: center;
-        }
-        .setting-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .setting-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        .setting-label {
-            font-weight: bold;
-            color: var(--text-color);
-            font-size: 15px;
-        }
-        .setting-control select, .setting-control button {
-            padding: 8px 15px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .setting-control button:hover {
-            border-color: var(--primary-color);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المكن | ProTech</title>
+
+<!--
+  ملحوظة: protech-core.js اتحمّل تحت في نهاية الصفحة بعد مكتبات
+  Firebase مباشرة (مش هنا) — عشان يشتغل صح من غير أخطاء، ولإنه دلوقتي
+  بيوفر كمان أرقام الواتساب وشريط الحالة العلوي اللي بيتحدثوا من الأدمن.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;800&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- نفس ملف التصميم المشترك مع باقي صفحات الموقع -->
+<link rel="stylesheet" href="style.css">
+
+<!--
+  ملحوظة: مسحت روابط responsive.css و dashboard.css من هنا لأن
+  style.css الجديد بقى متجاوب (Responsive) بيغطي كل المقاسات لوحده،
+  ولو الملفين دول فيهم تعديلات مهمة مش موجودة في التصميم الجديد
+  ابعتهاليّ نراجعها ونضيفها بدل ما نسيبها تتعارض مع بعض.
+-->
+
+<!-- تنسيقات خاصة بصفحة المكن فقط (فوق التصميم المشترك) -->
+<style>
+    .breadcrumb{
+        max-width:1180px; margin:18px auto 0; padding:0 28px;
+        font-family:var(--font-mono); font-size:12.5px; color:var(--muted);
+        display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+    }
+    .breadcrumb b{ color:var(--cyan); font-weight:600; }
+    .breadcrumb a{ color:var(--muted); cursor:pointer; }
+    .breadcrumb a:hover{ color:var(--cyan); }
+
+    .machine-hero{
+        max-width:1180px; margin:18px auto 0; padding:0 28px;
+    }
+    .machine-hero-inner{
+        display:flex; gap:24px; flex-wrap:wrap; align-items:stretch;
+        background:var(--ink-navy); border-radius:var(--radius); overflow:hidden;
+        background-image:radial-gradient(circle, rgba(255,255,255,.06) 1.4px, transparent 1.4px);
+        background-size:22px 22px;
+    }
+    .machine-hero-img{ flex:1.3; min-width:280px; position:relative; min-height:220px; }
+    .machine-hero-img img{ width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+    .machine-hero-img.img-fallback img{ display:none; }
+    .machine-hero-img.img-fallback::before{
+        content:''; position:absolute; inset:0;
+        background:linear-gradient(160deg,#14283d,#0b1622);
+    }
+    .machine-hero-img.img-fallback::after{
+        content:'\f02f'; font-family:'Font Awesome 6 Free'; font-weight:900;
+        position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+        font-size:44px; color:rgba(255,255,255,.18);
+    }
+    .machine-hero-text{
+        flex:1; min-width:240px; color:#EAF0F6; padding:26px 28px; display:flex; flex-direction:column; justify-content:center;
+    }
+    .machine-hero-text span.eyebrow{ color:var(--cyan); margin-bottom:10px; }
+    .machine-hero-text p{ color:#C4D0DB; font-size:14.5px; line-height:1.8; }
+
+    .section-title-row{
+        max-width:1180px; margin:44px auto 22px; padding:0 28px;
+        display:flex; align-items:center; justify-content:space-between;
+    }
+    .section-title-row h1, .section-title-row h2{ font-size:22px; text-align:right; }
+
+    .back-btn{
+        display:inline-flex; align-items:center; gap:8px;
+        background:var(--paper-2); border:1px solid var(--line); color:var(--charcoal);
+        padding:9px 16px; border-radius:999px; font-weight:700; font-size:13.5px;
+        margin-bottom:18px;
+    }
+    .back-btn:hover{ border-color:var(--cyan); color:var(--cyan); }
+
+    .machine-grid{
+        max-width:1180px; margin:0 auto; padding:0 28px 60px;
+        display:grid; grid-template-columns:repeat(5, 1fr); gap:18px;
+    }
+    .machine-card{
+        background:var(--paper-2); border:1px solid var(--line); border-top:4px solid var(--cyan);
+        border-radius:var(--radius); padding:26px 16px; text-align:center;
+        display:flex; flex-direction:column; align-items:center; gap:10px;
+        transition:.25s;
+    }
+    .machine-card:nth-child(4n+2){ border-top-color:var(--magenta); }
+    .machine-card:nth-child(4n+3){ border-top-color:var(--yellow); }
+    .machine-card:nth-child(4n+4){ border-top-color:var(--key); }
+    .machine-card:hover{ transform:translateY(-6px); box-shadow:var(--shadow); }
+    .machine-card .m-icon{
+        width:58px; height:58px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+        background:rgba(0,174,239,.1); color:var(--cyan); font-size:24px;
+    }
+    .machine-card h3{ font-size:15.5px; }
+
+    /* معرض الوسائط (صور/فيديوهات + تفاعل) */
+    .media-grid{
+        max-width:1180px; margin:0 auto; padding:0 28px 70px;
+        display:grid; grid-template-columns:repeat(auto-fill, minmax(270px,1fr)); gap:20px;
+    }
+    .media-card{
+        background:var(--paper-2); border:1px solid var(--line); border-radius:var(--radius);
+        overflow:hidden; box-shadow:var(--shadow-sm);
+    }
+    .media-card .media-thumb{ position:relative; height:180px; background:var(--ink-navy); cursor:zoom-in; }
+    .media-card .media-thumb img{ width:100%; height:100%; object-fit:cover; }
+    .media-card .media-thumb.img-fallback img{ display:none; }
+    .media-card .media-thumb.img-fallback::after{
+        content:'\f03e'; font-family:'Font Awesome 6 Free'; font-weight:900;
+        position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+        font-size:30px; color:rgba(255,255,255,.35);
+    }
+    .media-body{ padding:16px; }
+    .media-body h3{ font-size:15px; margin-bottom:4px; }
+    .media-body > p{ font-size:13px; color:var(--muted); margin-bottom:10px; }
+    .interaction-box{ display:flex; flex-direction:column; gap:8px; }
+    .interaction-box input{
+        padding:9px 10px; border:1px solid var(--line); border-radius:var(--radius-sm);
+        font-family:inherit; font-size:13.5px; background:var(--paper);
+    }
+    .like-btn{
+        align-self:flex-start; background:rgba(230,61,140,.1); color:var(--magenta);
+        border:none; padding:7px 14px; border-radius:999px; font-weight:700; font-size:13px;
+    }
+    .like-btn:hover{ background:rgba(230,61,140,.2); }
+    .comments-list{ font-size:12.5px; color:var(--muted); max-height:80px; overflow-y:auto; }
+    .comments-list div{ border-bottom:1px solid var(--line); padding:4px 0; }
+
+    /* بطاقات تحميل هيكلية (Skeleton) أثناء جلب البيانات من Firebase */
+    .skeleton-card{
+        background:var(--paper-2); border:1px solid var(--line); border-radius:var(--radius);
+        overflow:hidden; height:280px;
+    }
+    .skeleton-card .sk-thumb{ height:180px; background:linear-gradient(90deg, var(--line) 25%, #eef1f3 37%, var(--line) 63%); background-size:400% 100%; animation:shimmer 1.4s infinite; }
+    .skeleton-card .sk-line{ height:12px; margin:14px 16px; border-radius:6px; background:linear-gradient(90deg, var(--line) 25%, #eef1f3 37%, var(--line) 63%); background-size:400% 100%; animation:shimmer 1.4s infinite; }
+    @keyframes shimmer{ 0%{ background-position:100% 0; } 100%{ background-position:-100% 0; } }
+
+    .view-fade{ opacity:0; transform:translateY(10px); }
+    .view-fade.view-show{ opacity:1; transform:translateY(0); transition:opacity .4s ease, transform .4s ease; }
+
+    .empty-state{
+        grid-column:1 / -1; text-align:center; padding:50px 20px; color:var(--muted);
+    }
+    .empty-state i{ font-size:30px; margin-bottom:12px; color:var(--line); display:block; }
+
+    @media (max-width:980px){ .machine-grid{ grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:560px){ .machine-grid{ grid-template-columns:1fr 1fr; } .machine-hero-inner{ flex-direction:column; } }
+</style>
 </head>
 <body>
 
-    <!-- 1. شريط التنقل العلوي (الراس) -->
-    <header>
-        <div class="logo">ProTech</div>
-        <nav class="nav-icons">
-            <button onclick="window.location.href='index.html'" class="nav-btn" id="nav-home-btn">
-                <i class="fa-solid fa-house"></i>
-                <span data-i18n="nav_home">الرئيسية</span>
-            </button>
-            <button onclick="window.location.href='videos.html'" class="nav-btn" id="nav-videos-btn">
-                <i class="fa-solid fa-print"></i>
-                <span data-i18n="nav_videos">المكن</span>
-            </button>
-            <button onclick="window.location.href='inks.html'" class="nav-btn" id="nav-inks-btn">
-                <i class="fa-solid fa-droplet"></i>
-                <span>المتجر</span>
-            </button>
-            <button onclick="window.location.href='team.html'" class="nav-btn" id="nav-team-btn">
-                <i class="fa-solid fa-users-gear"></i>
-                <span data-i18n="nav_team">الفريق</span>
-            </button>
-            <button onclick="window.location.href='settings.html'" class="nav-btn active" id="nav-settings-btn">
-                <i class="fa-solid fa-gears"></i>
-                <span data-i18n="nav_settings">الإعدادات</span>
-            </button>
-        </nav>
+<!-- هيدر موحّد مع باقي صفحات الموقع -->
+<header id="siteHeader">
+    <div class="logo">Pro<span>Tech</span></div>
+    <nav class="nav-icons" id="mainNav">
+        <button onclick="location.href='index.html'" class="nav-btn"><i class="fa-solid fa-house"></i><span data-i18n="nav_home">الرئيسية</span></button>
+        <button onclick="location.href='videos.html'" class="nav-btn active"><i class="fa-solid fa-print"></i><span data-i18n="nav_machines">المكن</span></button>
+        <button onclick="location.href='inks.html'" class="nav-btn"><i class="fa-solid fa-droplet"></i><span data-i18n="nav_store">المتجر</span></button>
+        <button onclick="location.href='team.html'" class="nav-btn"><i class="fa-solid fa-users-gear"></i><span data-i18n="nav_team">الفريق</span></button>
+        <button onclick="location.href='settings.html'" class="nav-btn"><i class="fa-solid fa-gears"></i><span data-i18n="nav_settings">الإعدادات</span></button>
+    </nav>
+    <div class="header-actions">
         <button class="cart-trigger-btn" onclick="openCartModal()">
-            <i class="fa-solid fa-cart-shopping"></i> السلة (<span id="cart-count">0</span>)
+            <i class="fa-solid fa-cart-shopping"></i><span data-i18n="mp_cart">السلة</span><span class="cart-badge" id="cart-count">0</span>
         </button>
-    </header>
+        <button class="nav-toggle" id="navToggle" aria-label="فتح القائمة"><i class="fa-solid fa-bars"></i></button>
+    </div>
+</header>
 
-    <!-- المحتوى الرئيسي للإعدادات -->
-    <div class="container">
-        <div class="settings-container">
-            <h2><i class="fa-solid fa-gears"></i> إعدادات المظهر والتفضيلات</h2>
-            
-            <!-- اختيار مظهر الموقع (ليلي / نهاري) -->
-            <div class="setting-item">
-                <div class="setting-label">
-                    <i class="fa-solid fa-circle-half-stroke"></i> مظهر الموقع (المود)
-                </div>
-                <div class="setting-control">
-                    <button onclick="toggleTheme()" id="themeToggleBtn">الوضع الليلي / النهاري</button>
-                </div>
-            </div>
-
-            <!-- اختيار لغة الموقع -->
-            <div class="setting-item">
-                <div class="setting-label">
-                    <i class="fa-solid fa-language"></i> لغة الموقع (Language)
-                </div>
-                <div class="setting-control">
-                    <select id="langSelect" onchange="changeLanguage(this.value)">
-                        <option value="ar">العربية (Arabic)</option>
-                        <option value="en">الإنجليزية (English)</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- مسح بيانات السلة المحلية -->
-            <div class="setting-item">
-                <div class="setting-label">
-                    <i class="fa-solid fa-trash-can"></i> تفريغ سلة المشتريات المحفوظة
-                </div>
-                <div class="setting-control">
-                    <button onclick="clearStoreCart()" style="background-color: #ef4444; color: white; border: none;">مسح السلة</button>
-                </div>
-            </div>
-
+<!-- البانل الجانبي في الموبايل: تنقل + وضع ليلي + لغة + وصول سريع -->
+<div class="mobile-panel-overlay" id="mobilePanelOverlay" onclick="if(event.target===this) closeMobilePanel()">
+    <div class="mobile-panel">
+        <div class="mp-header">
+            <div class="logo">Pro<span>Tech</span></div>
+            <button class="mp-close" onclick="closeMobilePanel()">&times;</button>
         </div>
-    </div>
-
-    <!-- 2. أيقونات التواصل الثابتة أسفل اليسار -->
-    <div class="social-bar">
-        <a href="https://wa.me/201000000000" target="_blank" class="social-icon wa"><i class="fa-brands fa-whatsapp"></i></a>
-        <a href="mailto:info@protech.com" class="social-icon email-icon"><i class="fa-solid fa-envelope"></i></a>
-        <a href="https://facebook.com" target="_blank" class="social-icon fb"><i class="fa-brands fa-facebook-f"></i></a>
-    </div>
-
-    <!-- 3. زر الاستشارة الدائم أسفل اليمين -->
-    <button class="consultation-trigger" onclick="openConsultationModal()">
-        <i class="fa-solid fa-headset"></i> استشارة فنية
-    </button>
-
-    <!-- نافذة منبثقة لرقمين الواتساب -->
-    <div id="consultationModal" class="consultation-modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
-        <div class="consultation-content" style="background: var(--card-bg); padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center;">
-            <button class="close-modal" onclick="closeConsultationModal()" style="float: left; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-color);">&times;</button>
-            <h3 style="color: var(--primary-color); margin-bottom: 10px;">اختر رقم للتواصل عبر الواتساب</h3>
-            <p style="margin-bottom: 15px; font-size: 14px;">فريق الدعم الفني جاهز للإجابة على استفساراتك:</p>
-            <a href="https://wa.me/201000000000" target="_blank" style="display: block; background: #10b981; color: white; padding: 10px; border-radius: 6px; margin-bottom: 8px; text-decoration: none;"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الأول</a>
-            <a href="https://wa.me/201111111111" target="_blank" style="display: block; background: #10b981; color: white; padding: 10px; border-radius: 6px; text-decoration: none;"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الثاني</a>
-        </div>
-    </div>
-
-    <!-- نافذة سلة المشتريات والفاتورة -->
-    <div class="cart-modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
-        <div class="cart-modal-content" style="background: var(--card-bg); padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
-            <button class="close-modal" onclick="closeCartModal()" style="float: left; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-color);">&times;</button>
-            <h3 style="color: var(--primary-color); margin-bottom: 15px; text-align: center;"><i class="fa-solid fa-file-invoice"></i> فاتورة سلة المشتريات</h3>
-            <div id="cartItemsContainer" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;"></div>
-            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-bottom: 20px; border-top: 2px solid var(--border-color); padding-top: 10px;">
-                <span>الإجمالي الكلي:</span>
-                <span id="cartTotalPrice" style="color: var(--secondary-color);">0 ج.م</span>
+        <div class="mp-body">
+            <div class="mp-section">
+                <div class="mp-nav">
+                    <button onclick="location.href='index.html'"><i class="fa-solid fa-house"></i><span data-i18n="nav_home">الرئيسية</span></button>
+                    <button class="active" onclick="location.href='videos.html'"><i class="fa-solid fa-print"></i><span data-i18n="nav_machines">المكن</span></button>
+                    <button onclick="location.href='inks.html'"><i class="fa-solid fa-droplet"></i><span data-i18n="nav_store">المتجر</span></button>
+                    <button onclick="location.href='team.html'"><i class="fa-solid fa-users-gear"></i><span data-i18n="nav_team">الفريق</span></button>
+                    <button onclick="location.href='settings.html'"><i class="fa-solid fa-gears"></i><span data-i18n="nav_settings">الإعدادات</span></button>
+                </div>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <button onclick="downloadInvoice()" class="btn-action" style="flex: 1; background-color: #3b82f6; color: #fff; padding: 10px; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-download"></i> تنزيل الفاتورة</button>
-                <button onclick="checkoutToWhatsApp()" class="btn-action" style="flex: 1; background-color: #10b981; color: #fff; padding: 10px; border: none; border-radius: 6px; cursor: pointer;"><i class="fa-brands fa-whatsapp"></i> إتمام الشراء للأدمن</button>
+            <div class="mp-section">
+                <div class="mp-toggle-row">
+                    <span><i class="fa-solid fa-moon"></i> <span data-i18n="mp_dark_mode">الوضع الليلي</span></span>
+                    <button class="mp-switch" id="themeSwitch" onclick="toggleTheme()"></button>
+                </div>
+            </div>
+            <div class="mp-section">
+                <div class="mp-section-title" data-i18n="mp_language">اللغة</div>
+                <div class="mp-lang-options">
+                    <button class="mp-lang-btn active" data-lang="ar" onclick="setLanguage('ar')">العربية</button>
+                    <button class="mp-lang-btn" data-lang="en" onclick="setLanguage('en')">English</button>
+                    <button class="mp-lang-btn" disabled title="قريبًا">中文</button>
+                </div>
+            </div>
+            <div class="mp-section">
+                <div class="mp-section-title" data-i18n="mp_quick_actions">وصول سريع</div>
+                <div class="mp-quick-actions">
+                    <button onclick="closeMobilePanel(); openCartModal()"><i class="fa-solid fa-cart-shopping"></i> <span data-i18n="mp_cart">السلة</span> <span class="badge-mini" id="cart-count-mp">0</span></button>
+                    <button onclick="closeMobilePanel(); openConsultationModal()"><i class="fa-brands fa-whatsapp"></i> <span data-i18n="mp_whatsapp">تواصل واتساب</span></button>
+                    <button onclick="closeMobilePanel(); openMaintenanceModal()"><i class="fa-solid fa-screwdriver-wrench"></i> <span data-i18n="mp_maintenance">اطلب صيانة</span></button>
+                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- السكريبت الشامل -->
-    <script src="script.js"></script>
-    <script>
-        // دوال الاستشارة
-        function openConsultationModal() {
-            document.getElementById('consultationModal').style.display = 'flex';
-        }
-        function closeConsultationModal() {
-            document.getElementById('consultationModal').style.display = 'none';
-        }
+<!-- مسار التنقل: بيتحدث تلقائي حسب القسم اللي انت فيه -->
+<div class="breadcrumb" id="breadcrumb"><a onclick="location.href='index.html'">الرئيسية</a> / <b>المكن</b></div>
 
-        // دالة تبديل المود (ليلي / نهاري) وحفظها في المتصفح
-        function toggleTheme() {
-            const html = document.documentElement;
-            let currentTheme = html.getAttribute('data-theme');
-            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('protech_theme', newTheme);
-        }
+<!-- بانر القسم -->
+<div class="machine-hero">
+    <div class="machine-hero-inner">
+        <div class="machine-hero-img" id="bannerImgWrap">
+            <img src="https://via.placeholder.com/1200x300" alt="بانر المكن" id="bannerImg"
+                 onerror="this.closest('.machine-hero-img').classList.add('img-fallback')">
+        </div>
+        <div class="machine-hero-text">
+            <span class="eyebrow">قسم الماكينات</span>
+            <h2 id="bannerTitleText" style="color:#fff;font-size:19px;margin-bottom:8px;">أحدث ماكينات الطباعة الرقمية</h2>
+            <p id="bannerDescription">قسم ماكينات الطباعة المتطورة في شركة ProTech. استعرض أحدث التكنولوجيا العالمية في ماكينات الـ UV، الإكو سولفينت، الأوت دور، واللمينيشن والبلوتر بأعلى كفاءة تشغيلية.</p>
+        </div>
+    </div>
+</div>
 
-        // استرجاع المود واللغة المحفوظة عند فتح الصفحة
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('protech_theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
+<!-- القسم الرئيسي: 5 كروت للماكينات -->
+<div id="mainCategoriesView" class="view-fade view-show">
+    <div class="section-title-row"><h1>أقسام المكن والماكينات</h1></div>
+    <div class="machine-grid">
+        <button class="machine-card" data-cat="UV_MAIN" onclick="openUVCategories()">
+            <div class="m-icon"><i class="fa-solid fa-sun"></i></div>
+            <h3>ماكينات UV</h3>
+        </button>
+        <button class="machine-card" data-cat="إكو سولفينت" onclick="openDetailsPage('إكو سولفينت', 'ماكينات الإكو سولفينت المتميزة بدقة الألوان والطباعة على البانر والفينيل.')">
+            <div class="m-icon"><i class="fa-solid fa-flask"></i></div>
+            <h3>إكو سولفينت</h3>
+        </button>
+        <button class="machine-card" data-cat="أوت دور" onclick="openDetailsPage('أوت دور', 'ماكينات الأوت دور المصممة لتحمل العوامل الجوية والعمل المستمر للوحات الإعلانية.')">
+            <div class="m-icon"><i class="fa-solid fa-signs-post"></i></div>
+            <h3>أوت دور</h3>
+        </button>
+        <button class="machine-card" data-cat="لمينيشن" onclick="openDetailsPage('لمينيشن', 'ماكينات اللمنيشن والسلوفان الحراري لحماية المطبوعات وإعطائها لمسة احترافية.')">
+            <div class="m-icon"><i class="fa-solid fa-layer-group"></i></div>
+            <h3>لمينيشن</h3>
+        </button>
+        <button class="machine-card" data-cat="بلوتر / ولتريلوتر" onclick="openDetailsPage('بلوتر / ولتريلوتر', 'ماكينات القص والتشكيل المتقدمة للستيكر والفينيل بدقة مذهلة.')">
+            <div class="m-icon"><i class="fa-solid fa-scissors"></i></div>
+            <h3>بلوتر / ولتريلوتر</h3>
+        </button>
+    </div>
+</div>
 
-            const savedLang = localStorage.getItem('protech_lang') || 'ar';
-            document.documentElement.setAttribute('data-lang', savedLang);
-            const langSelect = document.getElementById('langSelect');
-            if(langSelect) langSelect.value = savedLang;
+<!-- تفريعات الـ UV (5 أنواع) -->
+<div id="uvSubCategoriesView" class="hidden view-fade">
+    <div class="section-title-row" style="justify-content:flex-start; gap:16px; flex-direction:column; align-items:flex-start;">
+        <button class="back-btn" onclick="goBackToMain()"><i class="fa-solid fa-arrow-right"></i> رجوع لأقسام المكن</button>
+        <h1>أنواع ماكينات الـ UV</h1>
+    </div>
+    <div class="machine-grid">
+        <button class="machine-card" data-cat="فلات بد UV" onclick="openSubDetailsPage('فلات بد UV')">
+            <div class="m-icon"><i class="fa-solid fa-table-cells"></i></div>
+            <h3>فلات بد (Flatbed)</h3>
+        </button>
+        <button class="machine-card" data-cat="رول تو رول UV" onclick="openSubDetailsPage('رول تو رول UV')">
+            <div class="m-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
+            <h3>رول تو رول</h3>
+        </button>
+        <button class="machine-card" data-cat="هيبير UV" onclick="openSubDetailsPage('هيبير UV')">
+            <div class="m-icon"><i class="fa-solid fa-shuffle"></i></div>
+            <h3>هيبرد (Hybrid)</h3>
+        </button>
+        <button class="machine-card" data-cat="DTF UV" onclick="openSubDetailsPage('DTF UV')">
+            <div class="m-icon"><i class="fa-solid fa-shirt"></i></div>
+            <h3>DTF</h3>
+        </button>
+        <button class="machine-card" data-cat="7 في 1 UV" onclick="openSubDetailsPage('7 في 1 UV')">
+            <div class="m-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+            <h3>7 في 1</h3>
+        </button>
+    </div>
+</div>
+
+<!-- صفحة عرض الصور والفيديوهات والتعليقات واللايكات -->
+<div id="dynamicMediaView" class="hidden view-fade">
+    <div class="section-title-row" style="justify-content:flex-start; gap:16px; flex-direction:column; align-items:flex-start;">
+        <button class="back-btn" onclick="goBackToPrevious()"><i class="fa-solid fa-arrow-right"></i> رجوع للخلف</button>
+        <div>
+            <h1 id="pageTitle">عنوان القسم</h1>
+            <p id="pageSubtitle" style="color:var(--muted); font-size:14px; margin-top:4px;"></p>
+        </div>
+    </div>
+    <div class="media-grid" id="mediaGalleryContainer"></div>
+</div>
+
+<!-- فوتر موحّد -->
+<footer class="site-footer">
+    <div class="footer-top">
+        <div class="footer-brand">Pro<span>Tech</span></div>
+        <div class="footer-social" id="footerSocial">
+            <a href="https://wa.me/201000000000" target="_blank" data-wa="phone1"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="mailto:info@protech.com"><i class="fa-solid fa-envelope"></i></a>
+            <a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+        </div>
+    </div>
+    <p class="footer-copy">© 2026 ProTech — جميع الحقوق محفوظة</p>
+</footer>
+
+<button class="consultation-trigger" onclick="openConsultationModal()">
+    <i class="fa-solid fa-headset"></i> استشارة فنية
+</button>
+
+<!-- نفس المودالات المستخدمة في باقي الموقع (استشارة / صيانة / سلة / صورة مكبرة) -->
+<div id="consultationModal" class="modal-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeConsultationModal()">&times;</button>
+        <h3><i class="fa-solid fa-headset"></i> اختر رقم للتواصل عبر الواتساب</h3>
+        <p>فريق الدعم الفني جاهز للإجابة على استفساراتك:</p>
+        <div id="consultationNumbersList">
+        <a class="wa-choice" href="https://wa.me/201000000000" target="_blank" data-wa="phone1"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الأول</a>
+        <a class="wa-choice" href="https://wa.me/201111111111" target="_blank" data-wa="phone2"><i class="fa-brands fa-whatsapp"></i> تواصل مع المهندس الثاني</a>
+        </div>
+    </div>
+</div>
+
+<div id="maintenanceModal" class="modal-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeMaintenanceModal()">&times;</button>
+        <h3><i class="fa-solid fa-screwdriver-wrench"></i> اطلب صيانة الآن</h3>
+        <p>املأ البيانات دي وهيتفتحلك واتساب برسالة جاهزة نبعتها للأدمن مباشرة.</p>
+        <form id="maintenanceForm" onsubmit="return sendMaintenanceRequest(event)">
+            <label>اسمك<input type="text" name="customerName" placeholder="الاسم بالكامل" required></label>
+            <label>نوع الماكينة<input type="text" name="machine" placeholder="مثال: طابعة UV فلات بد" required></label>
+            <label>وصف المشكلة<textarea name="issue" rows="3" placeholder="اكتب المشكلة باختصار" required></textarea></label>
+            <label>رقم التليفون<input type="tel" name="phone" placeholder="01xxxxxxxxx" required></label>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center"><i class="fa-brands fa-whatsapp"></i> إرسال الطلب عبر واتساب</button>
+        </form>
+    </div>
+</div>
+
+<div id="cartModal" class="modal-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeCartModal()">&times;</button>
+        <h3><i class="fa-solid fa-file-invoice"></i> فاتورة سلة المشتريات</h3>
+        <div id="cartItemsContainer" class="cart-items"></div>
+        <div class="cart-total"><span>الإجمالي الكلي:</span><span id="cartTotalPrice">0 ج.م</span></div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+            <input type="text" id="cartCustomerName" placeholder="اسمك بالكامل" style="padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);font-family:inherit;font-size:13.5px">
+            <input type="tel" id="cartCustomerPhone" placeholder="رقم تليفونك" style="padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);font-family:inherit;font-size:13.5px">
+        </div>
+        <div id="paymentMethodBox" style="margin-bottom:14px"></div>
+        <div class="cart-actions">
+            <button onclick="downloadInvoice()" class="btn-action btn-blue"><i class="fa-solid fa-download"></i> تنزيل الفاتورة</button>
+            <button onclick="checkoutToWhatsApp()" class="btn-action btn-green"><i class="fa-brands fa-whatsapp"></i> إتمام الشراء للأدمن</button>
+            <button onclick="clearCartItems()" class="btn-action" style="background:#e5484d"><i class="fa-solid fa-trash"></i> مسح السلة</button>
+        </div>
+    </div>
+</div>
+
+<div id="myLightbox" class="lightbox" onclick="closeLightbox()">
+    <span class="close-btn">&times;</span>
+    <img id="lightboxImg" src="" alt="صورة مكبرة">
+</div>
+
+<!-- Firebase (نفس الإعداد الأصلي بدون أي تغيير) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<!-- بعد ما Firebase بقى متحمّل، دلوقتي ينفع نحمّل protech-core.js بأمان
+     (بيوفر أرقام الواتساب وشريط الحالة العلوي اللي بيتحدثوا من الأدمن) -->
+<script src="protech-core.js"></script>
+
+<!-- التصميم المشترك (هيدر/فوتر/مودالات/أنيميشن) -->
+<script src="script.js"></script>
+
+<!-- كود الصفحة: نفس منطق العرض والتفريعات وربط Firebase الأصلي، بدون أي تغيير في البيانات أو أسماء الدوال -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const firebaseConfig = {
+        apiKey: "AIzaSyBzFacVVTAe2fMvCDXwexfd6Wi7cI7_1gc",
+        authDomain: "bro-tech-mane.firebaseapp.com",
+        projectId: "bro-tech-mane",
+        storageBucket: "bro-tech-mane.firebasestorage.app",
+        messagingSenderId: "391259453925",
+        appId: "1:391259453925:web:0fdf19af7e23d469bb970c",
+        measurementId: "G-467280QJFT"
+    };
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    // تطبيق إعدادات الموقع العامة (أرقام واتساب/البار/الإعلانات) بمجرد جاهزية فايربيز
+    if (typeof applySiteSettings === 'function') applySiteSettings();
+    if (typeof applyCategoryImages === 'function') applyCategoryImages();
+    if (typeof loadPageBanner === 'function') {
+        loadPageBanner('banner_videos', (item) => {
+            if (item.title) document.getElementById('bannerTitleText').textContent = item.title;
+            if (item.desc) document.getElementById('bannerDescription').textContent = item.desc;
+            if (item.imageUrl) document.getElementById('bannerImg').src = item.imageUrl;
         });
+    }
+});
 
-        // دالة تغيير اللغة
-        function changeLanguage(lang) {
-            document.documentElement.setAttribute('data-lang', lang);
-            localStorage.setItem('protech_lang', lang);
-            alert(lang === 'ar' ? 'تم تغيير لغة الموقع إلى العربية' : 'Website language changed to English');
+const mainView = document.getElementById('mainCategoriesView');
+const uvSubView = document.getElementById('uvSubCategoriesView');
+const mediaView = document.getElementById('dynamicMediaView');
+const breadcrumb = document.getElementById('breadcrumb');
+let currentMode = 'main';
+
+/* تأثير ظهور بسيط عند تبديل الأقسام — إضافة بصرية فقط، مش بتغيّر منطق العرض */
+function showView(el) {
+    el.classList.remove('hidden');
+    el.classList.remove('view-show');
+    requestAnimationFrame(() => el.classList.add('view-show'));
+}
+function hideView(el) {
+    el.classList.add('hidden');
+    el.classList.remove('view-show');
+}
+
+function setBreadcrumb(path) {
+    // path: مصفوفة نصوص، آخر عنصر هو القسم الحالي
+    const links = ['<a onclick="location.href=\'index.html\'">الرئيسية</a>', '<a onclick="goBackToMain()">المكن</a>'];
+    const trail = links.concat(path.slice(0, -1).map(p => `<span>${p}</span>`));
+    breadcrumb.innerHTML = trail.join(' / ') + (path.length ? ' / <b>' + path[path.length - 1] + '</b>' : '');
+}
+
+function openUVCategories() {
+    hideView(mainView);
+    showView(uvSubView);
+    hideView(mediaView);
+    currentMode = 'uv';
+    setBreadcrumb(['UV']);
+}
+
+function goBackToMain() {
+    showView(mainView);
+    hideView(uvSubView);
+    hideView(mediaView);
+    currentMode = 'main';
+    setBreadcrumb([]);
+}
+
+function goBackToPrevious() {
+    if (currentMode === 'uv-sub') {
+        showView(uvSubView);
+        hideView(mediaView);
+        currentMode = 'uv';
+        setBreadcrumb(['UV']);
+    } else {
+        showView(mainView);
+        hideView(mediaView);
+        currentMode = 'main';
+        setBreadcrumb([]);
+    }
+}
+
+function openDetailsPage(title, description) {
+    hideView(mainView);
+    hideView(uvSubView);
+    showView(mediaView);
+    currentMode = 'main-sub';
+
+    document.getElementById('pageTitle').innerText = title;
+    document.getElementById('pageSubtitle').innerText = description;
+    setBreadcrumb([title]);
+    loadMediaItems(title);
+}
+
+function openSubDetailsPage(subTitle) {
+    hideView(uvSubView);
+    showView(mediaView);
+    currentMode = 'uv-sub';
+
+    document.getElementById('pageTitle').innerText = subTitle;
+    document.getElementById('pageSubtitle').innerText = 'استعرض أحدث موديلات وصور وفيديوهات ' + subTitle;
+    setBreadcrumb(['UV', subTitle]);
+    loadMediaItems(subTitle);
+}
+
+/* هيكل تحميل مؤقت (Skeleton) بدل نص "جاري التحميل" العادي */
+function renderSkeleton(container, count = 4) {
+    container.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+        const sk = document.createElement('div');
+        sk.className = 'skeleton-card';
+        sk.innerHTML = `<div class="sk-thumb"></div><div class="sk-line" style="width:60%"></div><div class="sk-line" style="width:40%"></div>`;
+        container.appendChild(sk);
+    }
+}
+
+function loadMediaItems(categoryName) {
+    const container = document.getElementById('mediaGalleryContainer');
+    renderSkeleton(container);
+
+    const db = firebase.firestore();
+    db.collection("site_media").where("category", "==", categoryName).onSnapshot((snapshot) => {
+        container.innerHTML = '';
+        if (snapshot.empty) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-regular fa-images"></i>
+                    لا توجد عناصر مضافة حالياً في هذا القسم.
+                </div>`;
+            return;
         }
+        snapshot.forEach((doc) => {
+            const item = doc.data();
+            const id = doc.id;
+            const div = document.createElement('div');
+            div.className = 'media-card';
 
-        // دالة مسح السلة من الإعدادات
-        function clearStoreCart() {
-            if(confirm('هل أنت متأكد من تفريغ سلة المشتريات بالكامل؟')) {
-                localStorage.removeItem('protech_cart');
-                cartItems = [];
-                updateCartUI();
-                alert('تم تفريغ السلة بنجاح.');
+            // 🎥 لو فيه صورة وفيديو مع بعض، يتعرضوا جنب بعض؛ لو واحد بس، يتعرض لوحده
+            const hasImage = item.imageUrl && item.imageUrl.trim() !== '';
+            const hasVideo = item.videoUrl && item.videoUrl.trim() !== '';
+            let mediaHTML = '';
+            if (hasImage && hasVideo) {
+                mediaHTML = `
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;height:180px">
+                        <div class="media-thumb" style="height:180px" onclick="openLightbox('${item.imageUrl}')">
+                            <img src="${item.imageUrl}" alt="${item.title || 'صورة'}" onerror="this.closest('.media-thumb').classList.add('img-fallback')">
+                        </div>
+                        <video controls style="width:100%;height:180px;object-fit:cover"><source src="${item.videoUrl}" type="video/mp4"></video>
+                    </div>`;
+            } else if (hasVideo) {
+                mediaHTML = `<video controls style="width:100%;height:180px;object-fit:cover"><source src="${item.videoUrl}" type="video/mp4"></video>`;
+            } else {
+                mediaHTML = `
+                    <div class="media-thumb" onclick="openLightbox('${item.imageUrl || ''}')">
+                        <img src="${item.imageUrl || 'https://via.placeholder.com/280'}" alt="${item.title || 'صورة'}"
+                             onerror="this.closest('.media-thumb').classList.add('img-fallback')">
+                    </div>`;
             }
+
+            const commentsCount = (item.comments || []).length;
+            div.innerHTML = `
+                ${mediaHTML}
+                <div class="media-body">
+                    <h3>${item.title || 'موديل جديد'}</h3>
+                    <p>${item.desc || ''}</p>
+                    <div class="interaction-box">
+                        <button class="like-btn" onclick="toggleLike('${id}', '${(item.title||'').replace(/'/g,"\\'")}', this)">
+                            <i class="fa-solid fa-heart"></i> إعجاب (<span id="likes-${id}">${item.likes || 0}</span>)
+                        </button>
+                        <button class="btn btn-ghost" style="justify-content:center;color:var(--muted);border-color:var(--line);font-size:12.5px" onclick="toggleComments('${id}')">
+                            <i class="fa-regular fa-comment"></i> <span id="comments-toggle-label-${id}">عرض التعليقات (${commentsCount})</span>
+                        </button>
+                        <div id="comments-box-${id}" class="hidden">
+                            <input type="text" id="comment-input-${id}" placeholder="اكتب تعليقك هنا...">
+                            <button class="btn btn-ghost" style="justify-content:center;color:var(--charcoal);border-color:var(--line);margin-top:6px" onclick="addComment('${id}')">إرسال التعليق</button>
+                            <div id="comments-list-${id}" class="comments-list" style="margin-top:8px">${formatComments(item.comments)}</div>
+                        </div>
+                    </div>
+                </div>`;
+            container.appendChild(div);
+        });
+    });
+}
+
+function toggleComments(id){
+    const box = document.getElementById(`comments-box-${id}`);
+    const label = document.getElementById(`comments-toggle-label-${id}`);
+    const isHidden = box.classList.contains('hidden');
+    box.classList.toggle('hidden');
+    if (label) {
+        const count = box.querySelectorAll('.comments-list > div').length;
+        label.textContent = isHidden ? 'إخفاء التعليقات' : `عرض التعليقات`;
+    }
+}
+
+function toggleLike(docId, title, btnEl) {
+    if (typeof toggleLikeItem !== 'function') return;
+    toggleLikeItem(docId, title, 'machine', (liked) => {
+        const span = document.getElementById(`likes-${docId}`);
+        if (span) span.textContent = (parseInt(span.textContent, 10) || 0) + (liked ? 1 : -1);
+    });
+}
+
+function addComment(docId) {
+    if (!requireLogin('تكتب تعليق')) return;
+    const input = document.getElementById(`comment-input-${docId}`);
+    const commentText = input.value.trim();
+    if (!commentText) return;
+
+    const authorEmail = getCurrentUser()?.email || 'زائر';
+    const db = firebase.firestore();
+    db.collection("site_media").doc(docId).get().then((doc) => {
+        if (doc.exists) {
+            const data = doc.data();
+            let comments = data.comments || [];
+            comments.push({ text: commentText, author: authorEmail });
+            db.collection("site_media").doc(docId).update({ comments: comments }).then(() => {
+                input.value = '';
+            });
         }
-    </script>
-    <script type="module" src="firebase.js"></script>
-<script type="module" src="script.js"></script>
+    });
+}
+
+function formatComments(commentsArray) {
+    if (!commentsArray || commentsArray.length === 0) return '<em>لا توجد تعليقات بعد.</em>';
+    return commentsArray.map(c => {
+        // يدعم الشكل القديم (نص بسيط) والجديد ({text, author}) مع بعض
+        if (typeof c === 'string') return `<div>• ${c}</div>`;
+        return `<div>• ${c.text} <span style="color:var(--muted);font-size:11px">(${c.author || 'زائر'})</span></div>`;
+    }).join('');
+}
+</script>
 </body>
 </html>
