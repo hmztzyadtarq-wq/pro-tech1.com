@@ -7,22 +7,83 @@
 
 let WHATSAPP_ADMIN = "201000000000"; // قيمة افتراضية — بتتغير تلقائيًا لو فيه رقم محفوظ في إعدادات الأدمن
 
-/* ---------- الهيدر: ظل عند التمرير + قائمة الموبايل ---------- */
+/* ---------- الهيدر: ظل عند التمرير ---------- */
 const header = document.getElementById('siteHeader');
-const navToggle = document.getElementById('navToggle');
-const mainNav = document.getElementById('mainNav');
-
 window.addEventListener('scroll', () => {
   header.classList.toggle('scrolled', window.scrollY > 10);
 });
 
-navToggle?.addEventListener('click', () => mainNav.classList.toggle('open'));
+/* ---------- البانل الجانبي في الموبايل (يفتح من زرار الهمبرجر) ---------- */
+function openMobilePanel(){ document.getElementById('mobilePanelOverlay')?.classList.add('open'); }
+function closeMobilePanel(){ document.getElementById('mobilePanelOverlay')?.classList.remove('open'); }
+document.getElementById('navToggle')?.addEventListener('click', openMobilePanel);
 
-/* ---------- الثيم: يقرأ اختيار المستخدم المحفوظ من صفحة الإعدادات ---------- */
-(function applySavedTheme(){
-  const saved = localStorage.getItem('protech-theme');
-  if (saved) document.documentElement.setAttribute('data-theme', saved);
-})();
+/* ---------- الوضع الليلي/النهاري ---------- */
+function applySavedTheme(){
+  const saved = localStorage.getItem('protech-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  updateThemeSwitchUI(saved);
+}
+function toggleTheme(){
+  const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('protech-theme', next);
+  updateThemeSwitchUI(next);
+}
+function updateThemeSwitchUI(theme){
+  const sw = document.getElementById('themeSwitch');
+  if (sw) sw.classList.toggle('on', theme === 'dark');
+}
+applySavedTheme();
+
+/* ---------- اللغة (عربي / إنجليزي — الصينية تُضاف لاحقًا) ---------- */
+const TRANSLATIONS = {
+  ar: {
+    nav_home:'الرئيسية', nav_machines:'المكن', nav_store:'المتجر', nav_team:'الفريق', nav_settings:'الإعدادات',
+    hero_eyebrow:'ProTech · بيع وصيانة وأحبار أصلية',
+    hero_title:'خبرة أكتر من ١٠ سنين في صيانة وتوريد ماكينات الطباعة',
+    hero_desc:'بيع ماكينات طباعة رقمية، صيانة ودعم فني متكامل، وتوريد أحبار وتونر أصلي لكل الأنواع — بضمان حقيقي ومتابعة لحد ما تشتغل الماكينة تمام.',
+    hero_cta_shop:'تسوق الأحبار الآن', hero_cta_consult:'اطلب استشارة فنية',
+    quick_title:'محتاج إيه دلوقتي؟', quick_inks:'تسوق الأحبار', quick_machines:'شوف الماكينات',
+    quick_maintenance:'اطلب صيانة دلوقتي', quick_team:'تعرف على فريقنا',
+    services_title:'كل احتياجاتك تحت سقف واحد',
+    faq_title:'أسئلة شائعة',
+    mp_dark_mode:'الوضع الليلي', mp_language:'اللغة', mp_quick_actions:'وصول سريع',
+    mp_cart:'السلة', mp_whatsapp:'تواصل واتساب', mp_maintenance:'اطلب صيانة'
+  },
+  en: {
+    nav_home:'Home', nav_machines:'Machines', nav_store:'Store', nav_team:'Team', nav_settings:'Settings',
+    hero_eyebrow:'ProTech · Sales, Service & Genuine Ink',
+    hero_title:'10+ Years of Experience in Printer Sales & Maintenance',
+    hero_desc:'Digital printing machines for sale, full technical support and maintenance, and genuine ink & toner for every type — with real warranty and follow-up until your machine runs perfectly.',
+    hero_cta_shop:'Shop Ink Now', hero_cta_consult:'Request Technical Consultation',
+    quick_title:'What do you need right now?', quick_inks:'Shop Ink', quick_machines:'View Machines',
+    quick_maintenance:'Request Maintenance', quick_team:'Meet Our Team',
+    services_title:'Everything You Need Under One Roof',
+    faq_title:'Frequently Asked Questions',
+    mp_dark_mode:'Dark Mode', mp_language:'Language', mp_quick_actions:'Quick Access',
+    mp_cart:'Cart', mp_whatsapp:'WhatsApp Us', mp_maintenance:'Request Maintenance'
+  }
+};
+
+function applyLanguage(lang){
+  const dict = TRANSLATIONS[lang] || TRANSLATIONS.ar;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (dict[key]) el.textContent = dict[key];
+  });
+  document.documentElement.setAttribute('lang', lang === 'en' ? 'en' : 'ar');
+  document.documentElement.setAttribute('dir', lang === 'en' ? 'ltr' : 'rtl');
+  document.querySelectorAll('.mp-lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  localStorage.setItem('protech-lang', lang);
+}
+function setLanguage(lang){ applyLanguage(lang); }
+function applySavedLanguage(){
+  const saved = localStorage.getItem('protech-lang') || 'ar';
+  applyLanguage(saved);
+}
+applySavedLanguage();
 
 /* ---------- Reveal on scroll ---------- */
 const revealObserver = new IntersectionObserver((entries) => {
@@ -147,8 +208,11 @@ function saveCart(cart){
 }
 function updateCartBadge(){
   const cart = getCart();
+  const count = cart.reduce((sum, i) => sum + (i.qty || 1), 0);
   const badge = document.getElementById('cart-count');
-  if (badge) badge.textContent = cart.reduce((sum, i) => sum + (i.qty || 1), 0);
+  if (badge) badge.textContent = count;
+  const badgeMp = document.getElementById('cart-count-mp');
+  if (badgeMp) badgeMp.textContent = count;
 }
 function renderCart(){
   const cart = getCart();
@@ -196,34 +260,91 @@ function openCartModal(){
 }
 function closeCartModal(){ document.getElementById('cartModal').classList.remove('open'); }
 
-const PAYMENT_LABELS = { cash:'الدفع عند الاستلام / تواصل مباشر', vodafone:'فودافون كاش', etisalat:'اتصالات كاش', orange:'أورانج كاش' };
+const PAYMENT_METHOD_LABELS = { cash:'الدفع عند الاستلام', wallet:'محفظة إلكترونية', card:'فيزا / بطاقة' };
+const WALLET_LABELS = { vodafone:'فودافون كاش', etisalat:'اتصالات كاش', orange:'أورانج كاش' };
+
+let selectedPaymentMethod = 'cash';
+let selectedWalletProvider = null;
 
 function renderPaymentOptions(){
   const box = document.getElementById('paymentMethodBox');
   if (!box) return;
+  selectedPaymentMethod = 'cash';
+  selectedWalletProvider = null;
   box.innerHTML = `
     <label class="pm-label">طريقة الدفع</label>
-    <div class="pm-options">
-      <label class="pm-choice"><input type="radio" name="paymentMethod" value="cash" checked onchange="updateWalletInfo()"> ${PAYMENT_LABELS.cash}</label>
-      <label class="pm-choice"><input type="radio" name="paymentMethod" value="vodafone" onchange="updateWalletInfo()"> ${PAYMENT_LABELS.vodafone}</label>
-      <label class="pm-choice"><input type="radio" name="paymentMethod" value="etisalat" onchange="updateWalletInfo()"> ${PAYMENT_LABELS.etisalat}</label>
-      <label class="pm-choice"><input type="radio" name="paymentMethod" value="orange" onchange="updateWalletInfo()"> ${PAYMENT_LABELS.orange}</label>
+    <div class="pm-cards">
+      <button type="button" class="pm-card active" data-method="cash" onclick="selectPaymentMethod('cash')">
+        <i class="fa-solid fa-truck-fast"></i><span>${PAYMENT_METHOD_LABELS.cash}</span>
+      </button>
+      <button type="button" class="pm-card" data-method="wallet" onclick="selectPaymentMethod('wallet')">
+        <i class="fa-solid fa-wallet"></i><span>${PAYMENT_METHOD_LABELS.wallet}</span>
+      </button>
+      <button type="button" class="pm-card" data-method="card" onclick="selectPaymentMethod('card')">
+        <i class="fa-solid fa-credit-card"></i><span>${PAYMENT_METHOD_LABELS.card}</span>
+      </button>
     </div>
-    <div id="walletInfoBox" class="wallet-info-box" style="display:none"></div>`;
+    <div id="paymentDetailBox"></div>`;
+  renderPaymentDetail();
 }
 
-function updateWalletInfo(){
-  const method = document.querySelector('input[name="paymentMethod"]:checked')?.value;
-  const box = document.getElementById('walletInfoBox');
-  if (method === 'cash' || !SITE_WALLETS[method]){
-    box.style.display = 'none';
-    box.innerHTML = '';
+function selectPaymentMethod(method){
+  selectedPaymentMethod = method;
+  selectedWalletProvider = null;
+  document.querySelectorAll('.pm-card').forEach(c => c.classList.toggle('active', c.dataset.method === method));
+  renderPaymentDetail();
+}
+
+function renderPaymentDetail(){
+  const box = document.getElementById('paymentDetailBox');
+  if (!box) return;
+
+  if (selectedPaymentMethod === 'cash'){
+    box.innerHTML = `<p class="pm-note"><i class="fa-solid fa-circle-check"></i> هتدفع نقدًا وقت الاستلام مباشرة.</p>`;
+  } else if (selectedPaymentMethod === 'card'){
+    box.innerHTML = `<p class="pm-note"><i class="fa-solid fa-circle-info"></i> بعد تأكيد الطلب، هيتواصل معاك فريقنا على واتساب برابط دفع آمن بالفيزا.</p>`;
+  } else if (selectedPaymentMethod === 'wallet'){
+    box.innerHTML = `
+      <div class="wallet-providers">
+        <button type="button" class="wp-chip" data-provider="vodafone" onclick="selectWalletProvider('vodafone')"><i class="fa-solid fa-wallet" style="color:#e60000"></i> فودافون كاش</button>
+        <button type="button" class="wp-chip" data-provider="etisalat" onclick="selectWalletProvider('etisalat')"><i class="fa-solid fa-wallet" style="color:#00a651"></i> اتصالات كاش</button>
+        <button type="button" class="wp-chip" data-provider="orange" onclick="selectWalletProvider('orange')"><i class="fa-solid fa-wallet" style="color:#ff7900"></i> أورانج كاش</button>
+      </div>
+      <div id="walletStepsBox"></div>`;
+  }
+}
+
+function selectWalletProvider(provider){
+  selectedWalletProvider = provider;
+  document.querySelectorAll('.wp-chip').forEach(c => c.classList.toggle('active', c.dataset.provider === provider));
+
+  const number = SITE_WALLETS[provider];
+  const stepsBox = document.getElementById('walletStepsBox');
+  if (!number){
+    stepsBox.innerHTML = `<p class="pm-note" style="color:var(--danger)"><i class="fa-solid fa-triangle-exclamation"></i> لسه مفيش رقم ${WALLET_LABELS[provider]} متاح، اختار طريقة تانية.</p>`;
     return;
   }
-  box.style.display = 'block';
-  box.innerHTML = `
-    <p>حوّل المبلغ على رقم <b>${SITE_WALLETS[method]}</b> (${PAYMENT_LABELS[method]})، وبعدين اكتب رقمك اللي حوّلت منه تحت:</p>
-    <input type="tel" id="cartPaymentRef" placeholder="رقمك اللي حوّلت منه">`;
+  stepsBox.innerHTML = `
+    <div class="pm-steps">
+      <div class="pm-step">
+        <span class="step-num">1</span>
+        <div>حوّل المبلغ على رقم <b class="mono-num">${number}</b> (${WALLET_LABELS[provider]})
+          <button type="button" class="copy-btn" onclick="copyWalletNumber(this,'${number}')"><i class="fa-solid fa-copy"></i> نسخ</button>
+        </div>
+      </div>
+      <div class="pm-step">
+        <span class="step-num">2</span>
+        <div><input type="tel" id="cartPaymentRef" placeholder="اكتب رقمك اللي حوّلت منه"></div>
+      </div>
+    </div>`;
+}
+
+function copyWalletNumber(btn, number){
+  navigator.clipboard.writeText(number).then(() => {
+    const original = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> اتنسخ';
+    setTimeout(() => btn.innerHTML = original, 1800);
+  });
 }
 
 function clearCartItems(){
@@ -267,20 +388,27 @@ function checkoutToWhatsApp(){
     return;
   }
 
-  const methodInput = document.querySelector('input[name="paymentMethod"]:checked');
-  const paymentMethod = methodInput ? methodInput.value : 'cash';
   let paymentRef = '';
-  if (paymentMethod !== 'cash'){
+  let paymentLabel = PAYMENT_METHOD_LABELS.cash;
+  let paymentStatus = 'not_required';
+
+  if (selectedPaymentMethod === 'wallet'){
+    if (!selectedWalletProvider){ alert('اختار نوع المحفظة الأول.'); return; }
     const refInput = document.getElementById('cartPaymentRef');
     paymentRef = refInput ? refInput.value.trim() : '';
     if (!paymentRef){ alert('اكتب رقمك اللي حوّلت منه قبل تأكيد الطلب.'); return; }
+    paymentLabel = `محفظة إلكترونية — ${WALLET_LABELS[selectedWalletProvider]}`;
+    paymentStatus = 'awaiting_confirmation';
+  } else if (selectedPaymentMethod === 'card'){
+    paymentLabel = 'فيزا / بطاقة (هيتواصل معاك فريقنا برابط دفع آمن)';
+    paymentStatus = 'awaiting_link';
   }
 
   let total = 0;
   const itemsList = [];
   let message = 'طلب شراء جديد من موقع ProTech%0A%0A';
   if (customerName) message += `اسم العميل: ${encodeURIComponent(customerName)}%0A`;
-  message += `طريقة الدفع: ${encodeURIComponent(PAYMENT_LABELS[paymentMethod])}%0A`;
+  message += `طريقة الدفع: ${encodeURIComponent(paymentLabel)}%0A`;
   if (paymentRef) message += `رقم التحويل منه: ${encodeURIComponent(paymentRef)}%0A`;
   message += '%0A';
   cart.forEach(item => {
@@ -297,9 +425,10 @@ function checkoutToWhatsApp(){
     customerName, phone: customerPhone,
     details: itemsList.join(' | '),
     total,
-    paymentMethod,
+    paymentMethod: selectedPaymentMethod,
+    walletProvider: selectedWalletProvider,
     paymentRef,
-    paymentStatus: paymentMethod === 'cash' ? 'not_required' : 'awaiting_confirmation'
+    paymentStatus
   });
 
   window.open(`https://wa.me/${WHATSAPP_ADMIN}?text=${message}`, '_blank');
@@ -446,5 +575,6 @@ document.addEventListener('keydown', (e) => {
     closeMaintenanceModal();
     closeCartModal();
     closeLightbox();
+    closeMobilePanel();
   }
 });
