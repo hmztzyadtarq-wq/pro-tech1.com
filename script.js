@@ -558,6 +558,83 @@ function loadCertificatesGallery(){
   }, (err) => console.error('loadCertificatesGallery error:', err.message));
 }
 
+/* ---------- صور تصنيفات المكن (من الأدمن) ---------- */
+function applyCategoryImages(){
+  if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return;
+  firebase.firestore().collection('settings').doc('site_config').get().then((doc) => {
+    if (!doc.exists) return;
+    const imgs = doc.data().categoryImages || {};
+    document.querySelectorAll('[data-cat]').forEach(el => {
+      const cat = el.getAttribute('data-cat');
+      if (!imgs[cat]) return;
+      const iconWrap = el.querySelector('.m-icon');
+      if (iconWrap){
+        iconWrap.style.backgroundImage = `url('${imgs[cat]}')`;
+        iconWrap.style.backgroundSize = 'cover';
+        iconWrap.style.backgroundPosition = 'center';
+        iconWrap.innerHTML = '';
+      }
+    });
+  }).catch((err) => console.error('applyCategoryImages error:', err.message));
+}
+
+/* ---------- شريط إعلانات دوّار (اختياري، يديره الأدمن) ---------- */
+function loadAds(elementId){
+  const el = document.getElementById(elementId);
+  if (!el || typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return;
+  firebase.firestore().collection('settings').doc('site_config').get().then((doc) => {
+    const ads = (doc.exists && Array.isArray(doc.data().ads)) ? doc.data().ads.filter(a => a.text) : [];
+    if (!ads.length) return;
+    el.style.display = 'flex';
+    let i = 0;
+    function render(){
+      const ad = ads[i];
+      el.innerHTML = ad.link
+        ? `<a href="${ad.link}" target="_blank">${ad.text}</a>`
+        : `<span>${ad.text}</span>`;
+    }
+    render();
+    if (ads.length > 1) setInterval(() => { i = (i + 1) % ads.length; render(); }, 4000);
+  }).catch((err) => console.error('loadAds error:', err.message));
+}
+
+/* ---------- حساب الزائر (اختياري) — تسجيل دخول/إنشاء حساب ----------
+   مطلوب بس لما المستخدم يحب يكتب تعليق أو يسجل إعجاب، عشان نربطهم
+   باسمه. أي حد يقدر يستخدم الموقع من غيره عادي. */
+function getCurrentUser(){
+  return (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
+}
+function requireLogin(actionLabel){
+  if (typeof firebase === 'undefined' || !firebase.auth) return true; // الصفحة دي مفيهاش Auth أصلاً
+  if (getCurrentUser()) return true;
+  if (confirm(`محتاج تسجل دخولك الأول عشان ${actionLabel || 'تكمل'}. تحب تروح لصفحة الإعدادات دلوقتي؟`)){
+    location.href = 'settings.html';
+  }
+  return false;
+}
+
+/* ---------- إعجاب موحّد لأي عنصر (منتج/ماكينة) — مرتبط بالمستخدم ---------- */
+function toggleLikeItem(id, title, itemType, onDone){
+  if (!requireLogin('تسجل إعجابك')) return;
+  const uid = getCurrentUser().uid;
+  const likeId = `${uid}_${id}`;
+  const db2 = firebase.firestore();
+  db2.collection('likes').doc(likeId).get().then((doc) => {
+    if (doc.exists){
+      db2.collection('likes').doc(likeId).delete();
+      db2.collection('site_media').doc(id).update({ likes: firebase.firestore.FieldValue.increment(-1) });
+      if (onDone) onDone(false);
+    } else {
+      db2.collection('likes').doc(likeId).set({
+        userId: uid, itemId: id, itemTitle: title || '', itemType: itemType || '',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      db2.collection('site_media').doc(id).update({ likes: firebase.firestore.FieldValue.increment(1) });
+      if (onDone) onDone(true);
+    }
+  }).catch((err) => console.error('toggleLikeItem error:', err.message));
+}
+
 /* ---------- Lightbox ---------- */
 function openLightbox(src){
   const box = document.getElementById('myLightbox');
