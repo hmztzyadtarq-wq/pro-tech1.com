@@ -205,6 +205,7 @@ a{ color:inherit; }
         <li><button onclick="switchTab('certificates', this)"><i class="fa-solid fa-award"></i><span>شهادات التقدير</span></button></li>
         <li><button onclick="switchTab('team', this)"><i class="fa-solid fa-users-gear"></i><span>فريق العمل</span></button></li>
         <li><button onclick="switchTab('orders', this)"><i class="fa-solid fa-receipt"></i><span>الطلبات</span></button></li>
+        <li><button onclick="switchTab('users', this)"><i class="fa-solid fa-user-group"></i><span>المستخدمين</span></button></li>
         <li><button onclick="switchTab('settings', this)"><i class="fa-solid fa-gears"></i><span>الإعدادات العامة</span></button></li>
     </ul>
     <div class="sidebar-footer">
@@ -402,13 +403,31 @@ a{ color:inherit; }
                         <input type="text" id="bannerTitle" placeholder="العنوان الظاهر في البانر" required>
                     </div>
                     <div class="form-group full-width">
-                        <label>رابط صورة البانر</label>
+                        <label>رابط صورة البانر (الصورة الأولى)</label>
                         <input type="url" id="bannerImage" placeholder="https://..." oninput="previewImage('bannerImage','bannerPreview')" required>
                         <div class="upload-row">
                             <label class="upload-btn"><i class="fa-solid fa-upload"></i> أو ارفع من الجهاز<input type="file" accept="image/*" onchange="uploadFile(this,'bannerImage','bannerPreview','bannerUploadProgress')"></label>
                             <span class="upload-progress" id="bannerUploadProgress"></span>
                         </div>
                         <img class="preview-thumb" id="bannerPreview">
+                    </div>
+                    <div class="form-group">
+                        <label>الصورة الثانية (اختياري — تظهر في بانر الرئيسية فقط)</label>
+                        <input type="url" id="bannerImage2" placeholder="https://..." oninput="previewImage('bannerImage2','bannerPreview2')">
+                        <div class="upload-row">
+                            <label class="upload-btn"><i class="fa-solid fa-upload"></i> أو ارفع من الجهاز<input type="file" accept="image/*" onchange="uploadFile(this,'bannerImage2','bannerPreview2','bannerUploadProgress2')"></label>
+                            <span class="upload-progress" id="bannerUploadProgress2"></span>
+                        </div>
+                        <img class="preview-thumb" id="bannerPreview2">
+                    </div>
+                    <div class="form-group">
+                        <label>الصورة الثالثة (اختياري — تظهر في بانر الرئيسية فقط)</label>
+                        <input type="url" id="bannerImage3" placeholder="https://..." oninput="previewImage('bannerImage3','bannerPreview3')">
+                        <div class="upload-row">
+                            <label class="upload-btn"><i class="fa-solid fa-upload"></i> أو ارفع من الجهاز<input type="file" accept="image/*" onchange="uploadFile(this,'bannerImage3','bannerPreview3','bannerUploadProgress3')"></label>
+                            <span class="upload-progress" id="bannerUploadProgress3"></span>
+                        </div>
+                        <img class="preview-thumb" id="bannerPreview3">
                     </div>
                     <div class="form-group full-width">
                         <label>الوصف التوضيحي</label>
@@ -654,6 +673,49 @@ a{ color:inherit; }
             <button type="button" class="btn btn-outline" onclick="addSocialLink()"><i class="fa-solid fa-plus"></i> إضافة رابط</button>
             <div id="socialLinksManager" style="margin-top:16px;display:flex;flex-direction:column;gap:8px"></div>
         </div>
+
+        <div class="panel-card">
+            <h3>شريط إعلانات دوّار (يظهر أعلى الصفحة الرئيسية)</h3>
+            <p style="color:var(--muted);font-size:12.5px;margin-bottom:14px">لو ضفت أكتر من إعلان، هيتبادلوا تلقائيًا كل شوية ثواني.</p>
+            <div class="form-grid">
+                <div class="form-group"><label>نص الإعلان</label><input type="text" id="newAdText" placeholder="مثال: خصم ٢٠٪ على أحبار الـ UV هذا الأسبوع"></div>
+                <div class="form-group"><label>رابط عند الضغط (اختياري)</label><input type="url" id="newAdLink" placeholder="https://..."></div>
+            </div>
+            <button type="button" class="btn btn-outline" onclick="addAd()"><i class="fa-solid fa-plus"></i> إضافة إعلان</button>
+            <div id="adsManager" style="margin-top:16px;display:flex;flex-direction:column;gap:8px"></div>
+        </div>
+
+        <div class="panel-card">
+            <h3>صور تصنيفات المكن (تظهر بدل الأيقونات في صفحة المكن)</h3>
+            <p style="color:var(--muted);font-size:12.5px;margin-bottom:14px">اختر التصنيف وحط صورة واضحة له (شعار الماركة أو صورة الماكينة نفسها).</p>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>التصنيف</label>
+                    <select id="newCatImageKey">
+                        <option value="UV_MAIN">مربع UV الرئيسي</option>
+                        <option value="إكو سولفينت">إكو سولفينت</option>
+                        <option value="أوت دور">أوت دور</option>
+                        <option value="لمينيشن">لمينيشن</option>
+                        <option value="بلوتر / ولتريلوتر">بلوتر / ولتريلوتر</option>
+                        <option value="فلات بد UV">UV - فلات بد</option>
+                        <option value="رول تو رول UV">UV - رول تو رول</option>
+                        <option value="هيبير UV">UV - هيبرد</option>
+                        <option value="DTF UV">UV - DTF</option>
+                        <option value="7 في 1 UV">UV - 7 في 1</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>رابط الصورة</label>
+                    <input type="url" id="newCatImageUrl" placeholder="https://...">
+                    <div class="upload-row">
+                        <label class="upload-btn"><i class="fa-solid fa-upload"></i> أو ارفع من الجهاز<input type="file" accept="image/*" onchange="uploadFile(this,'newCatImageUrl',null,'catImageProgress')"></label>
+                        <span class="upload-progress" id="catImageProgress"></span>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-outline" onclick="addCategoryImage()"><i class="fa-solid fa-plus"></i> حفظ صورة التصنيف</button>
+            <div id="categoryImagesManager" style="margin-top:16px;display:flex;flex-direction:column;gap:8px"></div>
+        </div>
     </div>
 
     <!-- ============ الطلبات ============ -->
@@ -668,6 +730,27 @@ a{ color:inherit; }
                 <table class="data-table">
                     <thead><tr><th>النوع</th><th>اسم العميل</th><th>الهاتف</th><th>التفاصيل</th><th>الإجمالي</th><th>الدفع</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
                     <tbody id="ordersTableBody"><tr class="empty-row"><td colspan="8">جاري التحميل...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ المستخدمين ============ -->
+    <div id="users" class="tab-content">
+        <div class="panel-card">
+            <h3>المستخدمون المسجلون على الموقع</h3>
+            <p style="color:var(--muted);font-size:12.5px;margin-bottom:14px">
+                <i class="fa-solid fa-shield-halved" style="color:var(--cyan)"></i>
+                كلمات المرور مشفّرة ومحفوظة بأمان في نظام المصادقة (Firebase Authentication) ولا تظهر لأي حد — حتى الأدمن. اللي تحت ده بياناتهم الأساسية فقط.
+            </p>
+            <div class="table-toolbar">
+                <input type="text" placeholder="بحث بالإيميل أو الهاتف..." oninput="renderUsers(this.value)">
+                <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)" id="usersCount">0 مستخدم</span>
+            </div>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead><tr><th>الإيميل</th><th>الهاتف</th><th>تاريخ التسجيل</th><th>عدد الإعجابات</th></tr></thead>
+                    <tbody id="usersTableBody"><tr class="empty-row"><td colspan="4">جاري التحميل...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -695,7 +778,7 @@ const storage = firebase.storage();
 /* ===================== تسجيل الدخول ===================== */
 auth.onAuthStateChanged((user) => {
     document.getElementById('loginScreen').style.display = user ? 'none' : 'flex';
-    if (user) { loadAllData(); loadSettings(); loadOrders(); }
+    if (user) { loadAllData(); loadSettings(); loadOrders(); loadUsers(); }
 });
 
 function doLogin(event){
@@ -714,7 +797,7 @@ function doLogout(){ auth.signOut(); }
 const TAB_TITLES = {
     overview: 'نظرة عامة', machines: 'إدارة المكن والماكينات', inks: 'قسم الأحبار والمواد',
     banners: 'البانرات والوصف الرئيسي', certificates: 'شهادات التقدير والصور',
-    team: 'فريق العمل', orders: 'طلبات الصيانة والشراء', settings: 'الإعدادات العامة'
+    team: 'فريق العمل', orders: 'طلبات الصيانة والشراء', users: 'المستخدمون المسجلون', settings: 'الإعدادات العامة'
 };
 function switchTab(tabId, btnElement){
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -780,7 +863,7 @@ let editingType = null;
 const FIELD_MAP = {
     machine: { title:'machineTitle', desc:'machineDesc', image:'machineImage', category:'machineCategory', price:'machinePrice', video:'machineVideo', submitBtn:'machineSubmitBtn', banner:'machineEditBanner', preview:'machinePreview' },
     inks: { title:'inkTitle', desc:'inkDesc', image:'inkImage', price:'inkPrice', video:'inkVideo', submitBtn:'inksSubmitBtn', banner:'inksEditBanner', preview:'inkPreview' },
-    banners: { title:'bannerTitle', desc:'bannerDesc', image:'bannerImage', category:'bannerCategory', submitBtn:'bannersSubmitBtn', banner:'bannersEditBanner', preview:'bannerPreview' },
+    banners: { title:'bannerTitle', desc:'bannerDesc', image:'bannerImage', category:'bannerCategory', submitBtn:'bannersSubmitBtn', banner:'bannersEditBanner', preview:'bannerPreview', image2:'bannerImage2', image3:'bannerImage3' },
     certificates: { title:'certTitle', desc:'certDesc', image:'certImage', submitBtn:'certificatesSubmitBtn', banner:'certificatesEditBanner', preview:'certPreview' },
     team: { title:'teamTitle', desc:'teamDesc', image:'teamImage', submitBtn:'teamSubmitBtn', banner:'teamEditBanner', preview:'teamPreview', phone:'teamPhone', whatsapp:'teamWhatsapp', extraLink:'teamExtraLink', extraLinkLabel:'teamExtraLinkLabel' }
 };
@@ -802,6 +885,8 @@ function editItem(id, type){
     if (f.whatsapp) document.getElementById(f.whatsapp).value = item.whatsapp || '';
     if (f.extraLink) document.getElementById(f.extraLink).value = item.extraLink || '';
     if (f.extraLinkLabel) document.getElementById(f.extraLinkLabel).value = item.extraLinkLabel || '';
+    if (f.image2) document.getElementById(f.image2).value = item.image2 || '';
+    if (f.image3) document.getElementById(f.image3).value = item.image3 || '';
     previewImage(f.image, f.preview);
 
     document.getElementById(f.submitBtn).innerHTML = '<i class="fa-solid fa-rotate"></i> تحديث العنصر';
@@ -848,7 +933,9 @@ function saveItem(event, type){
             category: document.getElementById('bannerCategory').value,
             title: document.getElementById('bannerTitle').value.trim(),
             desc: document.getElementById('bannerDesc').value.trim(),
-            imageUrl: document.getElementById('bannerImage').value.trim()
+            imageUrl: document.getElementById('bannerImage').value.trim(),
+            image2: document.getElementById('bannerImage2').value.trim(),
+            image3: document.getElementById('bannerImage3').value.trim()
         };
     } else if (type === 'certificates'){
         data = {
@@ -977,6 +1064,8 @@ function loadSettings(){
         document.getElementById('setPromoLink').value = s.promoLink || '';
         renderConsultManager();
         renderSocialManager();
+        renderAdsManager();
+        renderCategoryImagesManager();
     });
 }
 
@@ -1033,6 +1122,64 @@ function removeSocialLink(i){
       .then(() => { showToast('تم الحذف'); renderSocialManager(); });
 }
 
+/* ---------- شريط الإعلانات الدوّار ---------- */
+function renderAdsManager(){
+    const list = currentSettings.ads || [];
+    const box = document.getElementById('adsManager');
+    box.innerHTML = list.length ? list.map((a, i) => `
+        <div style="display:flex;justify-content:space-between;align-items:center;background:var(--paper);padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--line)">
+            <span>${a.text}${a.link ? ' — <span style="color:var(--muted);font-size:11.5px">' + a.link + '</span>' : ''}</span>
+            <button type="button" class="btn-danger-sm" onclick="removeAd(${i})"><i class="fa-solid fa-trash"></i></button>
+        </div>`).join('') : `<p style="color:var(--muted);font-size:13px">مفيش إعلانات مضافة لسه.</p>`;
+}
+function addAd(){
+    const text = document.getElementById('newAdText').value.trim();
+    const link = document.getElementById('newAdLink').value.trim();
+    if (!text){ showToast('اكتب نص الإعلان الأول', 'error'); return; }
+    currentSettings.ads = currentSettings.ads || [];
+    currentSettings.ads.push({ text, link });
+    db.collection('settings').doc('site_config').set({ ads: currentSettings.ads }, { merge:true })
+      .then(() => { showToast('تمت إضافة الإعلان'); document.getElementById('newAdText').value=''; document.getElementById('newAdLink').value=''; renderAdsManager(); })
+      .catch(err => showToast('خطأ: ' + err.message, 'error'));
+}
+function removeAd(i){
+    currentSettings.ads.splice(i, 1);
+    db.collection('settings').doc('site_config').set({ ads: currentSettings.ads }, { merge:true })
+      .then(() => { showToast('تم الحذف'); renderAdsManager(); });
+}
+
+/* ---------- صور تصنيفات المكن ---------- */
+const CAT_IMAGE_LABELS = {
+    UV_MAIN:'مربع UV الرئيسي', 'إكو سولفينت':'إكو سولفينت', 'أوت دور':'أوت دور', 'لمينيشن':'لمينيشن',
+    'بلوتر / ولتريلوتر':'بلوتر / ولتريلوتر', 'فلات بد UV':'UV - فلات بد', 'رول تو رول UV':'UV - رول تو رول',
+    'هيبير UV':'UV - هيبرد', 'DTF UV':'UV - DTF', '7 في 1 UV':'UV - 7 في 1'
+};
+function renderCategoryImagesManager(){
+    const imgs = currentSettings.categoryImages || {};
+    const box = document.getElementById('categoryImagesManager');
+    const keys = Object.keys(imgs);
+    box.innerHTML = keys.length ? keys.map(key => `
+        <div style="display:flex;justify-content:space-between;align-items:center;background:var(--paper);padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--line)">
+            <span style="display:flex;align-items:center;gap:10px"><img src="${imgs[key]}" style="width:32px;height:32px;border-radius:6px;object-fit:cover"> ${CAT_IMAGE_LABELS[key] || key}</span>
+            <button type="button" class="btn-danger-sm" onclick="removeCategoryImage('${key}')"><i class="fa-solid fa-trash"></i></button>
+        </div>`).join('') : `<p style="color:var(--muted);font-size:13px">مفيش صور تصنيفات مضافة لسه — هتفضل الأيقونات الافتراضية ظاهرة.</p>`;
+}
+function addCategoryImage(){
+    const key = document.getElementById('newCatImageKey').value;
+    const url = document.getElementById('newCatImageUrl').value.trim();
+    if (!url){ showToast('حط رابط الصورة الأول', 'error'); return; }
+    currentSettings.categoryImages = currentSettings.categoryImages || {};
+    currentSettings.categoryImages[key] = url;
+    db.collection('settings').doc('site_config').set({ categoryImages: currentSettings.categoryImages }, { merge:true })
+      .then(() => { showToast('تم حفظ صورة التصنيف'); document.getElementById('newCatImageUrl').value=''; renderCategoryImagesManager(); })
+      .catch(err => showToast('خطأ: ' + err.message, 'error'));
+}
+function removeCategoryImage(key){
+    delete currentSettings.categoryImages[key];
+    db.collection('settings').doc('site_config').set({ categoryImages: currentSettings.categoryImages }, { merge:true })
+      .then(() => { showToast('تم الحذف'); renderCategoryImagesManager(); });
+}
+
 function saveSettings(event){
     event.preventDefault();
     const data = {
@@ -1072,16 +1219,21 @@ function renderOrders(searchTerm){
     const tbody = document.getElementById('ordersTableBody');
     if (!rows.length){ tbody.innerHTML = `<tr class="empty-row"><td colspan="8">لا توجد طلبات بعد.</td></tr>`; return; }
 
-    const paymentLabels = { cash:'كاش/تواصل', vodafone:'فودافون كاش', etisalat:'اتصالات كاش', orange:'أورانج كاش' };
+    const paymentLabels = { cash:'الدفع عند الاستلام', wallet:'محفظة إلكترونية', card:'فيزا / بطاقة' };
+    const walletLabels = { vodafone:'فودافون كاش', etisalat:'اتصالات كاش', orange:'أورانج كاش' };
     tbody.innerHTML = rows.map(([id, o]) => {
         const typeLabel = o.type === 'purchase' ? 'شراء' : 'صيانة';
-        const paymentCell = o.paymentMethod
-            ? `${paymentLabels[o.paymentMethod] || o.paymentMethod}${o.paymentRef ? '<br><span style="font-family:var(--font-mono);font-size:11px;color:var(--muted)">' + o.paymentRef + '</span>' : ''}`
-            : '—';
+        let paymentCell = '—';
+        if (o.paymentMethod){
+            const methodText = paymentLabels[o.paymentMethod] || o.paymentMethod;
+            const providerText = o.paymentMethod === 'wallet' && o.walletProvider ? ` (${walletLabels[o.walletProvider] || o.walletProvider})` : '';
+            const refText = o.paymentRef ? `<br><span style="font-family:var(--font-mono);font-size:11px;color:var(--muted)">${o.paymentRef}</span>` : '';
+            paymentCell = `${methodText}${providerText}${refText}`;
+        }
         const statusBadge = o.status === 'approved'
             ? `<span class="status-badge">تمت الموافقة</span>`
             : `<span class="status-badge offline">قيد المراجعة</span>`;
-        const approveLabel = (o.paymentMethod && o.paymentMethod !== 'cash' && o.paymentStatus === 'awaiting_confirmation') ? 'تأكيد الدفع' : 'موافقة';
+        const approveLabel = (o.paymentMethod && o.paymentMethod !== 'cash' && (o.paymentStatus === 'awaiting_confirmation' || o.paymentStatus === 'awaiting_link')) ? 'تأكيد الدفع' : 'موافقة';
         const approveBtn = o.status === 'approved' ? '' : `<button class="btn-edit-sm" onclick="approveOrder('${id}')"><i class="fa-solid fa-check"></i> ${approveLabel}</button>`;
         return `<tr>
             <td><span class="cat-chip">${typeLabel}</span></td>
@@ -1104,6 +1256,42 @@ function approveOrder(id){
 function deleteOrder(id){
     if (!confirm('حذف هذا الطلب نهائيًا؟')) return;
     db.collection('orders').doc(id).delete().then(() => showToast('تم حذف الطلب'));
+}
+
+/* ===================== المستخدمون المسجلون ===================== */
+let usersCache = {};
+function loadUsers(){
+    db.collection('users').onSnapshot((snapshot) => {
+        usersCache = {};
+        snapshot.forEach(doc => usersCache[doc.id] = doc.data());
+        // نعد إعجابات كل مستخدم على حدة (استعلام منفصل خفيف لكل مستخدم)
+        Object.keys(usersCache).forEach(uid => {
+            db.collection('likes').where('userId', '==', uid).get().then(likesSnap => {
+                usersCache[uid].likesCount = likesSnap.size;
+                renderUsers();
+            });
+        });
+        renderUsers();
+    }, (err) => console.error('loadUsers error:', err.message));
+}
+function renderUsers(searchTerm){
+    searchTerm = (searchTerm || document.querySelector('#users .table-toolbar input')?.value || '').trim().toLowerCase();
+    const rows = Object.entries(usersCache).filter(([id, u]) =>
+        !searchTerm || (u.email || '').toLowerCase().includes(searchTerm) || (u.phone || '').includes(searchTerm));
+
+    document.getElementById('usersCount').textContent = `${rows.length} مستخدم`;
+    const tbody = document.getElementById('usersTableBody');
+    if (!rows.length){ tbody.innerHTML = `<tr class="empty-row"><td colspan="4">لا يوجد مستخدمون مسجلون بعد.</td></tr>`; return; }
+
+    tbody.innerHTML = rows.map(([id, u]) => {
+        const date = u.createdAt && u.createdAt.toDate ? u.createdAt.toDate().toLocaleDateString('ar-EG') : '—';
+        return `<tr>
+            <td><strong>${u.email || '—'}</strong></td>
+            <td>${u.phone || '—'}</td>
+            <td style="font-family:var(--font-mono);font-size:12px">${date}</td>
+            <td>${u.likesCount != null ? u.likesCount : '...'}</td>
+        </tr>`;
+    }).join('');
 }
 </script>
 </body>
