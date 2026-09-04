@@ -8,6 +8,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -126,6 +127,14 @@ a{ color:inherit; }
 .form-actions{ display:flex; gap:10px; margin-top:6px; }
 
 .preview-thumb{ width:60px; height:60px; border-radius:8px; object-fit:cover; margin-top:8px; border:1px solid var(--line); display:none; background:var(--paper); }
+.upload-row{ display:flex; align-items:center; gap:10px; margin-top:8px; }
+.upload-btn{
+  display:inline-flex; align-items:center; gap:6px; background:var(--paper); border:1px dashed var(--line);
+  color:var(--muted); padding:8px 14px; border-radius:var(--radius-sm); font-size:12.5px; font-weight:700; cursor:pointer;
+}
+.upload-btn:hover{ border-color:var(--cyan); color:var(--cyan); }
+.upload-btn input{ display:none; }
+.upload-progress{ font-family:var(--font-mono); font-size:11.5px; color:var(--cyan); display:none; }
 
 .btn{ border:none; padding:11px 22px; border-radius:999px; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; }
 .btn-primary{ background:var(--cyan); color:#04202e; }
@@ -195,6 +204,7 @@ a{ color:inherit; }
         <li><button onclick="switchTab('banners', this)"><i class="fa-solid fa-image"></i><span>البانرات والوصف</span></button></li>
         <li><button onclick="switchTab('certificates', this)"><i class="fa-solid fa-award"></i><span>شهادات التقدير</span></button></li>
         <li><button onclick="switchTab('team', this)"><i class="fa-solid fa-users-gear"></i><span>فريق العمل</span></button></li>
+        <li><button onclick="switchTab('orders', this)"><i class="fa-solid fa-receipt"></i><span>الطلبات</span></button></li>
         <li><button onclick="switchTab('settings', this)"><i class="fa-solid fa-gears"></i><span>الإعدادات العامة</span></button></li>
     </ul>
     <div class="sidebar-footer">
@@ -267,6 +277,10 @@ a{ color:inherit; }
                     <div class="form-group">
                         <label>رابط فيديو (اختياري)</label>
                         <input type="url" id="machineVideo" placeholder="https://example.com/video.mp4">
+                        <div class="upload-row">
+                            <label class="upload-btn"><i class="fa-solid fa-upload"></i> أو ارفع من الجهاز<input type="file" accept="video/*" onchange="uploadFile(this,'machineVideo',null,'machineVideoProgress')"></label>
+                            <span class="upload-progress" id="machineVideoProgress"></span>
+                        </div>
                     </div>
                     <div class="form-group full-width">
                         <label>وصف المواصفات الفنية</label>
@@ -275,6 +289,10 @@ a{ color:inherit; }
                     <div class="form-group full-width">
                         <label>رابط الصورة الأساسية</label>
                         <input type="url" id="machineImage" placeholder="https://example.com/machine.jpg" oninput="previewImage('machineImage','machinePreview')" required>
+                        <div class="upload-row">
+                            <label class="upload-btn"><i class="fa-solid fa-upload"></i> أو ارفع من الجهاز<input type="file" accept="image/*" onchange="uploadFile(this,'machineImage','machinePreview','machineUploadProgress')"></label>
+                            <span class="upload-progress" id="machineUploadProgress"></span>
+                        </div>
                         <img class="preview-thumb" id="machinePreview">
                     </div>
                 </div>
@@ -320,11 +338,19 @@ a{ color:inherit; }
                     <div class="form-group">
                         <label>رابط الصورة</label>
                         <input type="url" id="inkImage" placeholder="https://example.com/ink.jpg" oninput="previewImage('inkImage','inkPreview')" required>
+                        <div class="upload-row">
+                            <label class="upload-btn"><i class="fa-solid fa-upload"></i> أو ارفع من الجهاز<input type="file" accept="image/*" onchange="uploadFile(this,'inkImage','inkPreview','inkUploadProgress')"></label>
+                            <span class="upload-progress" id="inkUploadProgress"></span>
+                        </div>
                         <img class="preview-thumb" id="inkPreview">
                     </div>
                     <div class="form-group">
                         <label>رابط فيديو (اختياري)</label>
                         <input type="url" id="inkVideo" placeholder="https://example.com/video.mp4">
+                        <div class="upload-row">
+                            <label class="upload-btn"><i class="fa-solid fa-upload"></i> أو ارفع من الجهاز<input type="file" accept="video/*" onchange="uploadFile(this,'inkVideo',null,'inkVideoProgress')"></label>
+                            <span class="upload-progress" id="inkVideoProgress"></span>
+                        </div>
                     </div>
                     <div class="form-group full-width">
                         <label>الوصف</label>
@@ -368,6 +394,7 @@ a{ color:inherit; }
                             <option value="banner_index">الصفحة الرئيسية</option>
                             <option value="banner_videos">صفحة المكن</option>
                             <option value="banner_inks">صفحة الأحبار</option>
+                            <option value="banner_team">صفحة الفريق</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -377,6 +404,10 @@ a{ color:inherit; }
                     <div class="form-group full-width">
                         <label>رابط صورة البانر</label>
                         <input type="url" id="bannerImage" placeholder="https://..." oninput="previewImage('bannerImage','bannerPreview')" required>
+                        <div class="upload-row">
+                            <label class="upload-btn"><i class="fa-solid fa-upload"></i> أو ارفع من الجهاز<input type="file" accept="image/*" onchange="uploadFile(this,'bannerImage','bannerPreview','bannerUploadProgress')"></label>
+                            <span class="upload-progress" id="bannerUploadProgress"></span>
+                        </div>
                         <img class="preview-thumb" id="bannerPreview">
                     </div>
                     <div class="form-group full-width">
@@ -422,6 +453,10 @@ a{ color:inherit; }
                     <div class="form-group">
                         <label>رابط صورة الشهادة</label>
                         <input type="url" id="certImage" placeholder="https://..." oninput="previewImage('certImage','certPreview')" required>
+                        <div class="upload-row">
+                            <label class="upload-btn"><i class="fa-solid fa-upload"></i> أو ارفع من الجهاز<input type="file" accept="image/*" onchange="uploadFile(this,'certImage','certPreview','certUploadProgress')"></label>
+                            <span class="upload-progress" id="certUploadProgress"></span>
+                        </div>
                         <img class="preview-thumb" id="certPreview">
                     </div>
                     <div class="form-group full-width">
@@ -467,11 +502,31 @@ a{ color:inherit; }
                     <div class="form-group">
                         <label>رابط الصورة الشخصية</label>
                         <input type="url" id="teamImage" placeholder="https://..." oninput="previewImage('teamImage','teamPreview')" required>
+                        <div class="upload-row">
+                            <label class="upload-btn"><i class="fa-solid fa-upload"></i> أو ارفع من الجهاز<input type="file" accept="image/*" onchange="uploadFile(this,'teamImage','teamPreview','teamUploadProgress')"></label>
+                            <span class="upload-progress" id="teamUploadProgress"></span>
+                        </div>
                         <img class="preview-thumb" id="teamPreview">
                     </div>
                     <div class="form-group full-width">
                         <label>المسمى الوظيفي</label>
                         <textarea id="teamDesc" rows="2" placeholder="مثال: مهندس صيانة رئيسي..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>رقم الهاتف (اختياري)</label>
+                        <input type="text" id="teamPhone" placeholder="201000000000">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم واتساب مباشر (اختياري — لو فاضي هيستخدم رقم الهاتف)</label>
+                        <input type="text" id="teamWhatsapp" placeholder="201000000000">
+                    </div>
+                    <div class="form-group">
+                        <label>رابط إضافي (فيسبوك، لينكدإن، إلخ) — اختياري</label>
+                        <input type="url" id="teamExtraLink" placeholder="https://facebook.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label>اسم الرابط الإضافي</label>
+                        <input type="text" id="teamExtraLinkLabel" placeholder="مثال: صفحة فيسبوك">
                     </div>
                 </div>
                 <div class="form-actions">
@@ -515,6 +570,22 @@ a{ color:inherit; }
                     </div>
                 </div>
 
+                <h3 style="margin-top:26px">أرقام المحافظ الإلكترونية (تظهر للعميل وقت الدفع في السلة)</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>رقم فودافون كاش</label>
+                        <input type="text" id="setWalletVodafone" placeholder="201000000000">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم اتصالات كاش</label>
+                        <input type="text" id="setWalletEtisalat" placeholder="201000000000">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم أورانج كاش</label>
+                        <input type="text" id="setWalletOrange" placeholder="201000000000">
+                    </div>
+                </div>
+
                 <h3 style="margin-top:26px">البار العلوي (يظهر أعلى الصفحة الرئيسية)</h3>
                 <div class="form-grid">
                     <div class="form-group">
@@ -550,6 +621,56 @@ a{ color:inherit; }
                 </div>
             </form>
         </div>
+
+        <div class="panel-card">
+            <h3>أرقام "استشارة فنية" (الزرار العائم)</h3>
+            <p style="color:var(--muted);font-size:12.5px;margin-bottom:14px">لو مفيش أي رقم هنا، هيفضل يظهر رقم المهندس الأول والثاني الافتراضيين.</p>
+            <div class="form-grid">
+                <div class="form-group"><label>الاسم الظاهر</label><input type="text" id="newConsultName" placeholder="مثال: المهندس أحمد"></div>
+                <div class="form-group"><label>رقم الواتساب</label><input type="text" id="newConsultPhone" placeholder="201000000000"></div>
+            </div>
+            <button type="button" class="btn btn-outline" onclick="addConsultationNumber()"><i class="fa-solid fa-plus"></i> إضافة رقم</button>
+            <div id="consultNumbersManager" style="margin-top:16px;display:flex;flex-direction:column;gap:8px"></div>
+        </div>
+
+        <div class="panel-card">
+            <h3>روابط التواصل في الفوتر</h3>
+            <p style="color:var(--muted);font-size:12.5px;margin-bottom:14px">لو مفيش أي رابط هنا، هتفضل الأيقونات الافتراضية (واتساب/إيميل/فيسبوك) ظاهرة.</p>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>المنصة</label>
+                    <select id="newSocialPlatform">
+                        <option value="whatsapp">واتساب</option>
+                        <option value="facebook">فيسبوك</option>
+                        <option value="instagram">إنستجرام</option>
+                        <option value="tiktok">تيك توك</option>
+                        <option value="youtube">يوتيوب</option>
+                        <option value="email">إيميل</option>
+                        <option value="website">موقع إلكتروني آخر</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>الرابط الكامل</label><input type="url" id="newSocialUrl" placeholder="https://..."></div>
+            </div>
+            <button type="button" class="btn btn-outline" onclick="addSocialLink()"><i class="fa-solid fa-plus"></i> إضافة رابط</button>
+            <div id="socialLinksManager" style="margin-top:16px;display:flex;flex-direction:column;gap:8px"></div>
+        </div>
+    </div>
+
+    <!-- ============ الطلبات ============ -->
+    <div id="orders" class="tab-content">
+        <div class="panel-card">
+            <h3>طلبات الصيانة والشراء</h3>
+            <div class="table-toolbar">
+                <input type="text" placeholder="بحث بالاسم أو الهاتف..." oninput="renderOrders(this.value)">
+                <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)" id="ordersCount">0 طلب</span>
+            </div>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead><tr><th>النوع</th><th>اسم العميل</th><th>الهاتف</th><th>التفاصيل</th><th>الإجمالي</th><th>الدفع</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+                    <tbody id="ordersTableBody"><tr class="empty-row"><td colspan="8">جاري التحميل...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -569,11 +690,12 @@ const firebaseConfig = {
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.firestore();
 const auth = firebase.auth();
+const storage = firebase.storage();
 
 /* ===================== تسجيل الدخول ===================== */
 auth.onAuthStateChanged((user) => {
     document.getElementById('loginScreen').style.display = user ? 'none' : 'flex';
-    if (user) { loadAllData(); loadSettings(); }
+    if (user) { loadAllData(); loadSettings(); loadOrders(); }
 });
 
 function doLogin(event){
@@ -592,7 +714,7 @@ function doLogout(){ auth.signOut(); }
 const TAB_TITLES = {
     overview: 'نظرة عامة', machines: 'إدارة المكن والماكينات', inks: 'قسم الأحبار والمواد',
     banners: 'البانرات والوصف الرئيسي', certificates: 'شهادات التقدير والصور',
-    team: 'فريق العمل', settings: 'الإعدادات العامة'
+    team: 'فريق العمل', orders: 'طلبات الصيانة والشراء', settings: 'الإعدادات العامة'
 };
 function switchTab(tabId, btnElement){
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -625,6 +747,32 @@ function previewImage(inputId, previewId){
     img.style.display = 'block';
 }
 
+/* ===================== رفع صورة/فيديو من الجهاز ===================== */
+function uploadFile(inputEl, targetFieldId, previewId, progressId){
+    const file = inputEl.files[0];
+    if (!file) return;
+    const progressEl = progressId ? document.getElementById(progressId) : null;
+    if (progressEl){ progressEl.style.display = 'inline'; progressEl.textContent = 'جاري الرفع... 0%'; }
+
+    const path = `uploads/${Date.now()}_${file.name}`;
+    const task = storage.ref(path).put(file);
+
+    task.on('state_changed', (snap) => {
+        const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+        if (progressEl) progressEl.textContent = `جاري الرفع... ${pct}%`;
+    }, (err) => {
+        if (progressEl) progressEl.style.display = 'none';
+        showToast('فشل رفع الملف: ' + err.message, 'error');
+    }, () => {
+        task.snapshot.ref.getDownloadURL().then((url) => {
+            document.getElementById(targetFieldId).value = url;
+            if (previewId && document.getElementById(previewId).tagName === 'IMG') previewImage(targetFieldId, previewId);
+            if (progressEl) progressEl.style.display = 'none';
+            showToast('تم رفع الملف بنجاح');
+        });
+    });
+}
+
 /* ===================== حالة التعديل ===================== */
 let editingId = null;
 let editingType = null;
@@ -634,7 +782,7 @@ const FIELD_MAP = {
     inks: { title:'inkTitle', desc:'inkDesc', image:'inkImage', price:'inkPrice', video:'inkVideo', submitBtn:'inksSubmitBtn', banner:'inksEditBanner', preview:'inkPreview' },
     banners: { title:'bannerTitle', desc:'bannerDesc', image:'bannerImage', category:'bannerCategory', submitBtn:'bannersSubmitBtn', banner:'bannersEditBanner', preview:'bannerPreview' },
     certificates: { title:'certTitle', desc:'certDesc', image:'certImage', submitBtn:'certificatesSubmitBtn', banner:'certificatesEditBanner', preview:'certPreview' },
-    team: { title:'teamTitle', desc:'teamDesc', image:'teamImage', submitBtn:'teamSubmitBtn', banner:'teamEditBanner', preview:'teamPreview' }
+    team: { title:'teamTitle', desc:'teamDesc', image:'teamImage', submitBtn:'teamSubmitBtn', banner:'teamEditBanner', preview:'teamPreview', phone:'teamPhone', whatsapp:'teamWhatsapp', extraLink:'teamExtraLink', extraLinkLabel:'teamExtraLinkLabel' }
 };
 
 function editItem(id, type){
@@ -650,6 +798,10 @@ function editItem(id, type){
     if (f.category) document.getElementById(f.category).value = item.category || '';
     if (f.price) document.getElementById(f.price).value = item.price || '';
     if (f.video) document.getElementById(f.video).value = item.videoUrl || '';
+    if (f.phone) document.getElementById(f.phone).value = item.phone || '';
+    if (f.whatsapp) document.getElementById(f.whatsapp).value = item.whatsapp || '';
+    if (f.extraLink) document.getElementById(f.extraLink).value = item.extraLink || '';
+    if (f.extraLinkLabel) document.getElementById(f.extraLinkLabel).value = item.extraLinkLabel || '';
     previewImage(f.image, f.preview);
 
     document.getElementById(f.submitBtn).innerHTML = '<i class="fa-solid fa-rotate"></i> تحديث العنصر';
@@ -710,7 +862,11 @@ function saveItem(event, type){
             category: 'team',
             title: document.getElementById('teamTitle').value.trim(),
             desc: document.getElementById('teamDesc').value.trim(),
-            imageUrl: document.getElementById('teamImage').value.trim()
+            imageUrl: document.getElementById('teamImage').value.trim(),
+            phone: document.getElementById('teamPhone').value.trim(),
+            whatsapp: document.getElementById('teamWhatsapp').value.trim(),
+            extraLink: document.getElementById('teamExtraLink').value.trim(),
+            extraLinkLabel: document.getElementById('teamExtraLinkLabel').value.trim()
         };
     }
 
@@ -771,7 +927,7 @@ function loadAllData(){
 }
 
 function bannerCategoryLabel(cat){
-    return { banner_index:'الرئيسية', banner_videos:'المكن', banner_inks:'الأحبار' }[cat] || cat;
+    return { banner_index:'الرئيسية', banner_videos:'المكن', banner_inks:'الأحبار', banner_team:'الفريق' }[cat] || cat;
 }
 
 function renderTable(bucket, searchTerm){
@@ -802,19 +958,79 @@ function renderTable(bucket, searchTerm){
 }
 
 /* ===================== الإعدادات العامة ===================== */
+let currentSettings = {};
+
 function loadSettings(){
     db.collection('settings').doc('site_config').get().then(doc => {
-        if (!doc.exists) return;
-        const s = doc.data();
+        currentSettings = doc.exists ? doc.data() : {};
+        const s = currentSettings;
         document.getElementById('setPhone1').value = s.phone1 || '';
         document.getElementById('setPhone2').value = s.phone2 || '';
         document.getElementById('setCartPhone').value = s.cartPhone || '';
+        document.getElementById('setWalletVodafone').value = s.walletVodafone || '';
+        document.getElementById('setWalletEtisalat').value = s.walletEtisalat || '';
+        document.getElementById('setWalletOrange').value = s.walletOrange || '';
         document.getElementById('setTopbarStatus').value = s.topbarStatus || '';
         document.getElementById('setTopbarHours').value = s.topbarHours || '';
         document.getElementById('setPromoEnabled').checked = !!s.promoEnabled;
         document.getElementById('setPromoText').value = s.promoText || '';
         document.getElementById('setPromoLink').value = s.promoLink || '';
+        renderConsultManager();
+        renderSocialManager();
     });
+}
+
+/* ---------- أرقام الاستشارة الفنية ---------- */
+function renderConsultManager(){
+    const list = currentSettings.consultationNumbers || [];
+    const box = document.getElementById('consultNumbersManager');
+    box.innerHTML = list.length ? list.map((c, i) => `
+        <div style="display:flex;justify-content:space-between;align-items:center;background:var(--paper);padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--line)">
+            <span><i class="fa-brands fa-whatsapp" style="color:var(--success)"></i> ${c.name} — ${c.phone}</span>
+            <button type="button" class="btn-danger-sm" onclick="removeConsultationNumber(${i})"><i class="fa-solid fa-trash"></i></button>
+        </div>`).join('') : `<p style="color:var(--muted);font-size:13px">مفيش أرقام مخصصة مضافة لسه.</p>`;
+}
+function addConsultationNumber(){
+    const name = document.getElementById('newConsultName').value.trim();
+    const phone = document.getElementById('newConsultPhone').value.trim();
+    if (!name || !phone){ showToast('اكتب الاسم والرقم الأول', 'error'); return; }
+    currentSettings.consultationNumbers = currentSettings.consultationNumbers || [];
+    currentSettings.consultationNumbers.push({ name, phone });
+    db.collection('settings').doc('site_config').set({ consultationNumbers: currentSettings.consultationNumbers }, { merge:true })
+      .then(() => { showToast('تمت إضافة الرقم'); document.getElementById('newConsultName').value=''; document.getElementById('newConsultPhone').value=''; renderConsultManager(); })
+      .catch(err => showToast('خطأ: ' + err.message, 'error'));
+}
+function removeConsultationNumber(i){
+    currentSettings.consultationNumbers.splice(i, 1);
+    db.collection('settings').doc('site_config').set({ consultationNumbers: currentSettings.consultationNumbers }, { merge:true })
+      .then(() => { showToast('تم الحذف'); renderConsultManager(); });
+}
+
+/* ---------- روابط الفوتر ---------- */
+const PLATFORM_LABELS = { whatsapp:'واتساب', facebook:'فيسبوك', instagram:'إنستجرام', tiktok:'تيك توك', youtube:'يوتيوب', email:'إيميل', website:'موقع' };
+function renderSocialManager(){
+    const list = currentSettings.socialLinks || [];
+    const box = document.getElementById('socialLinksManager');
+    box.innerHTML = list.length ? list.map((l, i) => `
+        <div style="display:flex;justify-content:space-between;align-items:center;background:var(--paper);padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--line)">
+            <span>${PLATFORM_LABELS[l.platform] || l.platform} — ${l.url}</span>
+            <button type="button" class="btn-danger-sm" onclick="removeSocialLink(${i})"><i class="fa-solid fa-trash"></i></button>
+        </div>`).join('') : `<p style="color:var(--muted);font-size:13px">مفيش روابط مخصصة مضافة لسه.</p>`;
+}
+function addSocialLink(){
+    const platform = document.getElementById('newSocialPlatform').value;
+    const url = document.getElementById('newSocialUrl').value.trim();
+    if (!url){ showToast('اكتب الرابط الأول', 'error'); return; }
+    currentSettings.socialLinks = currentSettings.socialLinks || [];
+    currentSettings.socialLinks.push({ platform, url });
+    db.collection('settings').doc('site_config').set({ socialLinks: currentSettings.socialLinks }, { merge:true })
+      .then(() => { showToast('تمت إضافة الرابط'); document.getElementById('newSocialUrl').value=''; renderSocialManager(); })
+      .catch(err => showToast('خطأ: ' + err.message, 'error'));
+}
+function removeSocialLink(i){
+    currentSettings.socialLinks.splice(i, 1);
+    db.collection('settings').doc('site_config').set({ socialLinks: currentSettings.socialLinks }, { merge:true })
+      .then(() => { showToast('تم الحذف'); renderSocialManager(); });
 }
 
 function saveSettings(event){
@@ -823,6 +1039,9 @@ function saveSettings(event){
         phone1: document.getElementById('setPhone1').value.trim(),
         phone2: document.getElementById('setPhone2').value.trim(),
         cartPhone: document.getElementById('setCartPhone').value.trim(),
+        walletVodafone: document.getElementById('setWalletVodafone').value.trim(),
+        walletEtisalat: document.getElementById('setWalletEtisalat').value.trim(),
+        walletOrange: document.getElementById('setWalletOrange').value.trim(),
         topbarStatus: document.getElementById('setTopbarStatus').value.trim(),
         topbarHours: document.getElementById('setTopbarHours').value.trim(),
         promoEnabled: document.getElementById('setPromoEnabled').checked,
@@ -833,6 +1052,63 @@ function saveSettings(event){
       .then(() => showToast('تم حفظ الإعدادات — هتظهر في الموقع خلال لحظات'))
       .catch(err => showToast('حصل خطأ: ' + err.message, 'error'));
     return false;
+}
+
+/* ===================== الطلبات ===================== */
+let ordersCache = {};
+function loadOrders(){
+    db.collection('orders').orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
+        ordersCache = {};
+        snapshot.forEach(doc => ordersCache[doc.id] = doc.data());
+        renderOrders();
+    }, (err) => console.error('loadOrders error:', err.message));
+}
+function renderOrders(searchTerm){
+    searchTerm = (searchTerm || document.querySelector('#orders .table-toolbar input')?.value || '').trim().toLowerCase();
+    const rows = Object.entries(ordersCache).filter(([id, o]) =>
+        !searchTerm || (o.customerName || '').toLowerCase().includes(searchTerm) || (o.phone || '').includes(searchTerm));
+
+    document.getElementById('ordersCount').textContent = `${rows.length} طلب`;
+    const tbody = document.getElementById('ordersTableBody');
+    if (!rows.length){ tbody.innerHTML = `<tr class="empty-row"><td colspan="8">لا توجد طلبات بعد.</td></tr>`; return; }
+
+    const paymentLabels = { cash:'الدفع عند الاستلام', wallet:'محفظة إلكترونية', card:'فيزا / بطاقة' };
+    const walletLabels = { vodafone:'فودافون كاش', etisalat:'اتصالات كاش', orange:'أورانج كاش' };
+    tbody.innerHTML = rows.map(([id, o]) => {
+        const typeLabel = o.type === 'purchase' ? 'شراء' : 'صيانة';
+        let paymentCell = '—';
+        if (o.paymentMethod){
+            const methodText = paymentLabels[o.paymentMethod] || o.paymentMethod;
+            const providerText = o.paymentMethod === 'wallet' && o.walletProvider ? ` (${walletLabels[o.walletProvider] || o.walletProvider})` : '';
+            const refText = o.paymentRef ? `<br><span style="font-family:var(--font-mono);font-size:11px;color:var(--muted)">${o.paymentRef}</span>` : '';
+            paymentCell = `${methodText}${providerText}${refText}`;
+        }
+        const statusBadge = o.status === 'approved'
+            ? `<span class="status-badge">تمت الموافقة</span>`
+            : `<span class="status-badge offline">قيد المراجعة</span>`;
+        const approveLabel = (o.paymentMethod && o.paymentMethod !== 'cash' && (o.paymentStatus === 'awaiting_confirmation' || o.paymentStatus === 'awaiting_link')) ? 'تأكيد الدفع' : 'موافقة';
+        const approveBtn = o.status === 'approved' ? '' : `<button class="btn-edit-sm" onclick="approveOrder('${id}')"><i class="fa-solid fa-check"></i> ${approveLabel}</button>`;
+        return `<tr>
+            <td><span class="cat-chip">${typeLabel}</span></td>
+            <td><strong>${o.customerName || '—'}</strong></td>
+            <td>${o.phone || '—'}</td>
+            <td style="max-width:220px">${o.details || ''}</td>
+            <td class="price-chip">${o.total ? o.total + ' ج.م' : '—'}</td>
+            <td style="font-size:12px">${paymentCell}</td>
+            <td>${statusBadge}</td>
+            <td>${approveBtn}<button class="btn-danger-sm" onclick="deleteOrder('${id}')"><i class="fa-solid fa-trash"></i></button></td>
+        </tr>`;
+    }).join('');
+}
+function approveOrder(id){
+    const o = ordersCache[id];
+    const updates = { status:'approved' };
+    if (o && o.paymentMethod && o.paymentMethod !== 'cash') updates.paymentStatus = 'confirmed';
+    db.collection('orders').doc(id).update(updates).then(() => showToast('تم تأكيد الطلب'));
+}
+function deleteOrder(id){
+    if (!confirm('حذف هذا الطلب نهائيًا؟')) return;
+    db.collection('orders').doc(id).delete().then(() => showToast('تم حذف الطلب'));
 }
 </script>
 </body>
