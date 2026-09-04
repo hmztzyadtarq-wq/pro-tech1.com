@@ -59,29 +59,62 @@
 <header id="siteHeader">
     <div class="logo">Pro<span>Tech</span></div>
     <nav class="nav-icons" id="mainNav">
-        <button onclick="location.href='index.html'" class="nav-btn"><i class="fa-solid fa-house"></i><span>الرئيسية</span></button>
-        <button onclick="location.href='videos.html'" class="nav-btn"><i class="fa-solid fa-print"></i><span>المكن</span></button>
-        <button onclick="location.href='inks.html'" class="nav-btn"><i class="fa-solid fa-droplet"></i><span>المتجر</span></button>
-        <button onclick="location.href='team.html'" class="nav-btn active"><i class="fa-solid fa-users-gear"></i><span>الفريق</span></button>
-        <button onclick="location.href='settings.html'" class="nav-btn"><i class="fa-solid fa-gears"></i><span>الإعدادات</span></button>
+        <button onclick="location.href='index.html'" class="nav-btn"><i class="fa-solid fa-house"></i><span data-i18n="nav_home">الرئيسية</span></button>
+        <button onclick="location.href='videos.html'" class="nav-btn"><i class="fa-solid fa-print"></i><span data-i18n="nav_machines">المكن</span></button>
+        <button onclick="location.href='inks.html'" class="nav-btn"><i class="fa-solid fa-droplet"></i><span data-i18n="nav_store">المتجر</span></button>
+        <button onclick="location.href='team.html'" class="nav-btn active"><i class="fa-solid fa-users-gear"></i><span data-i18n="nav_team">الفريق</span></button>
+        <button onclick="location.href='settings.html'" class="nav-btn"><i class="fa-solid fa-gears"></i><span data-i18n="nav_settings">الإعدادات</span></button>
     </nav>
     <div class="header-actions">
         <button class="cart-trigger-btn" onclick="openCartModal()">
-            <i class="fa-solid fa-cart-shopping"></i><span>السلة</span><span class="cart-badge" id="cart-count">0</span>
+            <i class="fa-solid fa-cart-shopping"></i><span data-i18n="mp_cart">السلة</span><span class="cart-badge" id="cart-count">0</span>
         </button>
         <button class="nav-toggle" id="navToggle" aria-label="فتح القائمة"><i class="fa-solid fa-bars"></i></button>
     </div>
 </header>
 
-<nav class="mobile-tabbar">
-    <div class="tab-inner">
-        <button onclick="location.href='index.html'"><i class="fa-solid fa-house"></i>الرئيسية</button>
-        <button onclick="location.href='videos.html'"><i class="fa-solid fa-print"></i>المكن</button>
-        <button onclick="location.href='inks.html'"><i class="fa-solid fa-droplet"></i>المتجر</button>
-        <button class="active" onclick="location.href='team.html'"><i class="fa-solid fa-users-gear"></i>الفريق</button>
-        <button onclick="location.href='settings.html'"><i class="fa-solid fa-gears"></i>الإعدادات</button>
+<!-- البانل الجانبي في الموبايل: تنقل + وضع ليلي + لغة + وصول سريع -->
+<div class="mobile-panel-overlay" id="mobilePanelOverlay" onclick="if(event.target===this) closeMobilePanel()">
+    <div class="mobile-panel">
+        <div class="mp-header">
+            <div class="logo">Pro<span>Tech</span></div>
+            <button class="mp-close" onclick="closeMobilePanel()">&times;</button>
+        </div>
+        <div class="mp-body">
+            <div class="mp-section">
+                <div class="mp-nav">
+                    <button onclick="location.href='index.html'"><i class="fa-solid fa-house"></i><span data-i18n="nav_home">الرئيسية</span></button>
+                    <button onclick="location.href='videos.html'"><i class="fa-solid fa-print"></i><span data-i18n="nav_machines">المكن</span></button>
+                    <button onclick="location.href='inks.html'"><i class="fa-solid fa-droplet"></i><span data-i18n="nav_store">المتجر</span></button>
+                    <button class="active" onclick="location.href='team.html'"><i class="fa-solid fa-users-gear"></i><span data-i18n="nav_team">الفريق</span></button>
+                    <button onclick="location.href='settings.html'"><i class="fa-solid fa-gears"></i><span data-i18n="nav_settings">الإعدادات</span></button>
+                </div>
+            </div>
+            <div class="mp-section">
+                <div class="mp-toggle-row">
+                    <span><i class="fa-solid fa-moon"></i> <span data-i18n="mp_dark_mode">الوضع الليلي</span></span>
+                    <button class="mp-switch" id="themeSwitch" onclick="toggleTheme()"></button>
+                </div>
+            </div>
+            <div class="mp-section">
+                <div class="mp-section-title" data-i18n="mp_language">اللغة</div>
+                <div class="mp-lang-options">
+                    <button class="mp-lang-btn active" data-lang="ar" onclick="setLanguage('ar')">العربية</button>
+                    <button class="mp-lang-btn" data-lang="en" onclick="setLanguage('en')">English</button>
+                    <button class="mp-lang-btn" disabled title="قريبًا">中文</button>
+                </div>
+            </div>
+            <div class="mp-section">
+                <div class="mp-section-title" data-i18n="mp_quick_actions">وصول سريع</div>
+                <div class="mp-quick-actions">
+                    <button onclick="closeMobilePanel(); openCartModal()"><i class="fa-solid fa-cart-shopping"></i> <span data-i18n="mp_cart">السلة</span> <span class="badge-mini" id="cart-count-mp">0</span></button>
+                    <button onclick="closeMobilePanel(); openConsultationModal()"><i class="fa-brands fa-whatsapp"></i> <span data-i18n="mp_whatsapp">تواصل واتساب</span></button>
+                    <button onclick="closeMobilePanel(); openMaintenanceModal()"><i class="fa-solid fa-screwdriver-wrench"></i> <span data-i18n="mp_maintenance">اطلب صيانة</span></button>
+                </div>
+            </div>
+        </div>
     </div>
-</nav>
+</div>
 
 <div class="breadcrumb" style="max-width:1180px;margin:18px auto 0;padding:0 28px;font-family:var(--font-mono);font-size:12.5px;color:var(--muted)">
     <a onclick="location.href='index.html'" style="cursor:pointer">الرئيسية</a> / <b style="color:var(--cyan)">الفريق</b>
