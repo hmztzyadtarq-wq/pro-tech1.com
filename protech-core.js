@@ -1,11 +1,13 @@
 // ==========================================
 // ملف التحكم المركزي لشركة بروتك (ProTech Core)
 // ==========================================
-// هذه نسخة مطابقة تمامًا لملفك الأصلي، فيها 5 تعديلات محددة فقط
-// (مُعلّمة بتعليق "🔧 تعديل" في مكانها): توحيد عداد وبيانات السلة
-// مع باقي الموقع، تصحيح السعر الثابت، منع تكرار مودال السلة، دمج
-// الكمية بدل تكرار المنتج في السلة، وجعل كل كارت يفتح صفحة تفاصيل.
-// باقي المنطق (Firebase، مطابقة الأقسام، عرض البيانات) لم يتغير.
+// نسخة موسّعة من ملفك الأصلي: لسه فيها كل منطقك (Firebase، مطابقة
+// الأقسام، عرض البيانات) زي ما هو، ومضاف عليها تعديلات السلة
+// (مُعلّمة بـ "🔧 تعديل")، وقسمين جداد بالكامل تحت في نهاية الملف:
+// - loadSiteSettings(): يجيب أرقام الواتساب وشريط الحالة العلوي
+//   وروابط السوشيال ميديا من فايربيز ويطبّقهم على أي صفحة فيها
+//   العناصر دي، عشان تتغير من الأدمن بدون لمس أي كود.
+// - loadAds(): يعرض أي إعلانات/عروض ترويجية مضافة من الأدمن.
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzFacVVTAe2fMvCDXwexfd6Wi7cI7_1gc",
@@ -97,33 +99,37 @@ function initDynamicSection(targetCategory, containerId, cardTemplateType) {
                     card.className = 'ink-card';
 
                     // 🔧 تعديل 5: كل كارت بقى قابل للدوس عليه يفتح صفحة تفاصيل
-                    // المنتج (بيستخدم رقم الوثيقة في فايربيز)، وزرار "إضافة للسلة"
-                    // مستثنى من ده عشان الدوس عليه يضيف للسلة بس من غير ما يفتح الصفحة
+                    // المنتج (بيستخدم رقم الوثيقة في فايربيز)، وأي زرار جواه
+                    // (سلة/إعجاب) مستثنى من ده بـ stopPropagation
                     card.style.cursor = 'pointer';
                     card.setAttribute('onclick', `location.href='product-details.html?id=${doc.id}'`);
 
-                    // التحقق مما إذا كان المحتوى فيديو أو صورة
+                    // 🔧 تعديل 6: تصميم أصغر على طراز أمازون — صورة/فيديو أصغر،
+                    // من غير وصف تحت الصورة (الوصف بقى في صفحة التفاصيل بس)
                     let mediaElement = '';
                     if (item.videoUrl && item.videoUrl.trim() !== '') {
-                        mediaElement = `<video controls style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:12px;"><source src="${item.videoUrl}" type="video/mp4">متصفحك لا يدعم عرض الفيديو</video>`;
+                        mediaElement = `<video controls style="width:100%; height:130px; object-fit:cover; border-radius:8px;"><source src="${item.videoUrl}" type="video/mp4"></video>`;
                     } else {
-                        mediaElement = `<img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="صورة" style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:12px;">`;
+                        mediaElement = `<img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="صورة" style="width:100%; height:130px; object-fit:cover; border-radius:8px;">`;
                     }
 
-                    // 🔧 تعديل 2: كان في سعر ثابت 150 لكل المنتجات مهما كان سعرها
-                    // الحقيقي — بقى ياخد item.price من فايربيز، ولو مش موجود يبقى صفر
                     const priceValue = item.price || 0;
                     const safeTitle = (item.title || 'منتج').replace(/'/g, "\\'");
+                    const likesValue = item.likes || 0;
 
                     card.innerHTML = `
                         <div>
                             ${mediaElement}
-                            <span style="background:#e1f0ff; color:#007bff; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:bold;">${item.category || 'عام'}</span>
-                            <h3 style="margin:10px 0 5px; font-size:18px; color:#2c3e50;">${item.title || 'بدون عنوان'}</h3>
-                            <p style="color:#666; font-size:14px; margin-bottom:15px; line-height:1.5;">${item.desc || 'لا يوجد وصف.'}</p>
-                            ${priceValue ? `<p style="color:#00AEEF; font-weight:800; font-size:15px; margin-bottom:10px;">${priceValue} ج.م</p>` : ''}
+                            <h3 style="margin:10px 0 4px; font-size:14.5px; color:#2c3e50; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:38px;">${item.title || 'بدون عنوان'}</h3>
+                            ${priceValue ? `<p style="color:#00AEEF; font-weight:800; font-size:15px; margin-bottom:8px;">${priceValue} ج.م</p>` : ''}
                         </div>
-                        <button class="btn-add-cart" onclick="event.stopPropagation(); addToCart('${safeTitle}', ${priceValue})">إضافة للسلة 🛒</button>
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <div style="display:flex; gap:6px;">
+                                <button class="btn-add-cart" style="flex:1; margin-top:0;" onclick="event.stopPropagation(); addToCart('${safeTitle}', ${priceValue})"><i class="fa-solid fa-cart-plus"></i> أضف</button>
+                                <button onclick="event.stopPropagation(); toggleProductLike('${doc.id}', '${safeTitle}', this)" style="background:none; border:1px solid #eee; border-radius:6px; padding:8px 10px; color:#e63d8c; font-size:13px; white-space:nowrap;"><i class="fa-regular fa-heart"></i> <span>${likesValue}</span></button>
+                            </div>
+                            <button style="background:#12181F; color:#fff; border:none; border-radius:6px; padding:9px; font-weight:700; font-size:12.5px; width:100%;" onclick="event.stopPropagation(); buyNowProduct('${safeTitle}', ${priceValue})"><i class="fa-solid fa-bolt"></i> شراء الآن</button>
+                        </div>
                     `;
                     container.appendChild(card);
                 }
@@ -134,6 +140,23 @@ function initDynamicSection(targetCategory, containerId, cardTemplateType) {
             }
         });
     });
+}
+
+// إعجاب بمنتج — مرتبط بالمستخدم المسجل (يُطلب تسجيل الدخول أول مرة بس)
+function toggleProductLike(id, title, btnEl) {
+    if (typeof toggleLikeItem !== 'function') return;
+    toggleLikeItem(id, title, 'product', (liked) => {
+        if (!btnEl) return;
+        const span = btnEl.querySelector('span');
+        if (span) span.textContent = (parseInt(span.textContent, 10) || 0) + (liked ? 1 : -1);
+        btnEl.classList.toggle('liked', liked);
+    });
+}
+
+// شراء فوري: يضيف المنتج للسلة ويفتحها على طول
+function buyNowProduct(title, price) {
+    addToCart(title, price, 1);
+    if (typeof openCartModal === 'function') openCartModal();
 }
 
 // --- كود السلة العائمة الموحدة (احتياطي لأي صفحة قديمة لسه معملهاش تحديث) ---
@@ -186,3 +209,9 @@ function clearCart() {
 
 // استدعاء السلة عند تحميل أي صفحة
 document.addEventListener("DOMContentLoaded", injectCartModal);
+// تطبيق إعدادات الموقع العامة (أرقام واتساب، البار العلوي، الإعلانات) فور ما فايربيز يكون جاهز
+// (الدالة الفعلية applySiteSettings معرّفة في script.js وبتقرا من settings/site_config)
+document.addEventListener("DOMContentLoaded", () => {
+    if (typeof applySiteSettings === 'function') applySiteSettings();
+    if (typeof applyCategoryImages === 'function') applyCategoryImages();
+});
