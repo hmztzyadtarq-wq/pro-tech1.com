@@ -69,29 +69,62 @@
 <header id="siteHeader">
     <div class="logo">Pro<span>Tech</span></div>
     <nav class="nav-icons" id="mainNav">
-        <button onclick="location.href='index.html'" class="nav-btn"><i class="fa-solid fa-house"></i><span>الرئيسية</span></button>
-        <button onclick="location.href='videos.html'" class="nav-btn"><i class="fa-solid fa-print"></i><span>المكن</span></button>
-        <button onclick="location.href='inks.html'" class="nav-btn active"><i class="fa-solid fa-droplet"></i><span>المتجر</span></button>
-        <button onclick="location.href='team.html'" class="nav-btn"><i class="fa-solid fa-users-gear"></i><span>الفريق</span></button>
-        <button onclick="location.href='settings.html'" class="nav-btn"><i class="fa-solid fa-gears"></i><span>الإعدادات</span></button>
+        <button onclick="location.href='index.html'" class="nav-btn"><i class="fa-solid fa-house"></i><span data-i18n="nav_home">الرئيسية</span></button>
+        <button onclick="location.href='videos.html'" class="nav-btn"><i class="fa-solid fa-print"></i><span data-i18n="nav_machines">المكن</span></button>
+        <button onclick="location.href='inks.html'" class="nav-btn active"><i class="fa-solid fa-droplet"></i><span data-i18n="nav_store">المتجر</span></button>
+        <button onclick="location.href='team.html'" class="nav-btn"><i class="fa-solid fa-users-gear"></i><span data-i18n="nav_team">الفريق</span></button>
+        <button onclick="location.href='settings.html'" class="nav-btn"><i class="fa-solid fa-gears"></i><span data-i18n="nav_settings">الإعدادات</span></button>
     </nav>
     <div class="header-actions">
         <button class="cart-trigger-btn" onclick="openCartModal()">
-            <i class="fa-solid fa-cart-shopping"></i><span>السلة</span><span class="cart-badge" id="cart-count">0</span>
+            <i class="fa-solid fa-cart-shopping"></i><span data-i18n="mp_cart">السلة</span><span class="cart-badge" id="cart-count">0</span>
         </button>
         <button class="nav-toggle" id="navToggle" aria-label="فتح القائمة"><i class="fa-solid fa-bars"></i></button>
     </div>
 </header>
 
-<nav class="mobile-tabbar">
-    <div class="tab-inner">
-        <button onclick="location.href='index.html'"><i class="fa-solid fa-house"></i>الرئيسية</button>
-        <button onclick="location.href='videos.html'"><i class="fa-solid fa-print"></i>المكن</button>
-        <button class="active" onclick="location.href='inks.html'"><i class="fa-solid fa-droplet"></i>المتجر</button>
-        <button onclick="location.href='team.html'"><i class="fa-solid fa-users-gear"></i>الفريق</button>
-        <button onclick="location.href='settings.html'"><i class="fa-solid fa-gears"></i>الإعدادات</button>
+<!-- البانل الجانبي في الموبايل: تنقل + وضع ليلي + لغة + وصول سريع -->
+<div class="mobile-panel-overlay" id="mobilePanelOverlay" onclick="if(event.target===this) closeMobilePanel()">
+    <div class="mobile-panel">
+        <div class="mp-header">
+            <div class="logo">Pro<span>Tech</span></div>
+            <button class="mp-close" onclick="closeMobilePanel()">&times;</button>
+        </div>
+        <div class="mp-body">
+            <div class="mp-section">
+                <div class="mp-nav">
+                    <button onclick="location.href='index.html'"><i class="fa-solid fa-house"></i><span data-i18n="nav_home">الرئيسية</span></button>
+                    <button onclick="location.href='videos.html'"><i class="fa-solid fa-print"></i><span data-i18n="nav_machines">المكن</span></button>
+                    <button class="active" onclick="location.href='inks.html'"><i class="fa-solid fa-droplet"></i><span data-i18n="nav_store">المتجر</span></button>
+                    <button onclick="location.href='team.html'"><i class="fa-solid fa-users-gear"></i><span data-i18n="nav_team">الفريق</span></button>
+                    <button onclick="location.href='settings.html'"><i class="fa-solid fa-gears"></i><span data-i18n="nav_settings">الإعدادات</span></button>
+                </div>
+            </div>
+            <div class="mp-section">
+                <div class="mp-toggle-row">
+                    <span><i class="fa-solid fa-moon"></i> <span data-i18n="mp_dark_mode">الوضع الليلي</span></span>
+                    <button class="mp-switch" id="themeSwitch" onclick="toggleTheme()"></button>
+                </div>
+            </div>
+            <div class="mp-section">
+                <div class="mp-section-title" data-i18n="mp_language">اللغة</div>
+                <div class="mp-lang-options">
+                    <button class="mp-lang-btn active" data-lang="ar" onclick="setLanguage('ar')">العربية</button>
+                    <button class="mp-lang-btn" data-lang="en" onclick="setLanguage('en')">English</button>
+                    <button class="mp-lang-btn" disabled title="قريبًا">中文</button>
+                </div>
+            </div>
+            <div class="mp-section">
+                <div class="mp-section-title" data-i18n="mp_quick_actions">وصول سريع</div>
+                <div class="mp-quick-actions">
+                    <button onclick="closeMobilePanel(); openCartModal()"><i class="fa-solid fa-cart-shopping"></i> <span data-i18n="mp_cart">السلة</span> <span class="badge-mini" id="cart-count-mp">0</span></button>
+                    <button onclick="closeMobilePanel(); openConsultationModal()"><i class="fa-brands fa-whatsapp"></i> <span data-i18n="mp_whatsapp">تواصل واتساب</span></button>
+                    <button onclick="closeMobilePanel(); openMaintenanceModal()"><i class="fa-solid fa-screwdriver-wrench"></i> <span data-i18n="mp_maintenance">اطلب صيانة</span></button>
+                </div>
+            </div>
+        </div>
     </div>
-</nav>
+</div>
 
 <div class="details-wrap">
     <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
@@ -213,11 +246,18 @@ if (!productId) {
             mediaHTML = `<img src="${item.imageUrl || 'https://via.placeholder.com/500'}" alt="${item.title || ''}">`;
         }
 
+        const likesValue = item.likes || 0;
+
         content.innerHTML = `
             <div class="details-card reveal in-view">
                 <div class="details-media">${mediaHTML}</div>
                 <div class="details-info">
-                    <span class="details-cat">${catLabel(item.category)}</span>
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                        <span class="details-cat">${catLabel(item.category)}</span>
+                        <button onclick="toggleDetailLike('${doc.id}', ${likesValue})" style="background:none;border:1px solid var(--line);border-radius:999px;padding:6px 14px;color:var(--magenta);font-size:13px;font-weight:700">
+                            <i class="fa-regular fa-heart"></i> <span id="detailLikeCount">${likesValue}</span>
+                        </button>
+                    </div>
                     <h1>${item.title || 'بدون عنوان'}</h1>
                     <div class="details-price">${price ? price + ' ج.م' : 'السعر عند الاستفسار'}</div>
                     <p class="details-desc">${item.desc || 'لا يوجد وصف لهذا المنتج حاليًا.'}</p>
@@ -232,7 +272,10 @@ if (!productId) {
                     </div>
 
                     <div class="details-actions">
-                        <button class="btn btn-primary" onclick="addFromDetails('${safeTitle}', ${price})">
+                        <button class="btn btn-primary" onclick="buyNowFromDetails('${safeTitle}', ${price})">
+                            <i class="fa-solid fa-bolt"></i> اشتري الآن
+                        </button>
+                        <button class="btn btn-ghost" style="color:var(--charcoal);border-color:var(--line)" onclick="addFromDetails('${safeTitle}', ${price})">
                             <i class="fa-solid fa-cart-plus"></i> أضف للسلة
                         </button>
                         <a href="https://wa.me/${WHATSAPP_ADMIN}?text=${encodeURIComponent('عايز أسأل عن: ' + (item.title || ''))}" target="_blank" class="btn btn-ghost" style="color:var(--charcoal);border-color:var(--line)">
@@ -254,6 +297,19 @@ function changeQty(delta){
 function addFromDetails(title, price){
     const qty = parseInt(document.getElementById('qtyInput').value, 10) || 1;
     addToCart(title, price, qty);
+}
+
+function buyNowFromDetails(title, price){
+    const qty = parseInt(document.getElementById('qtyInput').value, 10) || 1;
+    addToCart(title, price, qty);
+    openCartModal();
+}
+
+function toggleDetailLike(id, currentLikes){
+    const newCount = (currentLikes || 0) + 1;
+    db.collection('site_media').doc(id).update({ likes: newCount }).then(() => {
+        document.getElementById('detailLikeCount').textContent = newCount;
+    });
 }
 </script>
 </body>
