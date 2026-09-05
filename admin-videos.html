@@ -261,9 +261,32 @@ a{ color:inherit; }
                             </optgroup>
                             <optgroup label="الأقسام الأخرى">
                                 <option value="إكو سولفينت">إكو سولفينت</option>
-                                <option value="أوت دور">أوت دور</option>
                                 <option value="لمينيشن">لمينيشن</option>
                                 <option value="بلوتر / ولتريلوتر">بلوتر / ولتريلوتر</option>
+                            </optgroup>
+                            <optgroup label="أوت دور - بلوبرنت">
+                                <option value="بلوبرنت 5.3">بلوبرنت 5.3 (صور/فيديو)</option>
+                                <option value="بلوبرنت 5.3 - قطع غيار">بلوبرنت 5.3 (قطع غيار)</option>
+                                <option value="بلوبرنت 3.2">بلوبرنت 3.2 (صور/فيديو)</option>
+                                <option value="بلوبرنت 3.2 - قطع غيار">بلوبرنت 3.2 (قطع غيار)</option>
+                            </optgroup>
+                            <optgroup label="أوت دور - بلوبرنت انجلش">
+                                <option value="بلوبرنت انجلش 5.3">بلوبرنت انجلش 5.3 (صور/فيديو)</option>
+                                <option value="بلوبرنت انجلش 5.3 - قطع غيار">بلوبرنت انجلش 5.3 (قطع غيار)</option>
+                                <option value="بلوبرنت انجلش 3.2">بلوبرنت انجلش 3.2 (صور/فيديو)</option>
+                                <option value="بلوبرنت انجلش 3.2 - قطع غيار">بلوبرنت انجلش 3.2 (قطع غيار)</option>
+                            </optgroup>
+                            <optgroup label="أوت دور - SPT G2">
+                                <option value="SPT G2 5.3">SPT G2 5.3 (صور/فيديو)</option>
+                                <option value="SPT G2 5.3 - قطع غيار">SPT G2 5.3 (قطع غيار)</option>
+                                <option value="SPT G2 3.2">SPT G2 3.2 (صور/فيديو)</option>
+                                <option value="SPT G2 3.2 - قطع غيار">SPT G2 3.2 (قطع غيار)</option>
+                            </optgroup>
+                            <optgroup label="أوت دور - Aprint">
+                                <option value="Aprint 5.3">Aprint 5.3 (صور/فيديو)</option>
+                                <option value="Aprint 5.3 - قطع غيار">Aprint 5.3 (قطع غيار)</option>
+                                <option value="Aprint 3.2">Aprint 3.2 (صور/فيديو)</option>
+                                <option value="Aprint 3.2 - قطع غيار">Aprint 3.2 (قطع غيار)</option>
                             </optgroup>
                         </select>
                     </div>
@@ -396,6 +419,14 @@ a{ color:inherit; }
                             <option value="banner_videos">صفحة المكن</option>
                             <option value="banner_inks">صفحة الأحبار</option>
                             <option value="banner_team">صفحة الفريق</option>
+                            <option value="banner_outdoor_blueprint_53">أوت دور - بلوبرنت 5.3</option>
+                            <option value="banner_outdoor_blueprint_32">أوت دور - بلوبرنت 3.2</option>
+                            <option value="banner_outdoor_blueprint_eng_53">أوت دور - بلوبرنت انجلش 5.3</option>
+                            <option value="banner_outdoor_blueprint_eng_32">أوت دور - بلوبرنت انجلش 3.2</option>
+                            <option value="banner_outdoor_sptg2_53">أوت دور - SPT G2 5.3</option>
+                            <option value="banner_outdoor_sptg2_32">أوت دور - SPT G2 3.2</option>
+                            <option value="banner_outdoor_aprint_53">أوت دور - Aprint 5.3</option>
+                            <option value="banner_outdoor_aprint_32">أوت دور - Aprint 3.2</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -705,6 +736,10 @@ a{ color:inherit; }
                         <option value="هيبير UV">UV - هيبرد</option>
                         <option value="DTF UV">UV - DTF</option>
                         <option value="7 في 1 UV">UV - 7 في 1</option>
+                        <option value="outdoor_blueprint">أوت دور - بلوبرنت</option>
+                        <option value="outdoor_blueprint_eng">أوت دور - بلوبرنت انجلش</option>
+                        <option value="outdoor_sptg2">أوت دور - SPT G2</option>
+                        <option value="outdoor_aprint">أوت دور - Aprint</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -993,7 +1028,13 @@ function deleteItem(id){
 }
 
 /* ===================== تصنيف العناصر وجلبها ===================== */
-const MACHINE_CATS = ['فلات بد UV','رول تو رول UV','هيبير UV','DTF UV','7 في 1 UV','إكو سولفينت','أوت دور','لمينيشن','بلوتر / ولتريلوتر'];
+const MACHINE_CATS = [
+    'فلات بد UV','رول تو رول UV','هيبير UV','DTF UV','7 في 1 UV','إكو سولفينت','لمينيشن','بلوتر / ولتريلوتر',
+    'بلوبرنت 5.3','بلوبرنت 5.3 - قطع غيار','بلوبرنت 3.2','بلوبرنت 3.2 - قطع غيار',
+    'بلوبرنت انجلش 5.3','بلوبرنت انجلش 5.3 - قطع غيار','بلوبرنت انجلش 3.2','بلوبرنت انجلش 3.2 - قطع غيار',
+    'SPT G2 5.3','SPT G2 5.3 - قطع غيار','SPT G2 3.2','SPT G2 3.2 - قطع غيار',
+    'Aprint 5.3','Aprint 5.3 - قطع غيار','Aprint 3.2','Aprint 3.2 - قطع غيار'
+];
 let itemsCache = {};
 
 function classify(category){
@@ -1029,7 +1070,13 @@ function loadAllData(){
 }
 
 function bannerCategoryLabel(cat){
-    return { banner_index:'الرئيسية', banner_videos:'المكن', banner_inks:'الأحبار', banner_team:'الفريق' }[cat] || cat;
+    return {
+        banner_index:'الرئيسية', banner_videos:'المكن', banner_inks:'الأحبار', banner_team:'الفريق',
+        banner_outdoor_blueprint_53:'أوت دور - بلوبرنت 5.3', banner_outdoor_blueprint_32:'أوت دور - بلوبرنت 3.2',
+        banner_outdoor_blueprint_eng_53:'أوت دور - بلوبرنت انجلش 5.3', banner_outdoor_blueprint_eng_32:'أوت دور - بلوبرنت انجلش 3.2',
+        banner_outdoor_sptg2_53:'أوت دور - SPT G2 5.3', banner_outdoor_sptg2_32:'أوت دور - SPT G2 3.2',
+        banner_outdoor_aprint_53:'أوت دور - Aprint 5.3', banner_outdoor_aprint_32:'أوت دور - Aprint 3.2'
+    }[cat] || cat;
 }
 
 function renderTable(bucket, searchTerm){
@@ -1167,7 +1214,9 @@ function removeAd(i){
 const CAT_IMAGE_LABELS = {
     UV_MAIN:'مربع UV الرئيسي', 'إكو سولفينت':'إكو سولفينت', 'أوت دور':'أوت دور', 'لمينيشن':'لمينيشن',
     'بلوتر / ولتريلوتر':'بلوتر / ولتريلوتر', 'فلات بد UV':'UV - فلات بد', 'رول تو رول UV':'UV - رول تو رول',
-    'هيبير UV':'UV - هيبرد', 'DTF UV':'UV - DTF', '7 في 1 UV':'UV - 7 في 1'
+    'هيبير UV':'UV - هيبرد', 'DTF UV':'UV - DTF', '7 في 1 UV':'UV - 7 في 1',
+    outdoor_blueprint:'أوت دور - بلوبرنت', outdoor_blueprint_eng:'أوت دور - بلوبرنت انجلش',
+    outdoor_sptg2:'أوت دور - SPT G2', outdoor_aprint:'أوت دور - Aprint'
 };
 function renderCategoryImagesManager(){
     const imgs = currentSettings.categoryImages || {};
