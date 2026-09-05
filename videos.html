@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>المكن | ProTech</title>
 
 <!--
@@ -382,6 +382,16 @@
     <img id="lightboxImg" src="" alt="صورة مكبرة">
 </div>
 
+<!-- عرض تفصيلي: الفيديو بحجمه الطبيعي والصورة تحته (مش جنب بعض) -->
+<div id="mediaDetailModal" class="lightbox" onclick="if(event.target===this) closeMediaDetail()">
+    <span class="close-btn" onclick="closeMediaDetail()">&times;</span>
+    <div class="media-detail-box" onclick="event.stopPropagation()">
+        <h3 id="mediaDetailTitle" style="color:#fff;margin-bottom:14px;text-align:center"></h3>
+        <video id="mediaDetailVideo" controls autoplay style="width:100%;max-height:60vh;border-radius:10px;display:none"></video>
+        <img id="mediaDetailImage" style="width:100%;border-radius:10px;margin-top:14px;display:none">
+    </div>
+</div>
+
 <!-- Firebase (نفس الإعداد الأصلي بدون أي تغيير) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -529,20 +539,19 @@ function loadMediaItems(categoryName) {
             const div = document.createElement('div');
             div.className = 'media-card';
 
-            // 🎥 لو فيه صورة وفيديو مع بعض، يتعرضوا جنب بعض؛ لو واحد بس، يتعرض لوحده
+            // 🎥 لو فيه فيديو (مع صورة أو من غيرها)، نعرض معاينة مصغرة للفيديو وبس،
+            // ولما تُدوس عليها تفتح عرض تفصيلي: الفيديو ظاهر بحجمه الطبيعي والصورة تحته
             const hasImage = item.imageUrl && item.imageUrl.trim() !== '';
             const hasVideo = item.videoUrl && item.videoUrl.trim() !== '';
+            const safeImg = (item.imageUrl || '').replace(/'/g, "\\'");
+            const safeVid = (item.videoUrl || '').replace(/'/g, "\\'");
             let mediaHTML = '';
-            if (hasImage && hasVideo) {
+            if (hasVideo) {
                 mediaHTML = `
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;height:180px">
-                        <div class="media-thumb" style="height:180px" onclick="openLightbox('${item.imageUrl}')">
-                            <img src="${item.imageUrl}" alt="${item.title || 'صورة'}" onerror="this.closest('.media-thumb').classList.add('img-fallback')">
-                        </div>
-                        <video controls style="width:100%;height:180px;object-fit:cover"><source src="${item.videoUrl}" type="video/mp4"></video>
+                    <div class="media-thumb video-thumb" onclick="openMediaDetail('${safeImg}', '${safeVid}', '${(item.title||'').replace(/'/g,"\\'")}')">
+                        <video muted style="width:100%;height:180px;object-fit:cover;pointer-events:none"><source src="${item.videoUrl}" type="video/mp4"></video>
+                        <div class="play-overlay"><i class="fa-solid fa-play"></i></div>
                     </div>`;
-            } else if (hasVideo) {
-                mediaHTML = `<video controls style="width:100%;height:180px;object-fit:cover"><source src="${item.videoUrl}" type="video/mp4"></video>`;
             } else {
                 mediaHTML = `
                     <div class="media-thumb" onclick="openLightbox('${item.imageUrl || ''}')">
@@ -613,6 +622,35 @@ function addComment(docId) {
             });
         }
     });
+}
+
+/* عرض تفصيلي للفيديو + الصورة تحته (بدل ما يبانوا جنب بعض صغيرين) */
+function openMediaDetail(imageUrl, videoUrl, title){
+    const videoEl = document.getElementById('mediaDetailVideo');
+    const imgEl = document.getElementById('mediaDetailImage');
+    document.getElementById('mediaDetailTitle').textContent = title || '';
+
+    if (videoUrl){
+        videoEl.src = videoUrl;
+        videoEl.style.display = 'block';
+    } else {
+        videoEl.removeAttribute('src');
+        videoEl.style.display = 'none';
+    }
+    if (imageUrl){
+        imgEl.src = imageUrl;
+        imgEl.style.display = 'block';
+    } else {
+        imgEl.style.display = 'none';
+    }
+    document.getElementById('mediaDetailModal').classList.add('open');
+}
+function closeMediaDetail(){
+    const videoEl = document.getElementById('mediaDetailVideo');
+    videoEl.pause();
+    videoEl.removeAttribute('src');
+    videoEl.load();
+    document.getElementById('mediaDetailModal').classList.remove('open');
 }
 
 function formatComments(commentsArray) {
