@@ -653,5 +653,6 @@ document.addEventListener('keydown', (e) => {
     closeCartModal();
     closeLightbox();
     closeMobilePanel();
+    if (typeof closeMediaDetail === 'function') closeMediaDetail();
   }
 });
