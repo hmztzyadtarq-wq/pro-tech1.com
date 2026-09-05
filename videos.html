@@ -212,9 +212,20 @@
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 
+
+<nav class="mobile-tabbar">
+    <div class="tab-inner">
+        <button onclick="location.href='index.html'"><i class="fa-solid fa-house"></i>الرئيسية</button>
+        <button class="active" onclick="location.href='videos.html'"><i class="fa-solid fa-print"></i>المكن</button>
+        <button onclick="location.href='inks.html'"><i class="fa-solid fa-droplet"></i>المتجر</button>
+        <button onclick="location.href='team.html'"><i class="fa-solid fa-users-gear"></i>الفريق</button>
+        <button onclick="location.href='settings.html'"><i class="fa-solid fa-gears"></i>الإعدادات</button>
+    </div>
+</nav>
 <!-- مسار التنقل: بيتحدث تلقائي حسب القسم اللي انت فيه -->
 <div class="breadcrumb" id="breadcrumb"><a onclick="location.href='index.html'">الرئيسية</a> / <b>المكن</b></div>
 
@@ -237,23 +248,23 @@
 <div id="mainCategoriesView" class="view-fade view-show">
     <div class="section-title-row"><h1>أقسام المكن والماكينات</h1></div>
     <div class="machine-grid">
-        <button class="machine-card" onclick="openUVCategories()">
+        <button class="machine-card" data-cat="UV_MAIN" onclick="openUVCategories()">
             <div class="m-icon"><i class="fa-solid fa-sun"></i></div>
             <h3>ماكينات UV</h3>
         </button>
-        <button class="machine-card" onclick="openDetailsPage('إكو سولفينت', 'ماكينات الإكو سولفينت المتميزة بدقة الألوان والطباعة على البانر والفينيل.')">
+        <button class="machine-card" data-cat="إكو سولفينت" onclick="openDetailsPage('إكو سولفينت', 'ماكينات الإكو سولفينت المتميزة بدقة الألوان والطباعة على البانر والفينيل.')">
             <div class="m-icon"><i class="fa-solid fa-flask"></i></div>
             <h3>إكو سولفينت</h3>
         </button>
-        <button class="machine-card" onclick="openDetailsPage('أوت دور', 'ماكينات الأوت دور المصممة لتحمل العوامل الجوية والعمل المستمر للوحات الإعلانية.')">
+        <button class="machine-card" data-cat="أوت دور" onclick="openDetailsPage('أوت دور', 'ماكينات الأوت دور المصممة لتحمل العوامل الجوية والعمل المستمر للوحات الإعلانية.')">
             <div class="m-icon"><i class="fa-solid fa-signs-post"></i></div>
             <h3>أوت دور</h3>
         </button>
-        <button class="machine-card" onclick="openDetailsPage('لمينيشن', 'ماكينات اللمنيشن والسلوفان الحراري لحماية المطبوعات وإعطائها لمسة احترافية.')">
+        <button class="machine-card" data-cat="لمينيشن" onclick="openDetailsPage('لمينيشن', 'ماكينات اللمنيشن والسلوفان الحراري لحماية المطبوعات وإعطائها لمسة احترافية.')">
             <div class="m-icon"><i class="fa-solid fa-layer-group"></i></div>
             <h3>لمينيشن</h3>
         </button>
-        <button class="machine-card" onclick="openDetailsPage('بلوتر / ولتريلوتر', 'ماكينات القص والتشكيل المتقدمة للستيكر والفينيل بدقة مذهلة.')">
+        <button class="machine-card" data-cat="بلوتر / ولتريلوتر" onclick="openDetailsPage('بلوتر / ولتريلوتر', 'ماكينات القص والتشكيل المتقدمة للستيكر والفينيل بدقة مذهلة.')">
             <div class="m-icon"><i class="fa-solid fa-scissors"></i></div>
             <h3>بلوتر / ولتريلوتر</h3>
         </button>
@@ -267,23 +278,23 @@
         <h1>أنواع ماكينات الـ UV</h1>
     </div>
     <div class="machine-grid">
-        <button class="machine-card" onclick="openSubDetailsPage('فلات بد UV')">
+        <button class="machine-card" data-cat="فلات بد UV" onclick="openSubDetailsPage('فلات بد UV')">
             <div class="m-icon"><i class="fa-solid fa-table-cells"></i></div>
             <h3>فلات بد (Flatbed)</h3>
         </button>
-        <button class="machine-card" onclick="openSubDetailsPage('رول تو رول UV')">
+        <button class="machine-card" data-cat="رول تو رول UV" onclick="openSubDetailsPage('رول تو رول UV')">
             <div class="m-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
             <h3>رول تو رول</h3>
         </button>
-        <button class="machine-card" onclick="openSubDetailsPage('هيبير UV')">
+        <button class="machine-card" data-cat="هيبير UV" onclick="openSubDetailsPage('هيبير UV')">
             <div class="m-icon"><i class="fa-solid fa-shuffle"></i></div>
             <h3>هيبرد (Hybrid)</h3>
         </button>
-        <button class="machine-card" onclick="openSubDetailsPage('DTF UV')">
+        <button class="machine-card" data-cat="DTF UV" onclick="openSubDetailsPage('DTF UV')">
             <div class="m-icon"><i class="fa-solid fa-shirt"></i></div>
             <h3>DTF</h3>
         </button>
-        <button class="machine-card" onclick="openSubDetailsPage('7 في 1 UV')">
+        <button class="machine-card" data-cat="7 في 1 UV" onclick="openSubDetailsPage('7 في 1 UV')">
             <div class="m-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
             <h3>7 في 1</h3>
         </button>
@@ -374,6 +385,7 @@
 <!-- Firebase (نفس الإعداد الأصلي بدون أي تغيير) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <!-- بعد ما Firebase بقى متحمّل، دلوقتي ينفع نحمّل protech-core.js بأمان
      (بيوفر أرقام الواتساب وشريط الحالة العلوي اللي بيتحدثوا من الأدمن) -->
 <script src="protech-core.js"></script>
@@ -398,6 +410,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     // تطبيق إعدادات الموقع العامة (أرقام واتساب/البار/الإعلانات) بمجرد جاهزية فايربيز
     if (typeof applySiteSettings === 'function') applySiteSettings();
+    if (typeof applyCategoryImages === 'function') applyCategoryImages();
     if (typeof loadPageBanner === 'function') {
         loadPageBanner('banner_videos', (item) => {
             if (item.title) document.getElementById('bannerTitleText').textContent = item.title;
@@ -515,21 +528,47 @@ function loadMediaItems(categoryName) {
             const id = doc.id;
             const div = document.createElement('div');
             div.className = 'media-card';
+
+            // 🎥 لو فيه صورة وفيديو مع بعض، يتعرضوا جنب بعض؛ لو واحد بس، يتعرض لوحده
+            const hasImage = item.imageUrl && item.imageUrl.trim() !== '';
+            const hasVideo = item.videoUrl && item.videoUrl.trim() !== '';
+            let mediaHTML = '';
+            if (hasImage && hasVideo) {
+                mediaHTML = `
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;height:180px">
+                        <div class="media-thumb" style="height:180px" onclick="openLightbox('${item.imageUrl}')">
+                            <img src="${item.imageUrl}" alt="${item.title || 'صورة'}" onerror="this.closest('.media-thumb').classList.add('img-fallback')">
+                        </div>
+                        <video controls style="width:100%;height:180px;object-fit:cover"><source src="${item.videoUrl}" type="video/mp4"></video>
+                    </div>`;
+            } else if (hasVideo) {
+                mediaHTML = `<video controls style="width:100%;height:180px;object-fit:cover"><source src="${item.videoUrl}" type="video/mp4"></video>`;
+            } else {
+                mediaHTML = `
+                    <div class="media-thumb" onclick="openLightbox('${item.imageUrl || ''}')">
+                        <img src="${item.imageUrl || 'https://via.placeholder.com/280'}" alt="${item.title || 'صورة'}"
+                             onerror="this.closest('.media-thumb').classList.add('img-fallback')">
+                    </div>`;
+            }
+
+            const commentsCount = (item.comments || []).length;
             div.innerHTML = `
-                <div class="media-thumb" onclick="openLightbox('${item.imageUrl || ''}')">
-                    <img src="${item.imageUrl || 'https://via.placeholder.com/280'}" alt="${item.title || 'صورة'}"
-                         onerror="this.closest('.media-thumb').classList.add('img-fallback')">
-                </div>
+                ${mediaHTML}
                 <div class="media-body">
                     <h3>${item.title || 'موديل جديد'}</h3>
                     <p>${item.desc || ''}</p>
                     <div class="interaction-box">
-                        <button class="like-btn" onclick="toggleLike('${id}', ${item.likes || 0})">
+                        <button class="like-btn" onclick="toggleLike('${id}', '${(item.title||'').replace(/'/g,"\\'")}', this)">
                             <i class="fa-solid fa-heart"></i> إعجاب (<span id="likes-${id}">${item.likes || 0}</span>)
                         </button>
-                        <input type="text" id="comment-input-${id}" placeholder="اكتب تعليقك هنا...">
-                        <button class="btn btn-ghost" style="justify-content:center;color:var(--charcoal);border-color:var(--line)" onclick="addComment('${id}')">إرسال التعليق</button>
-                        <div id="comments-list-${id}" class="comments-list">${formatComments(item.comments)}</div>
+                        <button class="btn btn-ghost" style="justify-content:center;color:var(--muted);border-color:var(--line);font-size:12.5px" onclick="toggleComments('${id}')">
+                            <i class="fa-regular fa-comment"></i> <span id="comments-toggle-label-${id}">عرض التعليقات (${commentsCount})</span>
+                        </button>
+                        <div id="comments-box-${id}" class="hidden">
+                            <input type="text" id="comment-input-${id}" placeholder="اكتب تعليقك هنا...">
+                            <button class="btn btn-ghost" style="justify-content:center;color:var(--charcoal);border-color:var(--line);margin-top:6px" onclick="addComment('${id}')">إرسال التعليق</button>
+                            <div id="comments-list-${id}" class="comments-list" style="margin-top:8px">${formatComments(item.comments)}</div>
+                        </div>
                     </div>
                 </div>`;
             container.appendChild(div);
@@ -537,22 +576,38 @@ function loadMediaItems(categoryName) {
     });
 }
 
-function toggleLike(docId, currentLikes) {
-    const db = firebase.firestore();
-    db.collection("site_media").doc(docId).update({ likes: currentLikes + 1 });
+function toggleComments(id){
+    const box = document.getElementById(`comments-box-${id}`);
+    const label = document.getElementById(`comments-toggle-label-${id}`);
+    const isHidden = box.classList.contains('hidden');
+    box.classList.toggle('hidden');
+    if (label) {
+        const count = box.querySelectorAll('.comments-list > div').length;
+        label.textContent = isHidden ? 'إخفاء التعليقات' : `عرض التعليقات`;
+    }
+}
+
+function toggleLike(docId, title, btnEl) {
+    if (typeof toggleLikeItem !== 'function') return;
+    toggleLikeItem(docId, title, 'machine', (liked) => {
+        const span = document.getElementById(`likes-${docId}`);
+        if (span) span.textContent = (parseInt(span.textContent, 10) || 0) + (liked ? 1 : -1);
+    });
 }
 
 function addComment(docId) {
+    if (!requireLogin('تكتب تعليق')) return;
     const input = document.getElementById(`comment-input-${docId}`);
     const commentText = input.value.trim();
     if (!commentText) return;
 
+    const authorEmail = getCurrentUser()?.email || 'زائر';
     const db = firebase.firestore();
     db.collection("site_media").doc(docId).get().then((doc) => {
         if (doc.exists) {
             const data = doc.data();
             let comments = data.comments || [];
-            comments.push(commentText);
+            comments.push({ text: commentText, author: authorEmail });
             db.collection("site_media").doc(docId).update({ comments: comments }).then(() => {
                 input.value = '';
             });
@@ -562,7 +617,11 @@ function addComment(docId) {
 
 function formatComments(commentsArray) {
     if (!commentsArray || commentsArray.length === 0) return '<em>لا توجد تعليقات بعد.</em>';
-    return commentsArray.map(c => `<div>• ${c}</div>`).join('');
+    return commentsArray.map(c => {
+        // يدعم الشكل القديم (نص بسيط) والجديد ({text, author}) مع بعض
+        if (typeof c === 'string') return `<div>• ${c}</div>`;
+        return `<div>• ${c.text} <span style="color:var(--muted);font-size:11px">(${c.author || 'زائر'})</span></div>`;
+    }).join('');
 }
 </script>
 </body>
