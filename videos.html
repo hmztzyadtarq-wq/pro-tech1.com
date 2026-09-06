@@ -248,11 +248,11 @@
 <div id="mainCategoriesView" class="view-fade view-show">
     <div class="section-title-row"><h1>أقسام المكن والماكينات</h1></div>
     <div class="machine-grid">
-        <button class="machine-card" data-cat="UV_MAIN" onclick="openUVCategories()">
+        <button class="machine-card" data-cat="UV_MAIN" onclick="openUVBrands()">
             <div class="m-icon"><i class="fa-solid fa-sun"></i></div>
             <h3>ماكينات UV</h3>
         </button>
-        <button class="machine-card" data-cat="إكو سولفينت" onclick="openDetailsPage('إكو سولفينت', 'ماكينات الإكو سولفينت المتميزة بدقة الألوان والطباعة على البانر والفينيل.')">
+        <button class="machine-card" data-cat="إكو سولفينت" onclick="openEcoBrands()">
             <div class="m-icon"><i class="fa-solid fa-flask"></i></div>
             <h3>إكو سولفينت</h3>
         </button>
@@ -272,29 +272,65 @@
 </div>
 
 <!-- تفريعات الـ UV (5 أنواع) -->
-<div id="uvSubCategoriesView" class="hidden view-fade">
+<!-- اختيار ماركة اليوفي (المرحلة الجديدة قبل الأنواع) -->
+<div id="uvBrandsView" class="hidden view-fade">
     <div class="section-title-row" style="justify-content:flex-start; gap:16px; flex-direction:column; align-items:flex-start;">
         <button class="back-btn" onclick="goBackToMain()"><i class="fa-solid fa-arrow-right"></i> رجوع لأقسام المكن</button>
-        <h1>أنواع ماكينات الـ UV</h1>
+        <h1>اختر ماركة اليوفي</h1>
     </div>
     <div class="machine-grid">
-        <button class="machine-card" data-cat="فلات بد UV" onclick="openSubDetailsPage('فلات بد UV')">
+        <button class="machine-card" data-cat="brand_bloprint" onclick="openUVBrandTypes('Bloprint')">
+            <div class="m-icon"><i class="fa-solid fa-sun"></i></div>
+            <h3>Bloprint</h3>
+        </button>
+        <button class="machine-card" data-cat="brand_g2" onclick="openUVBrandTypes('G2')">
+            <div class="m-icon"><i class="fa-solid fa-sun"></i></div>
+            <h3>G2</h3>
+        </button>
+        <button class="machine-card" data-cat="brand_stp" onclick="openUVBrandTypes('STP')">
+            <div class="m-icon"><i class="fa-solid fa-sun"></i></div>
+            <h3>STP</h3>
+        </button>
+        <button class="machine-card" data-cat="brand_aprint" onclick="openUVBrandTypes('Aprint')">
+            <div class="m-icon"><i class="fa-solid fa-sun"></i></div>
+            <h3>Aprint</h3>
+        </button>
+    </div>
+</div>
+
+<!-- أنواع اليوفي (بعد اختيار الماركة) -->
+<div id="uvSubCategoriesView" class="hidden view-fade">
+    <div class="section-title-row" style="justify-content:flex-start; gap:16px; flex-direction:column; align-items:flex-start;">
+        <button class="back-btn" onclick="goBackToPrevious()"><i class="fa-solid fa-arrow-right"></i> رجوع للماركات</button>
+        <h1 id="uvTypesTitle">أنواع ماكينات الـ UV</h1>
+    </div>
+
+    <!-- بانر خاص بماركة اليوفي المختارة -->
+    <div id="uvBrandBannerBox" class="hidden" style="margin-bottom:24px; border-radius:var(--radius); overflow:hidden; position:relative; min-height:140px; background:var(--ink-navy); background-size:cover; background-position:center;">
+        <div style="background:linear-gradient(0deg, rgba(10,20,32,.75), rgba(10,20,32,.35)); padding:22px 24px;">
+            <h2 id="uvBrandBannerTitle" style="color:#fff; font-size:18px; margin-bottom:6px;"></h2>
+            <p id="uvBrandBannerDesc" style="color:#C4D0DB; font-size:13.5px; max-width:600px;"></p>
+        </div>
+    </div>
+
+    <div class="machine-grid">
+        <button class="machine-card" data-cat="فلات بد UV" onclick="openSubDetailsPage('فلات بد')">
             <div class="m-icon"><i class="fa-solid fa-table-cells"></i></div>
             <h3>فلات بد (Flatbed)</h3>
         </button>
-        <button class="machine-card" data-cat="رول تو رول UV" onclick="openSubDetailsPage('رول تو رول UV')">
+        <button class="machine-card" data-cat="رول تو رول UV" onclick="openSubDetailsPage('رول تو رول')">
             <div class="m-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
             <h3>رول تو رول</h3>
         </button>
-        <button class="machine-card" data-cat="هيبير UV" onclick="openSubDetailsPage('هيبير UV')">
+        <button class="machine-card" data-cat="هيبير UV" onclick="openSubDetailsPage('هيبرد')">
             <div class="m-icon"><i class="fa-solid fa-shuffle"></i></div>
             <h3>هيبرد (Hybrid)</h3>
         </button>
-        <button class="machine-card" data-cat="DTF UV" onclick="openSubDetailsPage('DTF UV')">
+        <button class="machine-card" data-cat="DTF UV" onclick="openSubDetailsPage('DTF')">
             <div class="m-icon"><i class="fa-solid fa-shirt"></i></div>
             <h3>DTF</h3>
         </button>
-        <button class="machine-card" data-cat="7 في 1 UV" onclick="openSubDetailsPage('7 في 1 UV')">
+        <button class="machine-card" data-cat="7 في 1 UV" onclick="openSubDetailsPage('7 في 1')">
             <div class="m-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
             <h3>7 في 1</h3>
         </button>
@@ -339,6 +375,50 @@
             <h3>5.3 متر</h3>
         </button>
         <button class="machine-card" onclick="openOutdoorLeaf('3.2')">
+            <div class="m-icon"><i class="fa-solid fa-ruler-horizontal"></i></div>
+            <h3>3.2 متر</h3>
+        </button>
+    </div>
+</div>
+
+<!-- تفريعات الإيكو سولفينت: الماركة (المرحلة ١) -->
+<div id="ecoBrandsView" class="hidden view-fade">
+    <div class="section-title-row" style="justify-content:flex-start; gap:16px; flex-direction:column; align-items:flex-start;">
+        <button class="back-btn" onclick="goBackToMain()"><i class="fa-solid fa-arrow-right"></i> رجوع لأقسام المكن</button>
+        <h1>اختر ماركة الإيكو سولفينت</h1>
+    </div>
+    <div class="machine-grid">
+        <button class="machine-card" data-cat="brand_bloprint" onclick="openEcoSizes('Bloprint')">
+            <div class="m-icon"><i class="fa-solid fa-flask"></i></div>
+            <h3>Bloprint</h3>
+        </button>
+        <button class="machine-card" data-cat="brand_g2" onclick="openEcoSizes('G2')">
+            <div class="m-icon"><i class="fa-solid fa-flask"></i></div>
+            <h3>G2</h3>
+        </button>
+        <button class="machine-card" data-cat="brand_stp" onclick="openEcoSizes('STP')">
+            <div class="m-icon"><i class="fa-solid fa-flask"></i></div>
+            <h3>STP</h3>
+        </button>
+        <button class="machine-card" data-cat="brand_aprint" onclick="openEcoSizes('Aprint')">
+            <div class="m-icon"><i class="fa-solid fa-flask"></i></div>
+            <h3>Aprint</h3>
+        </button>
+    </div>
+</div>
+
+<!-- تفريعات الإيكو سولفينت: المقاس (المرحلة ٢) -->
+<div id="ecoSizesView" class="hidden view-fade">
+    <div class="section-title-row" style="justify-content:flex-start; gap:16px; flex-direction:column; align-items:flex-start;">
+        <button class="back-btn" onclick="goBackToPrevious()"><i class="fa-solid fa-arrow-right"></i> رجوع للماركات</button>
+        <h1 id="ecoSizesTitle">اختر المقاس</h1>
+    </div>
+    <div class="machine-grid">
+        <button class="machine-card" onclick="openEcoLeaf('5.3')">
+            <div class="m-icon"><i class="fa-solid fa-ruler-horizontal"></i></div>
+            <h3>5.3 متر</h3>
+        </button>
+        <button class="machine-card" onclick="openEcoLeaf('3.2')">
             <div class="m-icon"><i class="fa-solid fa-ruler-horizontal"></i></div>
             <h3>3.2 متر</h3>
         </button>
@@ -497,14 +577,22 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 const mainView = document.getElementById('mainCategoriesView');
+const uvBrandsView = document.getElementById('uvBrandsView');
 const uvSubView = document.getElementById('uvSubCategoriesView');
 const outdoorBrandsView = document.getElementById('outdoorBrandsView');
 const outdoorSizesView = document.getElementById('outdoorSizesView');
+const ecoBrandsView = document.getElementById('ecoBrandsView');
+const ecoSizesView = document.getElementById('ecoSizesView');
 const mediaView = document.getElementById('dynamicMediaView');
 const breadcrumb = document.getElementById('breadcrumb');
-const allViews = [mainView, uvSubView, outdoorBrandsView, outdoorSizesView, mediaView];
+const allViews = [mainView, uvBrandsView, uvSubView, outdoorBrandsView, outdoorSizesView, ecoBrandsView, ecoSizesView, mediaView];
 let currentMode = 'main';
 let currentOutdoorBrand = '';
+let currentUVBrand = '';
+let currentEcoBrand = '';
+
+/* أسماء العرض بالإنجليزي للماركات المشتركة بين الإيكو واليوفي (تستخدم في البانرات وصور الفئات) */
+const BRAND_SLUGS = { 'Bloprint':'bloprint', 'G2':'g2', 'STP':'stp', 'Aprint':'aprint' };
 
 /* تأثير ظهور بسيط عند تبديل الأقسام — إضافة بصرية فقط، مش بتغيّر منطق العرض */
 function showView(el) {
@@ -530,13 +618,6 @@ function setBreadcrumb(path) {
     breadcrumb.innerHTML = trail.join(' / ') + (path.length ? ' / <b>' + path[path.length - 1] + '</b>' : '');
 }
 
-function openUVCategories() {
-    hideAllViews();
-    showView(uvSubView);
-    currentMode = 'uv';
-    setBreadcrumb(['UV']);
-}
-
 function goBackToMain() {
     hideAllViews();
     showView(mainView);
@@ -546,11 +627,17 @@ function goBackToMain() {
 }
 
 function goBackToPrevious() {
-    if (currentMode === 'uv-sub') {
+    if (currentMode === 'uv-types') {
         hideAllViews();
-        showView(uvSubView);
-        currentMode = 'uv';
+        showView(uvBrandsView);
+        currentMode = 'uv-brands';
         setBreadcrumb(['UV']);
+    } else if (currentMode === 'uv-leaf') {
+        hideAllViews();
+        hideLeafExtras();
+        showView(uvSubView);
+        currentMode = 'uv-types';
+        setBreadcrumb(['UV', currentUVBrand]);
     } else if (currentMode === 'outdoor-sizes') {
         hideAllViews();
         showView(outdoorBrandsView);
@@ -562,6 +649,17 @@ function goBackToPrevious() {
         showView(outdoorSizesView);
         currentMode = 'outdoor-sizes';
         setBreadcrumb(['أوت دور', currentOutdoorBrand]);
+    } else if (currentMode === 'eco-sizes') {
+        hideAllViews();
+        showView(ecoBrandsView);
+        currentMode = 'eco-brands';
+        setBreadcrumb(['إيكو سولفينت']);
+    } else if (currentMode === 'eco-leaf') {
+        hideAllViews();
+        hideLeafExtras();
+        showView(ecoSizesView);
+        currentMode = 'eco-sizes';
+        setBreadcrumb(['إيكو سولفينت', currentEcoBrand]);
     } else {
         hideAllViews();
         showView(mainView);
@@ -582,21 +680,57 @@ function openDetailsPage(title, description) {
     loadMediaItems(title);
 }
 
+/* ---------- تفريعات اليوفي: ماركة → نوع (فلات بد/رول تو رول/...) → معرض ---------- */
+function openUVBrands() {
+    hideAllViews();
+    showView(uvBrandsView);
+    currentMode = 'uv-brands';
+    setBreadcrumb(['UV']);
+}
+
+function openUVBrandTypes(brand) {
+    hideAllViews();
+    showView(uvSubView);
+    currentMode = 'uv-types';
+    currentUVBrand = brand;
+    document.getElementById('uvTypesTitle').innerText = `أنواع ماكينات UV - ${brand}`;
+    setBreadcrumb(['UV', brand]);
+
+    const bannerBox = document.getElementById('uvBrandBannerBox');
+    bannerBox.classList.remove('hidden');
+    bannerBox.style.backgroundImage = '';
+    document.getElementById('uvBrandBannerTitle').textContent = `UV - ${brand}`;
+    document.getElementById('uvBrandBannerDesc').textContent = `أحدث موديلات ماكينات UV من ${brand}.`;
+    if (typeof loadPageBanner === 'function') {
+        loadPageBanner(`banner_uv_${BRAND_SLUGS[brand] || 'other'}`, (item) => {
+            if (item.title) document.getElementById('uvBrandBannerTitle').textContent = item.title;
+            if (item.desc) document.getElementById('uvBrandBannerDesc').textContent = item.desc;
+            if (item.imageUrl) bannerBox.style.backgroundImage = `url('${item.imageUrl}')`;
+        });
+    }
+}
+
 function openSubDetailsPage(subTitle) {
     hideAllViews();
     hideLeafExtras();
     showView(mediaView);
-    currentMode = 'uv-sub';
+    currentMode = 'uv-leaf';
 
-    document.getElementById('pageTitle').innerText = subTitle;
+    const brand = currentUVBrand;
+    const category = `UV ${brand} ${subTitle}`;
+    document.getElementById('pageTitle').innerText = `${brand} - ${subTitle}`;
     document.getElementById('pageSubtitle').innerText = 'استعرض أحدث موديلات وصور وفيديوهات ' + subTitle;
-    setBreadcrumb(['UV', subTitle]);
-    loadMediaItems(subTitle);
+    setBreadcrumb(['UV', brand, subTitle]);
+
+    currentLeafBaseCategory = category;
+    showLeafTabs();
 }
 
 /* ---------- تفريعات الأوت دور: ماركة → مقاس → معرض بيه بانر خاص وتاب قطع غيار ---------- */
 const OUTDOOR_BANNER_SLUGS = { 'بلوبرنت':'blueprint', 'بلوبرنت انجلش':'blueprint_eng', 'SPT G2':'sptg2', 'Aprint':'aprint' };
 let currentOutdoorSize = '';
+
+let currentLeafBaseCategory = '';
 
 function openOutdoorBrands() {
     hideAllViews();
@@ -621,6 +755,7 @@ function openOutdoorLeaf(size) {
     currentOutdoorSize = size;
 
     const brand = currentOutdoorBrand;
+    currentLeafBaseCategory = `${brand} ${size}`;
     document.getElementById('pageTitle').innerText = `${brand} ${size} متر`;
     document.getElementById('pageSubtitle').innerText = `استعرض صور وفيديوهات وقطع غيار ${brand} ${size} متر`;
     setBreadcrumb(['أوت دور', brand, size]);
@@ -640,7 +775,58 @@ function openOutdoorLeaf(size) {
         });
     }
 
-    // تبويب الصور/الفيديوهات مقابل قطع الغيار
+    showLeafTabs();
+}
+
+/* ---------- تفريعات الإيكو سولفينت: ماركة → مقاس → معرض بيه بانر خاص وتاب قطع غيار ---------- */
+let currentEcoSize = '';
+
+function openEcoBrands() {
+    hideAllViews();
+    showView(ecoBrandsView);
+    currentMode = 'eco-brands';
+    setBreadcrumb(['إيكو سولفينت']);
+}
+
+function openEcoSizes(brand) {
+    hideAllViews();
+    showView(ecoSizesView);
+    currentMode = 'eco-sizes';
+    currentEcoBrand = brand;
+    document.getElementById('ecoSizesTitle').innerText = `اختر مقاس ${brand}`;
+    setBreadcrumb(['إيكو سولفينت', brand]);
+}
+
+function openEcoLeaf(size) {
+    hideAllViews();
+    showView(mediaView);
+    currentMode = 'eco-leaf';
+    currentEcoSize = size;
+
+    const brand = currentEcoBrand;
+    currentLeafBaseCategory = `إيكو ${brand} ${size}`;
+    document.getElementById('pageTitle').innerText = `إيكو سولفينت ${brand} ${size} متر`;
+    document.getElementById('pageSubtitle').innerText = `استعرض صور وفيديوهات وقطع غيار إيكو سولفينت ${brand} ${size} متر`;
+    setBreadcrumb(['إيكو سولفينت', brand, size]);
+
+    const bannerBox = document.getElementById('leafBannerBox');
+    bannerBox.classList.remove('hidden');
+    bannerBox.style.backgroundImage = '';
+    document.getElementById('leafBannerTitle').textContent = `إيكو سولفينت ${brand} ${size} متر`;
+    document.getElementById('leafBannerDesc').textContent = `أحدث موديلات إيكو سولفينت ${brand} مقاس ${size} متر — صور، فيديوهات، وقطع غيار أصلية.`;
+    const bannerSlug = `banner_eco_${BRAND_SLUGS[brand] || 'other'}_${size.replace('.', '')}`;
+    if (typeof loadPageBanner === 'function') {
+        loadPageBanner(bannerSlug, (item) => {
+            if (item.title) document.getElementById('leafBannerTitle').textContent = item.title;
+            if (item.desc) document.getElementById('leafBannerDesc').textContent = item.desc;
+            if (item.imageUrl) bannerBox.style.backgroundImage = `url('${item.imageUrl}')`;
+        });
+    }
+
+    showLeafTabs();
+}
+
+function showLeafTabs(){
     const tabsBox = document.getElementById('leafTabsBox');
     tabsBox.classList.remove('hidden');
     tabsBox.style.display = 'flex';
@@ -650,9 +836,7 @@ function openOutdoorLeaf(size) {
 
 function switchLeafTab(tab) {
     document.querySelectorAll('.leaf-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-    const brand = currentOutdoorBrand;
-    const size = currentOutdoorSize;
-    const category = tab === 'parts' ? `${brand} ${size} - قطع غيار` : `${brand} ${size}`;
+    const category = tab === 'parts' ? `${currentLeafBaseCategory} - قطع غيار` : currentLeafBaseCategory;
     loadMediaItems(category);
 }
 
