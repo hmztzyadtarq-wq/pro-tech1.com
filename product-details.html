@@ -270,7 +270,6 @@ if (!productId) {
                         </button>
                     </div>
                     <h1>${item.title || 'بدون عنوان'}</h1>
-                    <div class="details-price">${price ? price + ' ج.م' : 'السعر عند الاستفسار'}</div>
                     <p class="details-desc">${item.desc || 'لا يوجد وصف لهذا المنتج حاليًا.'}</p>
 
                     <div class="qty-row">
@@ -283,10 +282,10 @@ if (!productId) {
                     </div>
 
                     <div class="details-actions">
-                        <button class="btn btn-primary" onclick="buyNowFromDetails('${safeTitle}', ${price})">
+                        <button class="btn btn-primary" onclick="buyNowFromDetails('${safeTitle}', 0)">
                             <i class="fa-solid fa-bolt"></i> اشتري الآن
                         </button>
-                        <button class="btn btn-ghost" style="color:var(--charcoal);border-color:var(--line)" onclick="addFromDetails('${safeTitle}', ${price})">
+                        <button class="btn btn-ghost" style="color:var(--charcoal);border-color:var(--line)" onclick="addFromDetails('${safeTitle}', 0)">
                             <i class="fa-solid fa-cart-plus"></i> أضف للسلة
                         </button>
                         <a href="https://wa.me/${WHATSAPP_ADMIN}?text=${encodeURIComponent('عايز أسأل عن: ' + (item.title || ''))}" target="_blank" class="btn btn-ghost" style="color:var(--charcoal);border-color:var(--line)">
