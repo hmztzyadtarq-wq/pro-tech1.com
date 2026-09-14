@@ -279,34 +279,42 @@
     // "المكن" هنا قسم مستقل تمامًا عن صفحة المكن الحقيقية — الأدمن بيضيفله صور بشكل منفصل
     let storeUnsubscribe = null;
 
-    // قطع الغيار: معرض ثابت (Static) — الصور بتتحط هنا يدويًا في الكود، مش من قاعدة البيانات
-    // لإضافة قطعة جديدة، ضيف سطر هنا بنفس الشكل: { name: 'اسم القطعة', img: 'رابط الصورة' }
-    const SPARE_PARTS = [
-        // { name: '', img: 'صور2\ctaloog 1_page_1_1.jpg' },
-         // { name: '', img: 'صور2/ctaloog 1_page_1_10.jpg' },
-         // { name: '', img: '' },
-         // { name: '', img: '' },
-         // { name: '', img: '' },
-         // { name: '', img: '' },
-         // { name: '', img: '' },
-         // { name: '', img: '' },
-         // { name: '', img: '' },
-         // { name: '', img: '' },
-         // { name: '', img: '' },
-         // { name: '', img: '' },
-         // { name: '', img: '' },
-         // { name: '', img: '' },
-         // { name: '', img: '' },
-         // { name: '', img: '' },
-         // { name: '', img: '' },   
-         // { name: '', img: '' },
-         // { name: '', img: '' },
-      
-      
+    // ============================================================
+    // قطع الغيار: بتتحمل تلقائيًا من مجلد في نفس مستودع GitHub —
+    // ارفع صور القطع في المجلد المحدد تحت، وهيّظهروا هنا لوحدهم
+    // من غير ما تكتب اسم أي صورة يدويًا.
+    // ============================================================
+    const GITHUB_OWNER = 'hmztzyadtarq-wq';        // اسم المستخدم بتاعك في GitHub
+    const GITHUB_REPO = 'pro-tech1.com';           // اسم المستودع (الريبو)
+    const SPARE_PARTS_FOLDER = 'صور/قطع-غيار';     // اسم المجلد اللي هترفع فيه صور القطع
 
-      
-        // { name: 'مضخة حبر', img: 'صور/قطع-غيار/part-2.jpg' },
-    ];
+    async function renderSpareParts(){
+        const container = document.getElementById('partsContainer');
+        container.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--muted);padding:30px">جاري تحميل الصور...</p>`;
+        try {
+            const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${encodeURIComponent(SPARE_PARTS_FOLDER)}`;
+            const res = await fetch(apiUrl);
+            if (!res.ok) throw new Error('تعذر قراءة المجلد — تأكد من اسم المستخدم/المستودع/المجلد');
+            const files = await res.json();
+            const images = files.filter(f => f.type === 'file' && /\.(jpe?g|png|webp|gif)$/i.test(f.name));
+
+            if (!images.length){
+                container.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--muted);padding:30px">لسه مفيش صور قطع غيار مرفوعة في المجلد.</p>`;
+                return;
+            }
+            container.innerHTML = images.map(f => {
+                const label = f.name.replace(/\.(jpe?g|png|webp|gif)$/i, '').replace(/[-_]+/g, ' ');
+                return `
+                    <div class="part-item" onclick="openLightbox('${f.download_url}')">
+                        <img src="${f.download_url}" alt="${label}" loading="lazy">
+                        <span>${label}</span>
+                    </div>`;
+            }).join('');
+        } catch (err) {
+            container.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--muted);padding:30px">تعذر تحميل صور قطع الغيار حاليًا.</p>`;
+            console.error('renderSpareParts error:', err);
+        }
+    }
 
     function switchStoreTab(bucket){
         document.querySelectorAll('.store-tab').forEach(b => b.classList.toggle('active', b.dataset.bucket === bucket));
@@ -322,19 +330,6 @@
         } else {
             loadStoreProducts(bucket);
         }
-    }
-
-    function renderSpareParts(){
-        const container = document.getElementById('partsContainer');
-        if (!SPARE_PARTS.length){
-            container.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--muted);padding:30px">لسه مفيش صور قطع غيار مضافة.</p>`;
-            return;
-        }
-        container.innerHTML = SPARE_PARTS.map(p => `
-            <div class="part-item" onclick="openLightbox('${p.img}')">
-                <img src="${p.img}" alt="${p.name}" loading="lazy">
-                <span>${p.name}</span>
-            </div>`).join('');
     }
 
     function loadStoreProducts(bucket){
